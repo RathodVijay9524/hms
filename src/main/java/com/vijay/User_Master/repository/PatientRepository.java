@@ -13,4 +13,5 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     Page<Patient> findByOwnerId(Long ownerId, Pageable pageable);
     Optional<Patient> findByIdAndOwnerId(Long id, Long ownerId);
     Optional<Patient> findByPhoneAndOwnerId(String phone, Long ownerId);
+    long countByOwnerId(Long ownerId);
 }

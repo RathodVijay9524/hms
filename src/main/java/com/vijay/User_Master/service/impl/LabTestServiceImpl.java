@@ -94,4 +94,10 @@ public class LabTestServiceImpl implements LabTestService {
         labTest.setActive(false); // Soft delete
         labTestRepository.save(labTest);
     }
+
+    @Override
+    public long getLabTestCount() {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        return labTestRepository.countByOwnerIdAndActiveTrue(ownerId);
+    }
 }

@@ -6,7 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
+@lombok.RequiredArgsConstructor
 public class WebController {
+
+    private final com.vijay.User_Master.service.LabTestService labTestService;
+    private final com.vijay.User_Master.service.PatientService patientService;
+    private final com.vijay.User_Master.service.LabOrderService labOrderService;
 
     @GetMapping("/login")
     public String login() {
@@ -45,23 +50,37 @@ public class WebController {
 
     // Dashboard
     @GetMapping("/dashboard")
-    public String dashboard() {
+    public String dashboard(Model model) {
+        model.addAttribute("totalPatients", patientService.getPatientCount());
+        model.addAttribute("totalTests", labTestService.getLabTestCount());
+        model.addAttribute("pendingOrders", labOrderService.getPendingOrderCount());
+        model.addAttribute("reportsReadyCount", labOrderService.getReportsReadyCount());
+        model.addAttribute("recentOrders", labOrderService.getRecentOrders(5));
         return "dashboard";
     }
 
     // Lab Management Pages
     @GetMapping("/lab/tests")
-    public String labTests() {
+    public String labTests(Model model) {
+        model.addAttribute("tests", labTestService.getAllLabTests());
         return "lab/tests";
     }
 
     @GetMapping("/lab/patients")
-    public String labPatients() {
+    public String labPatients(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
+        model.addAttribute("patientsPage", patientService.getAllPatients(page, size));
         return "lab/patients";
     }
 
     @GetMapping("/lab/orders")
-    public String labOrders() {
+    public String labOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
+        model.addAttribute("ordersPage", labOrderService.getAllOrders(page, size));
         return "lab/orders";
     }
 }

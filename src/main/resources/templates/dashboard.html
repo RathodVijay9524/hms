@@ -310,7 +310,7 @@
                 <div class="stat-card">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <div class="stat-value">152</div>
+                            <div class="stat-value" th:text="${totalPatients}">152</div>
                             <div class="stat-label">Total Patients</div>
                         </div>
                         <div class="stat-icon green"><i class="fas fa-users"></i></div>
@@ -321,7 +321,7 @@
                 <div class="stat-card">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <div class="stat-value">48</div>
+                            <div class="stat-value" th:text="${totalTests}">48</div>
                             <div class="stat-label">Lab Tests</div>
                         </div>
                         <div class="stat-icon cyan"><i class="fas fa-flask"></i></div>
@@ -332,7 +332,7 @@
                 <div class="stat-card">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <div class="stat-value">23</div>
+                            <div class="stat-value" th:text="${pendingOrders}">23</div>
                             <div class="stat-label">Pending Orders</div>
                         </div>
                         <div class="stat-icon amber"><i class="fas fa-clock"></i></div>
@@ -343,7 +343,7 @@
                 <div class="stat-card">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <div class="stat-value">89</div>
+                            <div class="stat-value" th:text="${reportsReadyCount}">89</div>
                             <div class="stat-label">Reports Ready</div>
                         </div>
                         <div class="stat-icon purple"><i class="fas fa-file-medical"></i></div>
@@ -381,33 +381,22 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><strong>ORD-7823</strong></td>
-                                <td>John Doe</td>
-                                <td>Complete Blood Count</td>
-                                <td><span class="badge badge-status badge-verified">Verified</span></td>
-                                <td>Dec 24, 2025</td>
+                            <tr th:each="order : ${recentOrders}">
+                                <td><strong th:text="${order.orderNumber}">ORD-7823</strong></td>
+                                <td th:text="${order.patientName}">John Doe</td>
+                                <td>
+                                    <span th:each="test, iter : ${order.tests}"
+                                        th:text="${test.name} + ${!iter.last ? ', ' : ''}"></span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-status"
+                                        th:classappend="${'badge-' + #strings.toLowerCase(order.status)}"
+                                        th:text="${order.status}">Verified</span>
+                                </td>
+                                <td th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy')}">Dec 24, 2025</td>
                             </tr>
-                            <tr>
-                                <td><strong>ORD-7822</strong></td>
-                                <td>Jane Smith</td>
-                                <td>Lipid Profile</td>
-                                <td><span class="badge badge-status badge-process">In Process</span></td>
-                                <td>Dec 24, 2025</td>
-                            </tr>
-                            <tr>
-                                <td><strong>ORD-7821</strong></td>
-                                <td>Robert Wilson</td>
-                                <td>Liver Function Test</td>
-                                <td><span class="badge badge-status badge-collected">Collected</span></td>
-                                <td>Dec 23, 2025</td>
-                            </tr>
-                            <tr>
-                                <td><strong>ORD-7820</strong></td>
-                                <td>Emily Brown</td>
-                                <td>Thyroid Panel</td>
-                                <td><span class="badge badge-status badge-ordered">Ordered</span></td>
-                                <td>Dec 23, 2025</td>
+                            <tr th:if="${#lists.isEmpty(recentOrders)}">
+                                <td colspan="5" class="text-center text-muted">No recent orders found.</td>
                             </tr>
                         </tbody>
                     </table>

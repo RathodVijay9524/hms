@@ -23,4 +23,6 @@ public class LabOrderDTO {
     private String aiSummary;
     private boolean doctorVerified;
     private String doctorRemarks;
+    private String patientName;
+    private LocalDateTime createdAt;
 }

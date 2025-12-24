@@ -31,6 +31,7 @@ public class LabTest extends BaseModel {
 
     private Double basePrice;
 
+    @Builder.Default
     private boolean active = true;
 
     @ManyToOne(fetch = FetchType.LAZY)

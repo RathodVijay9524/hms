@@ -9,4 +9,5 @@ public interface PatientService {
     Page<PatientDTO> getAllPatients(int page, int size);
     PatientDTO updatePatient(Long id, PatientDTO patientDTO);
     void deletePatient(Long id);
+    long getPatientCount();
 }

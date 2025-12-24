@@ -33,6 +33,12 @@ public class LabReferenceRange {
     private Double criticalHigh;
 
     public enum Gender {
-        MALE, FEMALE, BOTH
+        MALE, FEMALE, BOTH;
+
+        @com.fasterxml.jackson.annotation.JsonCreator
+        public static Gender fromString(String value) {
+            if (value == null) return null;
+            return Gender.valueOf(value.toUpperCase());
+        }
     }
 }

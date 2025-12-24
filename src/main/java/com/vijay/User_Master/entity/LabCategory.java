@@ -7,5 +7,11 @@ public enum LabCategory {
     URINALYSIS,
     IMMUNOLOGY,
     PATHOLOGY,
-    RADIOLOGY
+    RADIOLOGY;
+
+    @com.fasterxml.jackson.annotation.JsonCreator
+    public static LabCategory fromString(String value) {
+        if (value == null) return null;
+        return LabCategory.valueOf(value.toUpperCase());
+    }
 }

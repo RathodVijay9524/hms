@@ -19,4 +19,5 @@ public class PatientDTO {
     private LocalDate dateOfBirth;
     private Gender gender;
     private String address;
+    private Integer age;
 }

@@ -60,10 +60,7 @@ public class LabOrderServiceImpl implements LabOrderService {
                 .build();
 
         LabOrder savedOrder = labOrderRepository.save(order);
-        
-        LabOrderDTO responseDTO = modelMapper.map(savedOrder, LabOrderDTO.class);
-        responseDTO.setPatientId(patient.getId());
-        return responseDTO;
+        return convertToDTO(savedOrder);
     }
 
     @Override
@@ -72,24 +69,15 @@ public class LabOrderServiceImpl implements LabOrderService {
         LabOrder order = labOrderRepository.findByIdAndOwnerId(id, ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("LabOrder", "id", id));
         
-        LabOrderDTO dto = modelMapper.map(order, LabOrderDTO.class);
-        dto.setPatientId(order.getPatient().getId());
-        dto.setTests(order.getTests().stream()
-                .map(t -> modelMapper.map(t, LabTestDTO.class))
-                .collect(Collectors.toList()));
-        return dto;
+        return convertToDTO(order);
     }
 
     @Override
-    public Page<LabOrderDTO> getAllOrders(int page, int size) {
+    public org.springframework.data.domain.Page<LabOrderDTO> getAllOrders(int page, int size) {
         Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
-        Pageable pageable = PageRequest.of(page, size);
-        Page<LabOrder> orders = labOrderRepository.findByOwnerId(ownerId, pageable);
-        return orders.map(o -> {
-            LabOrderDTO dto = modelMapper.map(o, LabOrderDTO.class);
-            dto.setPatientId(o.getPatient().getId());
-            return dto;
-        });
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        org.springframework.data.domain.Page<LabOrder> orders = labOrderRepository.findByOwnerId(ownerId, pageable);
+        return orders.map(this::convertToDTO);
     }
 
     @Override
@@ -105,7 +93,7 @@ public class LabOrderServiceImpl implements LabOrderService {
         }
 
         LabOrder updatedOrder = labOrderRepository.save(order);
-        return modelMapper.map(updatedOrder, LabOrderDTO.class);
+        return convertToDTO(updatedOrder);
     }
 
     @Override
@@ -151,6 +139,45 @@ public class LabOrderServiceImpl implements LabOrderService {
         order.setStatus(LabOrder.OrderStatus.VERIFIED);
         
         LabOrder verifiedOrder = labOrderRepository.save(order);
-        return modelMapper.map(verifiedOrder, LabOrderDTO.class);
+        return convertToDTO(verifiedOrder);
+    }
+
+    @Override
+    public long getPendingOrderCount() {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        return labOrderRepository.countByOwnerIdAndStatusIn(ownerId, 
+            java.util.List.of(LabOrder.OrderStatus.ORDERED, LabOrder.OrderStatus.SAMPLE_COLLECTED, LabOrder.OrderStatus.IN_PROCESS));
+    }
+
+    @Override
+    public long getReportsReadyCount() {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        return labOrderRepository.countByOwnerIdAndStatusIn(ownerId, 
+            java.util.List.of(LabOrder.OrderStatus.VERIFIED, LabOrder.OrderStatus.REPORT_READY));
+    }
+
+    @Override
+    public java.util.List<LabOrderDTO> getRecentOrders(int limit) {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(0, limit, org.springframework.data.domain.Sort.by("id").descending());
+        return labOrderRepository.findByOwnerId(ownerId, pageable)
+                .map(this::convertToDTO).getContent();
+    }
+
+    private LabOrderDTO convertToDTO(LabOrder order) {
+        LabOrderDTO dto = modelMapper.map(order, LabOrderDTO.class);
+        dto.setPatientId(order.getPatient().getId());
+        dto.setPatientName(order.getPatient().getName());
+        
+        dto.setTests(order.getTests().stream()
+                .map(t -> modelMapper.map(t, LabTestDTO.class))
+                .collect(Collectors.toList()));
+
+        if (order.getCreatedOn() != null) {
+            dto.setCreatedAt(order.getCreatedOn().toInstant()
+                    .atZone(java.time.ZoneId.systemDefault())
+                    .toLocalDateTime());
+        }
+        return dto;
     }
 }

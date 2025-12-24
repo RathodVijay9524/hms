@@ -35,7 +35,7 @@ public class PatientServiceImpl implements PatientService {
         patient.setOwner(owner);
 
         Patient savedPatient = patientRepository.save(patient);
-        return modelMapper.map(savedPatient, PatientDTO.class);
+        return convertToDTO(savedPatient);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class PatientServiceImpl implements PatientService {
         Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
         Patient patient = patientRepository.findByIdAndOwnerId(id, ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient", "id", id));
-        return modelMapper.map(patient, PatientDTO.class);
+        return convertToDTO(patient);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class PatientServiceImpl implements PatientService {
         Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
         Pageable pageable = PageRequest.of(page, size);
         Page<Patient> patients = patientRepository.findByOwnerId(ownerId, pageable);
-        return patients.map(p -> modelMapper.map(p, PatientDTO.class));
+        return patients.map(this::convertToDTO);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class PatientServiceImpl implements PatientService {
         patient.setAddress(patientDTO.getAddress());
 
         Patient updatedPatient = patientRepository.save(patient);
-        return modelMapper.map(updatedPatient, PatientDTO.class);
+        return convertToDTO(updatedPatient);
     }
 
     @Override
@@ -79,5 +79,19 @@ public class PatientServiceImpl implements PatientService {
         Patient patient = patientRepository.findByIdAndOwnerId(id, ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient", "id", id));
         patientRepository.delete(patient);
+    }
+
+    @Override
+    public long getPatientCount() {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        return patientRepository.countByOwnerId(ownerId);
+    }
+
+    private PatientDTO convertToDTO(Patient patient) {
+        PatientDTO dto = modelMapper.map(patient, PatientDTO.class);
+        if (patient.getDateOfBirth() != null) {
+            dto.setAge(java.time.Period.between(patient.getDateOfBirth(), java.time.LocalDate.now()).getYears());
+        }
+        return dto;
     }
 }

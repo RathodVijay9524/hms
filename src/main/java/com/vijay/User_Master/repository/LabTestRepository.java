@@ -13,4 +13,5 @@ public interface LabTestRepository extends JpaRepository<LabTest, Long> {
     List<LabTest> findByOwnerIdAndActiveTrue(Long ownerId);
     Optional<LabTest> findByIdAndOwnerId(Long id, Long ownerId);
     boolean existsByNameAndOwnerId(String name, Long ownerId);
+    long countByOwnerIdAndActiveTrue(Long ownerId);
 }

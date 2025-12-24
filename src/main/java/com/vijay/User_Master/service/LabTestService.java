@@ -9,4 +9,5 @@ public interface LabTestService {
     LabTestDTO getLabTestById(Long id);
     LabTestDTO updateLabTest(Long id, LabTestDTO labTestDTO);
     void deleteLabTest(Long id);
+    long getLabTestCount();
 }
