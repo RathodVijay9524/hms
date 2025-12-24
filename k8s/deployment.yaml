@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-master-deployment
+  labels:
+    app: user-master
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-master
+  template:
+    metadata:
+      labels:
+        app: user-master
+    spec:
+      containers:
+      - name: user-master
+        image: user-master:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 9091
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "prod"
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:mysql://mysql-service:3306/user_master?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "root"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "password"
+        resources:
+          limits:
+            cpu: "1"
+            memory: "1Gi"
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: /api/v1/home/welcome
+            port: 9091
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/v1/home/welcome
+            port: 9091
+          initialDelaySeconds: 30
+          periodSeconds: 10

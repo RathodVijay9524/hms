@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} ?: 'Java Tutorial Platform'">Java Tutorial Platform</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSRF Meta Tags for AJAX -->
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+
+    <style>
+        :root {
+            /* Default Dark Theme */
+            --primary-color: #0084ff;
+            --secondary-color: #00c6ff;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-muted: #94a3b8;
+            --text-light: #f8fafc;
+            --text-main: #f8fafc;
+            --accent-color: #38bdf8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --nav-bg: rgba(15, 23, 42, 0.9);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-muted: #64748b;
+            --text-light: #0f172a;
+            --text-main: #1e293b;
+            --accent-color: #0284c7;
+            --border-color: rgba(0, 0, 0, 0.05);
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --glass-bg: rgba(0, 0, 0, 0.03);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .navbar {
+            background-color: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.6rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-link {
+            color: var(--text-main) !important;
+            font-weight: 500;
+            margin: 0 0.25rem;
+            padding: 0.5rem 1rem !important;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+            background: rgba(0, 132, 255, 0.08);
+        }
+
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            background: rgba(0, 132, 255, 0.12);
+        }
+
+        /* Dropdown Styles */
+        .dropdown-menu {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .dropdown-item {
+            color: var(--text-main);
+            border-radius: 0.4rem;
+            padding: 0.6rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: rgba(0, 132, 255, 0.1);
+            color: var(--primary-color);
+            transform: translateX(4px);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .user-avatar-circle {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: 2px solid var(--border-color);
+            transition: transform 0.2s ease;
+        }
+
+        .user-avatar-circle:hover {
+            transform: scale(1.05);
+            border-color: var(--primary-color);
+        }
+
+        /* Search Bar Enhancement */
+        .search-container {
+            max-width: 320px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .search-container:focus-within {
+            max-width: 400px;
+        }
+
+        .search-input-group {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 2rem;
+            padding: 0.25rem 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input-group:focus-within {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(0, 132, 255, 0.1);
+        }
+
+        .search-input-group .form-control {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            box-shadow: none;
+            font-size: 0.9rem;
+        }
+
+        .search-input-group .input-group-text {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+        }
+
+        footer {
+            background-color: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem 0;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* Premium Card Design */
+        .premium-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+            overflow: hidden;
+        }
+
+        .premium-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .btn-premium {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: opacity 0.3s;
+        }
+
+        .btn-premium:hover {
+            opacity: 0.9;
+            color: white;
+        }
+
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Theme Switcher Styles */
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(15deg);
+        }
+    </style>
+    <script>
+        // Pre-init script to prevent flash
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/tutorials}">
+                <i class="fa-solid fa-code me-2"></i>JavaMaster
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/tutorials/courses}">Video Courses</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/tutorials/playground}">Playground</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link text-warning" th:href="@{/admin}">
+                            <i class="fas fa-shield-halved me-1"></i>Admin
+                        </a>
+                    </li>
+                </ul>
+
+
+                <!-- Search Bar -->
+                <form class="d-none d-lg-flex mx-auto search-container" th:action="@{/tutorials/search}" method="GET">
+                    <div class="input-group search-input-group">
+                        <span class="input-group-text ps-3">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input name="q" class="form-control" type="search" placeholder="Search tutorials..."
+                            aria-label="Search">
+                    </div>
+                </form>
+
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Theme Toggle -->
+                    <button id="theme-toggle" class="theme-toggle me-2" title="Toggle Dark/Light Mode">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                    </button>
+
+                    <div sec:authorize="isAuthenticated()" class="dropdown">
+                        <div class="d-flex align-items-center gap-3 category-filter px-3 py-1 rounded-pill"
+                            style="cursor: pointer; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar-circle">
+                                <span th:text="${#strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
+                            </div>
+                            <div class="d-none d-md-block text-start">
+                                <div class="fw-bold small lh-1" th:text="${#authentication.name}">Username</div>
+                                <div class="text-muted" style="font-size: 0.7rem;">Student</div>
+                            </div>
+                            <i class="fas fa-chevron-down small text-muted ms-1"></i>
+                        </div>
+
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2">
+                            <li>
+                                <a class="dropdown-item" th:href="@{/tutorials/profile}">
+                                    <i class="fas fa-user-circle text-primary"></i>
+                                    <span>My Profile</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/tutorials/bookmarks}">
+                                    <i class="fas fa-bookmark text-warning"></i>
+                                    <span>Bookmarks</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/tutorials/dashboard}">
+                                    <i class="fas fa-chart-line text-success"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider opacity-10">
+                            </li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" id="logoutForm" style="display: none;">
+                                </form>
+                                <a class="dropdown-item text-danger" href="javascript:void(0)"
+                                    onclick="document.getElementById('logoutForm').submit();">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Logout</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div sec:authorize="isAnonymous()" class="d-flex gap-2">
+                        <a th:href="@{/login}" class="btn btn-link text-decoration-none text-main fw-500">Login</a>
+                        <a th:href="@{/register}" class="btn btn-premium px-4">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container container" layout:fragment="content">
+        <!-- Page content will be inserted here -->
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 JavaMaster Platform. All rights reserved.</p>
+            <div class="mt-2">
+                <a href="#" class="text-muted me-3"><i class="fab fa-github"></i></a>
+                <a href="#" class="text-muted me-3"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-muted"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Theme Switcher Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const html = document.documentElement;
+
+        function updateIcon(theme) {
+            themeIcon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+        }
+
+        // Init icon
+        updateIcon(html.getAttribute('data-theme'));
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateIcon(newTheme);
+        });
+
+        // Set active nav link
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                } else if (currentPath.startsWith(link.getAttribute('href')) && link.getAttribute('href') !== '/tutorials') {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+    <th:block layout:fragment="scripts">
+        <!-- Page specific scripts will be inserted here -->
+    </th:block>
+</body>
+
+</html>
