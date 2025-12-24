@@ -51,6 +51,7 @@ public class WebSecurityConfig {
                         // 2) Your explicit static & root fallbacks (Vite assets etc.)
                         .requestMatchers(
                                 "/", "/index.html",
+                                "/css/**", "/js/**",
                                 "/assets/**", "/static/**",
                                 "/favicon.ico", "/vite.svg",
                                 "/manifest.*", "/robots.txt",

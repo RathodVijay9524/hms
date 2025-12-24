@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -11,37 +11,38 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css?v=1.0}" rel="stylesheet">
+
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
 
     <style>
-        :root {
-            --primary-color: #10b981;
-            --secondary-color: #06b6d4;
-            --accent-color: #8b5cf6;
-            --dark-bg: #0f172a;
-            --dark-card: #1e293b;
-            --dark-hover: #334155;
-            --text-muted: #94a3b8;
-            --text-light: #f8fafc;
-        }
-
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--dark-bg);
-            color: var(--text-light);
+            background: #0f172a;
+            color: #f8fafc;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
+            transition: all 0.3s;
         }
 
         .navbar-custom {
-            background: rgba(15, 23, 42, 0.95);
+            background: var(--navbar-bg);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s;
         }
 
         .navbar-brand {
             font-family: 'Outfit', sans-serif;
             font-weight: 700;
             font-size: 1.5rem;
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            background: var(--gradient-primary);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -53,17 +54,18 @@
         }
 
         .nav-link:hover {
-            color: var(--text-light) !important;
+            color: var(--text-primary) !important;
         }
 
         .sidebar {
-            background: var(--dark-card);
+            background: var(--bg-secondary);
             min-height: calc(100vh - 56px);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            border-right: 1px solid var(--border-color);
             padding: 1.5rem 1rem;
             position: fixed;
             width: 250px;
             top: 56px;
+            transition: all 0.3s;
         }
 
         .sidebar-link {
@@ -105,10 +107,11 @@
             font-family: 'Outfit', sans-serif;
             font-size: 1.75rem;
             font-weight: 600;
+            color: var(--text-primary);
         }
 
         .btn-primary-gradient {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: var(--gradient-primary);
             border: none;
             color: white;
             font-weight: 600;
@@ -122,19 +125,20 @@
         }
 
         .table-wrapper {
-            background: var(--dark-card);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 1rem;
             overflow: hidden;
+            transition: all 0.3s;
         }
 
         .table-custom {
             margin-bottom: 0;
-            color: var(--text-light);
+            color: var(--text-primary);
         }
 
         .table-custom thead th {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--bg-tertiary);
             border: none;
             color: var(--text-muted);
             font-weight: 600;
@@ -142,13 +146,13 @@
         }
 
         .table-custom tbody td {
-            border-color: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-light);
             padding: 1rem;
             vertical-align: middle;
         }
 
         .table-custom tbody tr:hover {
-            background: rgba(255, 255, 255, 0.03);
+            background: var(--bg-tertiary);
         }
 
         .btn-icon {
@@ -158,7 +162,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
             background: transparent;
             color: var(--text-muted);
             transition: all 0.3s;
@@ -167,8 +171,8 @@
         }
 
         .btn-icon:hover {
-            background: var(--dark-hover);
-            color: var(--text-light);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
         }
 
         .btn-icon.view:hover {
@@ -180,7 +184,7 @@
         }
 
         .btn-icon.pdf:hover {
-            color: #f59e0b;
+            color: var(--warning);
         }
 
         .badge-status {
@@ -191,18 +195,18 @@
         }
 
         .badge-ordered {
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
+            background: var(--info-bg);
+            color: var(--info);
         }
 
         .badge-collected {
-            background: rgba(245, 158, 11, 0.2);
-            color: #fbbf24;
+            background: var(--warning-bg);
+            color: var(--warning);
         }
 
         .badge-verified {
-            background: rgba(34, 197, 94, 0.2);
-            color: #4ade80;
+            background: var(--success-bg);
+            color: var(--success);
         }
 
         .badge-process {
@@ -216,19 +220,20 @@
         }
 
         .search-box {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-light);
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
             width: 300px;
+            transition: all 0.3s;
         }
 
         .search-box:focus {
             outline: none;
             border-color: var(--primary-color);
-            background: rgba(255, 255, 255, 0.08);
-            color: var(--text-light);
+            background: var(--input-bg-focus);
+            color: var(--text-primary);
         }
 
         .search-box::placeholder {
@@ -245,7 +250,7 @@
             padding: 0.5rem 1rem;
             border-radius: 50px;
             background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
             color: var(--text-muted);
             cursor: pointer;
             transition: all 0.3s;
@@ -256,6 +261,51 @@
             background: var(--primary-color);
             border-color: var(--primary-color);
             color: white;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header,
+        .modal-footer {
+            border-color: var(--border-color);
+        }
+
+        .form-control,
+        .form-select {
+            background: var(--input-bg);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background: var(--input-bg-focus);
+            border-color: var(--primary-color);
+            color: var(--text-primary);
+            box-shadow: none;
+        }
+
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-hover);
+            border-color: var(--primary-color);
         }
 
         @media (max-width: 992px) {
@@ -271,14 +321,19 @@
 </head>
 
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
         <div class="container-fluid px-4">
             <a class="navbar-brand" th:href="@{/}"><i class="fas fa-flask-vial me-2"></i>MedLab Pro</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span
                     class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item me-2">
+                        <button class="theme-toggle" title="Toggle Theme">
+                            <i class="fas fa-sun icon-sun"></i><i class="fas fa-moon icon-moon"
+                                style="display:none;"></i>
+                        </button>
+                    </li>
                     <li class="nav-item"><a class="nav-link" th:href="@{/logout}"><i
                                 class="fas fa-sign-out-alt me-1"></i> Logout</a></li>
                 </ul>
@@ -286,18 +341,16 @@
         </div>
     </nav>
 
-    <!-- Sidebar -->
     <div class="sidebar">
         <div class="mb-4"><small class="text-muted text-uppercase">Main Menu</small></div>
         <a th:href="@{/dashboard}" class="sidebar-link"><i class="fas fa-chart-pie"></i> Dashboard</a>
         <a th:href="@{/lab/tests}" class="sidebar-link"><i class="fas fa-flask"></i> Lab Tests</a>
         <a th:href="@{/lab/patients}" class="sidebar-link"><i class="fas fa-user-injured"></i> Patients</a>
         <a th:href="@{/lab/orders}" class="sidebar-link active"><i class="fas fa-clipboard-list"></i> Lab Orders</a>
-        <hr style="border-color: rgba(255,255,255,0.1);">
-        <a href="#" class="sidebar-link"><i class="fas fa-cog"></i> Settings</a>
+        <hr style="border-color: var(--border-color);"><a href="#" class="sidebar-link"><i class="fas fa-cog"></i>
+            Settings</a>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
         <div class="page-header">
             <div>
@@ -306,13 +359,11 @@
             </div>
             <div class="d-flex gap-2">
                 <input type="text" class="search-box" placeholder="Search orders...">
-                <button class="btn btn-primary-gradient" data-bs-toggle="modal" data-bs-target="#createOrderModal">
-                    <i class="fas fa-plus me-1"></i> New Order
-                </button>
+                <button class="btn btn-primary-gradient" data-bs-toggle="modal" data-bs-target="#createOrderModal"><i
+                        class="fas fa-plus me-1"></i> New Order</button>
             </div>
         </div>
 
-        <!-- Filter Tabs -->
         <div class="filter-tabs">
             <button class="filter-tab active">All Orders</button>
             <button class="filter-tab">Ordered</button>
@@ -341,135 +392,52 @@
                         <td><span class="badge badge-status badge-verified"><i
                                     class="fas fa-check me-1"></i>Verified</span></td>
                         <td>Dec 24, 2025</td>
-                        <td>
-                            <a href="#" class="btn-icon view" title="View Details"><i class="fas fa-eye"></i></a>
-                            <a href="#" class="btn-icon ai" title="Generate AI Summary"><i class="fas fa-brain"></i></a>
-                            <a href="#" class="btn-icon pdf" title="Download PDF"><i class="fas fa-file-pdf"></i></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>ORD-7822</strong></td>
-                        <td>Jane Smith</td>
-                        <td>Thyroid Panel</td>
-                        <td><span class="badge badge-status badge-process"><i class="fas fa-spinner me-1"></i>In
-                                Process</span></td>
-                        <td>Dec 24, 2025</td>
-                        <td>
-                            <a href="#" class="btn-icon view" title="View Details"><i class="fas fa-eye"></i></a>
-                            <a href="#" class="btn-icon" title="Enter Results"><i class="fas fa-edit"></i></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>ORD-7821</strong></td>
-                        <td>Robert Wilson</td>
-                        <td>LFT, RFT</td>
-                        <td><span class="badge badge-status badge-result"><i class="fas fa-vial me-1"></i>Result
-                                Entered</span></td>
-                        <td>Dec 23, 2025</td>
-                        <td>
-                            <a href="#" class="btn-icon view" title="View Details"><i class="fas fa-eye"></i></a>
-                            <a href="#" class="btn-icon ai" title="Generate AI Summary"><i class="fas fa-brain"></i></a>
-                            <a href="#" class="btn-icon" title="Verify"><i class="fas fa-check-circle"></i></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>ORD-7820</strong></td>
-                        <td>Emily Brown</td>
-                        <td>Complete Blood Count</td>
-                        <td><span class="badge badge-status badge-collected"><i
-                                    class="fas fa-vial me-1"></i>Collected</span></td>
-                        <td>Dec 23, 2025</td>
-                        <td>
-                            <a href="#" class="btn-icon view" title="View Details"><i class="fas fa-eye"></i></a>
-                            <a href="#" class="btn-icon" title="Enter Results"><i class="fas fa-edit"></i></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>ORD-7819</strong></td>
-                        <td>Michael Chen</td>
-                        <td>HbA1c, Fasting Glucose</td>
-                        <td><span class="badge badge-status badge-ordered"><i
-                                    class="fas fa-clock me-1"></i>Ordered</span></td>
-                        <td>Dec 22, 2025</td>
-                        <td>
-                            <a href="#" class="btn-icon view" title="View Details"><i class="fas fa-eye"></i></a>
-                            <a href="#" class="btn-icon" title="Collect Sample"><i class="fas fa-syringe"></i></a>
-                        </td>
+                        <td><a href="#" class="btn-icon view" title="View Details"><i class="fas fa-eye"></i></a><a
+                                href="#" class="btn-icon ai" title="Generate AI Summary"><i
+                                    class="fas fa-brain"></i></a><a href="#" class="btn-icon pdf"
+                                title="Download PDF"><i class="fas fa-file-pdf"></i></a></td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Create Order Modal -->
     <div class="modal fade" id="createOrderModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content" style="background: var(--dark-card); border: 1px solid rgba(255,255,255,0.1);">
-                <div class="modal-header" style="border-color: rgba(255,255,255,0.1);">
-                    <h5 class="modal-title">Create New Lab Order</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Lab Order</h5><button type="button" class="btn-close"
+                        data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form>
-                        <div class="mb-3">
-                            <label class="form-label">Select Patient</label>
-                            <select class="form-select"
-                                style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: var(--text-light);">
+                        <div class="mb-3"><label class="form-label">Select Patient</label><select class="form-select">
                                 <option>John Doe</option>
                                 <option>Jane Smith</option>
-                                <option>Robert Wilson</option>
-                                <option>Emily Brown</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Select Tests</label>
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <div class="form-check"
-                                        style="padding: 0.75rem; background: rgba(255,255,255,0.03); border-radius: 0.5rem;">
-                                        <input class="form-check-input" type="checkbox" id="test1">
-                                        <label class="form-check-label" for="test1">Complete Blood Count (₹450)</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-check"
-                                        style="padding: 0.75rem; background: rgba(255,255,255,0.03); border-radius: 0.5rem;">
-                                        <input class="form-check-input" type="checkbox" id="test2">
-                                        <label class="form-check-label" for="test2">Lipid Profile (₹650)</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-check"
-                                        style="padding: 0.75rem; background: rgba(255,255,255,0.03); border-radius: 0.5rem;">
-                                        <input class="form-check-input" type="checkbox" id="test3">
-                                        <label class="form-check-label" for="test3">Liver Function Test (₹550)</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-check"
-                                        style="padding: 0.75rem; background: rgba(255,255,255,0.03); border-radius: 0.5rem;">
-                                        <input class="form-check-input" type="checkbox" id="test4">
-                                        <label class="form-check-label" for="test4">Thyroid Panel (₹800)</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Notes (Optional)</label>
-                            <textarea class="form-control" rows="2"
-                                style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: var(--text-light);"></textarea>
-                        </div>
+                            </select></div>
                     </form>
                 </div>
-                <div class="modal-footer" style="border-color: rgba(255,255,255,0.1);">
-                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary-gradient">Create Order</button>
-                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-outline-secondary"
+                        data-bs-dismiss="modal">Cancel</button><button type="button"
+                        class="btn btn-primary-gradient">Create Order</button></div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+    <script>
+        // Local UI state management for theme icons
+        document.addEventListener('themeChanged', (e) => {
+            const theme = e.detail.theme;
+            document.querySelectorAll('.theme-toggle').forEach(btn => {
+                const sun = btn.querySelector('.icon-sun');
+                const moon = btn.querySelector('.icon-moon');
+                if (theme === 'dark') { sun.style.display = 'inline'; moon.style.display = 'none'; }
+                else { sun.style.display = 'none'; moon.style.display = 'inline'; }
+            });
+        });
+    </script>
 </body>
 
 </html>

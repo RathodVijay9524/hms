@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -11,37 +11,38 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
 
     <style>
-        :root {
-            --primary-color: #10b981;
-            --secondary-color: #06b6d4;
-            --accent-color: #8b5cf6;
-            --dark-bg: #0f172a;
-            --dark-card: #1e293b;
-            --dark-hover: #334155;
-            --text-muted: #94a3b8;
-            --text-light: #f8fafc;
-        }
-
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--dark-bg);
-            color: var(--text-light);
+            background: #0f172a;
+            color: #f8fafc;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
+            transition: all 0.3s;
         }
 
         .navbar-custom {
-            background: rgba(15, 23, 42, 0.95);
+            background: var(--navbar-bg);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s;
         }
 
         .navbar-brand {
             font-family: 'Outfit', sans-serif;
             font-weight: 700;
             font-size: 1.5rem;
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            background: var(--gradient-primary);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -53,17 +54,18 @@
         }
 
         .nav-link:hover {
-            color: var(--text-light) !important;
+            color: var(--text-primary) !important;
         }
 
         .sidebar {
-            background: var(--dark-card);
+            background: var(--bg-secondary);
             min-height: calc(100vh - 56px);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            border-right: 1px solid var(--border-color);
             padding: 1.5rem 1rem;
             position: fixed;
             width: 250px;
             top: 56px;
+            transition: all 0.3s;
         }
 
         .sidebar-link {
@@ -105,10 +107,11 @@
             font-family: 'Outfit', sans-serif;
             font-size: 1.75rem;
             font-weight: 600;
+            color: var(--text-primary);
         }
 
         .btn-primary-gradient {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: var(--gradient-primary);
             border: none;
             color: white;
             font-weight: 600;
@@ -122,22 +125,23 @@
         }
 
         .patient-card {
-            background: var(--dark-card);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 1rem;
             padding: 1.5rem;
-            transition: transform 0.3s;
+            transition: all 0.3s;
         }
 
         .patient-card:hover {
             transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
         }
 
         .patient-avatar {
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: var(--gradient-primary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -150,6 +154,7 @@
             font-weight: 600;
             font-size: 1.1rem;
             margin-bottom: 0.25rem;
+            color: var(--text-primary);
         }
 
         .patient-info {
@@ -176,19 +181,20 @@
         }
 
         .search-box {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-light);
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
             width: 300px;
+            transition: all 0.3s;
         }
 
         .search-box:focus {
             outline: none;
             border-color: var(--primary-color);
-            background: rgba(255, 255, 255, 0.08);
-            color: var(--text-light);
+            background: var(--input-bg-focus);
+            color: var(--text-primary);
         }
 
         .search-box::placeholder {
@@ -203,13 +209,58 @@
         }
 
         .badge-male {
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
+            background: var(--info-bg);
+            color: var(--info);
         }
 
         .badge-female {
             background: rgba(236, 72, 153, 0.2);
             color: #f472b6;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header,
+        .modal-footer {
+            border-color: var(--border-color);
+        }
+
+        .form-control,
+        .form-select {
+            background: var(--input-bg);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background: var(--input-bg-focus);
+            border-color: var(--primary-color);
+            color: var(--text-primary);
+            box-shadow: none;
+        }
+
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-hover);
+            border-color: var(--primary-color);
         }
 
         @media (max-width: 992px) {
@@ -225,14 +276,19 @@
 </head>
 
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
         <div class="container-fluid px-4">
             <a class="navbar-brand" th:href="@{/}"><i class="fas fa-flask-vial me-2"></i>MedLab Pro</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span
                     class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item me-2">
+                        <button class="theme-toggle" title="Toggle Theme">
+                            <i class="fas fa-sun icon-sun"></i><i class="fas fa-moon icon-moon"
+                                style="display:none;"></i>
+                        </button>
+                    </li>
                     <li class="nav-item"><a class="nav-link" th:href="@{/logout}"><i
                                 class="fas fa-sign-out-alt me-1"></i> Logout</a></li>
                 </ul>
@@ -240,18 +296,16 @@
         </div>
     </nav>
 
-    <!-- Sidebar -->
     <div class="sidebar">
         <div class="mb-4"><small class="text-muted text-uppercase">Main Menu</small></div>
         <a th:href="@{/dashboard}" class="sidebar-link"><i class="fas fa-chart-pie"></i> Dashboard</a>
         <a th:href="@{/lab/tests}" class="sidebar-link"><i class="fas fa-flask"></i> Lab Tests</a>
         <a th:href="@{/lab/patients}" class="sidebar-link active"><i class="fas fa-user-injured"></i> Patients</a>
         <a th:href="@{/lab/orders}" class="sidebar-link"><i class="fas fa-clipboard-list"></i> Lab Orders</a>
-        <hr style="border-color: rgba(255,255,255,0.1);">
-        <a href="#" class="sidebar-link"><i class="fas fa-cog"></i> Settings</a>
+        <hr style="border-color: var(--border-color);"><a href="#" class="sidebar-link"><i class="fas fa-cog"></i>
+            Settings</a>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
         <div class="page-header">
             <div>
@@ -260,9 +314,8 @@
             </div>
             <div class="d-flex gap-2">
                 <input type="text" class="search-box" placeholder="Search patients...">
-                <button class="btn btn-primary-gradient" data-bs-toggle="modal" data-bs-target="#addPatientModal">
-                    <i class="fas fa-plus me-1"></i> Add Patient
-                </button>
+                <button class="btn btn-primary-gradient" data-bs-toggle="modal" data-bs-target="#addPatientModal"><i
+                        class="fas fa-plus me-1"></i> Add Patient</button>
             </div>
         </div>
 
@@ -273,8 +326,8 @@
                         <div class="patient-avatar">JD</div>
                         <div class="ms-3 flex-grow-1">
                             <div class="d-flex justify-content-between">
-                                <div class="patient-name">John Doe</div>
-                                <span class="badge badge-gender badge-male">Male</span>
+                                <div class="patient-name">John Doe</div><span
+                                    class="badge badge-gender badge-male">Male</span>
                             </div>
                             <div class="patient-info">johndoe@email.com</div>
                         </div>
@@ -288,12 +341,11 @@
             <div class="col-md-6 col-lg-4">
                 <div class="patient-card">
                     <div class="d-flex align-items-start">
-                        <div class="patient-avatar" style="background: linear-gradient(135deg, #ec4899, #f472b6);">JS
-                        </div>
+                        <div class="patient-avatar" style="background: var(--gradient-accent);">JS</div>
                         <div class="ms-3 flex-grow-1">
                             <div class="d-flex justify-content-between">
-                                <div class="patient-name">Jane Smith</div>
-                                <span class="badge badge-gender badge-female">Female</span>
+                                <div class="patient-name">Jane Smith</div><span
+                                    class="badge badge-gender badge-female">Female</span>
                             </div>
                             <div class="patient-info">jane.smith@email.com</div>
                         </div>
@@ -304,105 +356,48 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-4">
-                <div class="patient-card">
-                    <div class="d-flex align-items-start">
-                        <div class="patient-avatar">RW</div>
-                        <div class="ms-3 flex-grow-1">
-                            <div class="d-flex justify-content-between">
-                                <div class="patient-name">Robert Wilson</div>
-                                <span class="badge badge-gender badge-male">Male</span>
-                            </div>
-                            <div class="patient-info">r.wilson@email.com</div>
-                        </div>
-                    </div>
-                    <div class="patient-meta">
-                        <div class="patient-meta-item"><i class="fas fa-calendar"></i> 42 years</div>
-                        <div class="patient-meta-item"><i class="fas fa-phone"></i> +91 91234 56789</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-4">
-                <div class="patient-card">
-                    <div class="d-flex align-items-start">
-                        <div class="patient-avatar" style="background: linear-gradient(135deg, #ec4899, #f472b6);">EB
-                        </div>
-                        <div class="ms-3 flex-grow-1">
-                            <div class="d-flex justify-content-between">
-                                <div class="patient-name">Emily Brown</div>
-                                <span class="badge badge-gender badge-female">Female</span>
-                            </div>
-                            <div class="patient-info">emily.b@email.com</div>
-                        </div>
-                    </div>
-                    <div class="patient-meta">
-                        <div class="patient-meta-item"><i class="fas fa-calendar"></i> 31 years</div>
-                        <div class="patient-meta-item"><i class="fas fa-phone"></i> +91 76543 21098</div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- Add Patient Modal -->
     <div class="modal fade" id="addPatientModal" tabindex="-1">
         <div class="modal-dialog">
-            <div class="modal-content" style="background: var(--dark-card); border: 1px solid rgba(255,255,255,0.1);">
-                <div class="modal-header" style="border-color: rgba(255,255,255,0.1);">
-                    <h5 class="modal-title">Add New Patient</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Patient</h5><button type="button" class="btn-close"
+                        data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form>
-                        <div class="mb-3">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" class="form-control"
-                                style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: var(--text-light);">
-                        </div>
+                        <div class="mb-3"><label class="form-label">Full Name</label><input type="text"
+                                class="form-control"></div>
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control"
-                                    style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: var(--text-light);">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Phone</label>
-                                <input type="text" class="form-control"
-                                    style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: var(--text-light);">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Date of Birth</label>
-                                <input type="date" class="form-control"
-                                    style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: var(--text-light);">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Gender</label>
-                                <select class="form-select"
-                                    style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: var(--text-light);">
-                                    <option>Male</option>
-                                    <option>Female</option>
-                                    <option>Other</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Address</label>
-                            <textarea class="form-control" rows="2"
-                                style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: var(--text-light);"></textarea>
+                            <div class="col-md-6 mb-3"><label class="form-label">Email</label><input type="email"
+                                    class="form-control"></div>
+                            <div class="col-md-6 mb-3"><label class="form-label">Phone</label><input type="text"
+                                    class="form-control"></div>
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer" style="border-color: rgba(255,255,255,0.1);">
-                    <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary-gradient">Save Patient</button>
-                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-outline-secondary"
+                        data-bs-dismiss="modal">Cancel</button><button type="button"
+                        class="btn btn-primary-gradient">Save Patient</button></div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+    <script>
+        document.addEventListener('themeChanged', (e) => {
+            const theme = e.detail.theme;
+            document.querySelectorAll('.theme-toggle').forEach(btn => {
+                const sun = btn.querySelector('.icon-sun');
+                const moon = btn.querySelector('.icon-moon');
+                if (theme === 'dark') { sun.style.display = 'inline'; moon.style.display = 'none'; }
+                else { sun.style.display = 'none'; moon.style.display = 'inline'; }
+            });
+        });
+    </script>
 </body>
 
 </html>
