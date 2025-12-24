@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 public class CustomUserDetails implements UserDetails {
 
     private Long id;
+    private Long ownerId; // Field to store the Business Owner (Tenant) ID
     private String name;
     private String username;
     private String email;
@@ -44,6 +45,7 @@ public class CustomUserDetails implements UserDetails {
     public static CustomUserDetails build(User user) {
         return new CustomUserDetails(
                 user.getId(),
+                user.getId(), // For Business Owner, ownerId is their own ID
                 user.getName(),
                 user.getUsername(),
                 user.getEmail(),
@@ -61,6 +63,7 @@ public class CustomUserDetails implements UserDetails {
     public static CustomUserDetails build(Worker worker) {
         return new CustomUserDetails(
                 worker.getId(),
+                worker.getUser().getId(), // For Worker, ownerId is the Business Owner's ID
                 worker.getName(),
                 worker.getUsername(),
                 worker.getEmail(),

@@ -1,0 +1,83 @@
+package com.vijay.User_Master.service.impl;
+
+import com.vijay.User_Master.Helper.CommonUtils;
+import com.vijay.User_Master.dto.lab.PatientDTO;
+import com.vijay.User_Master.entity.Patient;
+import com.vijay.User_Master.entity.User;
+import com.vijay.User_Master.exceptions.ResourceNotFoundException;
+import com.vijay.User_Master.repository.PatientRepository;
+import com.vijay.User_Master.repository.UserRepository;
+import com.vijay.User_Master.service.PatientService;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class PatientServiceImpl implements PatientService {
+
+    private final PatientRepository patientRepository;
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
+
+    @Override
+    @Transactional
+    public PatientDTO createPatient(PatientDTO patientDTO) {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        User owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", ownerId));
+
+        Patient patient = modelMapper.map(patientDTO, Patient.class);
+        patient.setOwner(owner);
+
+        Patient savedPatient = patientRepository.save(patient);
+        return modelMapper.map(savedPatient, PatientDTO.class);
+    }
+
+    @Override
+    public PatientDTO getPatientById(Long id) {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        Patient patient = patientRepository.findByIdAndOwnerId(id, ownerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient", "id", id));
+        return modelMapper.map(patient, PatientDTO.class);
+    }
+
+    @Override
+    public Page<PatientDTO> getAllPatients(int page, int size) {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Patient> patients = patientRepository.findByOwnerId(ownerId, pageable);
+        return patients.map(p -> modelMapper.map(p, PatientDTO.class));
+    }
+
+    @Override
+    @Transactional
+    public PatientDTO updatePatient(Long id, PatientDTO patientDTO) {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        Patient patient = patientRepository.findByIdAndOwnerId(id, ownerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient", "id", id));
+
+        patient.setName(patientDTO.getName());
+        patient.setEmail(patientDTO.getEmail());
+        patient.setPhone(patientDTO.getPhone());
+        patient.setDateOfBirth(patientDTO.getDateOfBirth());
+        patient.setGender(patientDTO.getGender());
+        patient.setAddress(patientDTO.getAddress());
+
+        Patient updatedPatient = patientRepository.save(patient);
+        return modelMapper.map(updatedPatient, PatientDTO.class);
+    }
+
+    @Override
+    @Transactional
+    public void deletePatient(Long id) {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        Patient patient = patientRepository.findByIdAndOwnerId(id, ownerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient", "id", id));
+        patientRepository.delete(patient);
+    }
+}

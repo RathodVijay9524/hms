@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Laboratory Report</title>
+    <style>
+        body { font-family: 'Helvetica', sans-serif; color: #333; margin: 0; padding: 20px; }
+        .header { border-bottom: 2px solid #2c3e50; padding-bottom: 10px; margin-bottom: 20px; }
+        .hospital-name { font-size: 24px; font-weight: bold; color: #2c3e50; }
+        .hospital-info { font-size: 12px; color: #7f8c8d; }
+        .report-title { text-align: center; font-size: 20px; text-decoration: underline; margin: 20px 0; }
+        
+        .patient-box { border: 1px solid #bdc3c7; padding: 15px; margin-bottom: 20px; }
+        .patient-info { display: table; width: 100%; }
+        .info-row { display: table-row; }
+        .info-cell { display: table-cell; padding: 5px; font-size: 14px; }
+        .label { font-weight: bold; width: 120px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th { background-color: #f2f2f2; border: 1px solid #bdc3c7; padding: 10px; text-align: left; font-size: 14px; }
+        td { border: 1px solid #bdc3c7; padding: 10px; font-size: 14px; }
+        
+        .ai-section { background-color: #fdfefe; border: 1px dashed #3498db; padding: 15px; margin-top: 30px; }
+        .ai-title { color: #3498db; font-weight: bold; margin-bottom: 10px; }
+        .ai-content { font-size: 13px; font-style: italic; line-height: 1.6; }
+        
+        .footer { margin-top: 50px; }
+        .signature-box { float: right; width: 250px; text-align: center; }
+        .signature-line { border-top: 1px solid #333; margin-top: 50px; padding-top: 5px; }
+        
+        .disclaimer { font-size: 10px; color: #95a5a6; margin-top: 100px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="hospital-name" th:text="${hospitalName}">Hospital Name</div>
+        <div class="hospital-info">
+            <span th:text="${hospitalAddress}">Address</span><br/>
+            Phone: <span th:text="${hospitalPhone}">Phone</span>
+        </div>
+    </div>
+
+    <div class="report-title">LABORATORY INVESTIGATION REPORT</div>
+
+    <div class="patient-box">
+        <div class="patient-info">
+            <div class="info-row">
+                <div class="info-cell label">Patient Name:</div>
+                <div class="info-cell" th:text="${order.patient.name}">John Doe</div>
+                <div class="info-cell label">Order Number:</div>
+                <div class="info-cell" th:text="${order.orderNumber}">ORD-12345</div>
+            </div>
+            <div class="info-row">
+                <div class="info-cell label">Age / Gender:</div>
+                <div class="info-cell" th:text="${order.patient.dateOfBirth != null ? T(java.time.Period).between(order.patient.dateOfBirth, T(java.time.LocalDate).now()).getYears() : 'N/A'} + '/' + ${order.patient.gender}">30/MALE</div>
+                <div class="info-cell label">Date:</div>
+                <div class="info-cell" th:text="${#temporals.format(order.createdAt, 'dd-MMM-yyyy HH:mm')}">24-Dec-2025</div>
+            </div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Test Parameter</th>
+                <th>Result</th>
+                <th>Unit</th>
+                <th>Reference Range</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="res : ${results}">
+                <td th:text="${res.parameter.name}">Hemoglobin</td>
+                <td th:text="${res.resultValue}">14.5</td>
+                <td th:text="${res.parameter.unit}">g/dL</td>
+                <td>
+                    <span th:each="range : ${res.parameter.referenceRanges}" 
+                          th:if="${range.gender.name() == 'BOTH' or range.gender.name() == order.patient.gender.name()}"
+                          th:text="${range.lowerLimit} + ' - ' + ${range.upperLimit}">13.0 - 17.0</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="ai-section" th:if="${order.aiSummary != null}">
+        <div class="ai-title">Clinical Insight Summary (AI Generated)</div>
+        <div class="ai-content" th:text="${order.aiSummary}">
+            Summary findings here...
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="signature-box" th:if="${order.doctorVerified}">
+            <div class="signature-line">
+                Digitally Signed By:<br/>
+                <strong>Authorized Pathologist</strong><br/>
+                Remarks: <span th:text="${order.doctorRemarks}">Everything looks normal.</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="disclaimer">
+        * This report is generated for clinical assistance only. Please consult a physician for diagnostic advice.<br/>
+        End of Report
+    </div>
+</body>
+</html>

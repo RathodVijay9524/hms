@@ -78,7 +78,7 @@ public class WebSecurityConfig {
                         .loginProcessingUrl("/login")
                         .usernameParameter("usernameOrEmail")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/tutorials", true)
+                        .defaultSuccessUrl("/dashboard", true)
                         .permitAll()
                 )
                 .logout(logout -> logout

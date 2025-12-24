@@ -36,4 +36,32 @@ public class WebController {
         model.addAttribute("code", code);
         return "verify-account";
     }
+
+    // Home Page
+    @GetMapping("/")
+    public String home() {
+        return "index";
+    }
+
+    // Dashboard
+    @GetMapping("/dashboard")
+    public String dashboard() {
+        return "dashboard";
+    }
+
+    // Lab Management Pages
+    @GetMapping("/lab/tests")
+    public String labTests() {
+        return "lab/tests";
+    }
+
+    @GetMapping("/lab/patients")
+    public String labPatients() {
+        return "lab/patients";
+    }
+
+    @GetMapping("/lab/orders")
+    public String labOrders() {
+        return "lab/orders";
+    }
 }
