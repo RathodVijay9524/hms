@@ -64,6 +64,7 @@ public class LabOrderServiceImpl implements LabOrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public LabOrderDTO getOrderById(Long id) {
         Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
         LabOrder order = labOrderRepository.findByIdAndOwnerId(id, ownerId)
@@ -73,6 +74,7 @@ public class LabOrderServiceImpl implements LabOrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public org.springframework.data.domain.Page<LabOrderDTO> getAllOrders(int page, int size) {
         Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
@@ -143,6 +145,19 @@ public class LabOrderServiceImpl implements LabOrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<LabResultDTO> getResultsByOrderId(Long orderId) {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        List<LabResult> results = labResultRepository.findByOrder_IdAndOwner_Id(orderId, ownerId);
+        return results.stream().map(r -> {
+            LabResultDTO dto = modelMapper.map(r, LabResultDTO.class);
+            dto.setParameterId(r.getParameter().getId());
+            dto.setParameterName(r.getParameter().getName());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
     public long getPendingOrderCount() {
         Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
         return labOrderRepository.countByOwnerIdAndStatusIn(ownerId, 
@@ -157,11 +172,21 @@ public class LabOrderServiceImpl implements LabOrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public java.util.List<LabOrderDTO> getRecentOrders(int limit) {
         Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(0, limit, org.springframework.data.domain.Sort.by("id").descending());
         return labOrderRepository.findByOwnerId(ownerId, pageable)
                 .map(this::convertToDTO).getContent();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<LabOrderDTO> getOrdersByPatient(Long patientId) {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        return labOrderRepository.findByPatientIdAndOwnerIdOrderByCreatedOnDesc(patientId, ownerId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     private LabOrderDTO convertToDTO(LabOrder order) {

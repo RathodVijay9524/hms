@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient EMR - MedLab Pro</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+
+    <!-- Chart.js for Vitals -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: all 0.3s;
+        }
+
+        .navbar-custom {
+            background: var(--navbar-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .navbar-brand {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .main-content {
+            padding: 2rem;
+            margin-top: 56px;
+        }
+
+        .btn-primary-gradient {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+        }
+
+        .btn-primary-gradient:hover {
+            opacity: 0.9;
+            color: white;
+        }
+
+        .dashboard-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            height: 100%;
+        }
+
+        .nav-tabs .nav-link {
+            color: var(--text-muted);
+            border: none;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: transparent;
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .timeline-item {
+            border-left: 2px solid var(--border-color);
+            padding-left: 1.5rem;
+            padding-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -9px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            border: 2px solid var(--primary-color);
+        }
+
+        .timeline-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .badge-vital {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary-color);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .form-control,
+        .form-select {
+            background: var(--input-bg);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <div class="container-fluid px-4">
+            <button class="btn btn-link me-3 d-lg-none" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a class="navbar-brand" th:href="@{/}"><i class="fas fa-flask-vial me-2"></i>MedLab Pro</a>
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <a th:href="@{/lab/patients}" class="btn btn-outline-secondary btn-sm"><i
+                        class="fas fa-arrow-left me-1"></i> Back to Patients</a>
+                <button class="theme-toggle btn btn-sm btn-icon" title="Toggle Theme">
+                    <i class="fas fa-adjust"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content container-fluid px-4">
+        <!-- Patient Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                    style="width: 64px; height: 64px; font-size: 1.5rem;">
+                    <span th:text="${#strings.substring(patient.name, 0, 1)}">J</span>
+                </div>
+                <div>
+                    <h2 class="mb-0 fw-bold" th:text="${patient.name}">John Doe</h2>
+                    <p class="text-muted mb-0">
+                        <span class="badge bg-primary me-2" th:if="${patient.uhid}"
+                            th:text="${patient.uhid}">UHID</span>
+                        <i class="fas fa-id-card me-1"></i> <span
+                            th:text="${patient.gender} + ', ' + ${patient.age} + ' yrs'">Male, 35 yrs</span>
+                        <span class="mx-2">|</span>
+                        <i class="fas fa-phone me-1"></i> <span th:text="${patient.phone}">+91 9876543210</span>
+                    </p>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#visitModal"><i
+                        class="fas fa-user-md me-1"></i> Record Visit</button>
+                <button class="btn btn-primary-gradient" data-bs-toggle="modal" data-bs-target="#vitalsModal"><i
+                        class="fas fa-heartbeat me-1"></i> Add Vitals</button>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Sidebar / Quick Info -->
+            <div class="col-lg-3">
+                <div class="dashboard-card mb-4">
+                    <h5 class="fw-bold mb-3">Vitals Summary</h5>
+                    <div id="latestVitals">
+                        <p class="text-muted text-center py-3">Loading vitals...</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-card mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Medical History</h5>
+                        <div>
+                            <button class="btn btn-sm btn-link"
+                                th:onclick="|viewAuditTrail('MEDICAL_HISTORY', ${patient.id})|"><i
+                                    class="fas fa-history"></i></button>
+                            <button class="btn btn-sm btn-link" onclick="editHistory()"><i
+                                    class="fas fa-edit"></i></button>
+                        </div>
+                    </div>
+                    <div id="medicalHistoryContent">
+                        <p class="text-muted small">No history recorded.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Tabs -->
+            <div class="col-lg-9">
+                <div class="dashboard-card">
+                    <ul class="nav nav-tabs mb-4" id="emrTabs">
+                        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab"
+                                href="#timeline">Timeline</a></li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#vitalsGraph">Vitals
+                                Trends</a></li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab"
+                                href="#prescriptions">Prescriptions</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <!-- Timeline Tab -->
+                        <div class="tab-pane fade show active" id="timeline">
+                            <h6 class="text-muted text-uppercase mb-4 small fw-bold">Recent Activity</h6>
+                            <div id="patientTimeline">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Vitals Graph Tab -->
+                        <div class="tab-pane fade" id="vitalsGraph">
+                            <canvas id="bpChart" height="100"></canvas>
+                        </div>
+
+                        <!-- Prescriptions Tab -->
+                        <div class="tab-pane fade" id="prescriptions">
+                            <div class="table-responsive">
+                                <table class="table" id="prescriptionsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Doctor</th>
+                                            <th>Medications</th>
+                                            <th>Instructions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody><!-- JS Populated --></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add Vitals Modal -->
+    <div class="modal fade" id="vitalsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Record Vitals</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="vitalsForm">
+                        <div class="row g-3">
+                            <div class="col-6"><label>Systolic BP</label><input type="number" id="sysBp"
+                                    class="form-control"></div>
+                            <div class="col-6"><label>Diastolic BP</label><input type="number" id="diaBp"
+                                    class="form-control"></div>
+                            <div class="col-6"><label>Heart Rate</label><input type="number" id="heartRate"
+                                    class="form-control"></div>
+                            <div class="col-6"><label>SpO2 (%)</label><input type="number" id="spo2"
+                                    class="form-control"></div>
+                            <div class="col-6"><label>Temp (°C)</label><input type="number" id="temp"
+                                    class="form-control" step="0.1"></div>
+                            <div class="col-6"><label>Weight (kg)</label><input type="number" id="weight"
+                                    class="form-control" step="0.1"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary-gradient" onclick="saveVitals()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Medical History Modal -->
+    <div class="modal fade" id="historyModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Medical History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="historyForm">
+                        <div class="mb-3"><label>Allergies</label><textarea id="histAllergies"
+                                class="form-control"></textarea></div>
+                        <div class="mb-3"><label>Chronic Conditions</label><textarea id="histConditions"
+                                class="form-control"></textarea></div>
+                        <div class="mb-3"><label>Past Surgeries</label><textarea id="histSurgeries"
+                                class="form-control"></textarea></div>
+                        <div class="mb-3"><label>Family History</label><textarea id="histFamily"
+                                class="form-control"></textarea></div>
+                        <div class="mb-3"><label>Blood Group</label><input type="text" id="histBlood"
+                                class="form-control"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary-gradient" onclick="saveHistory()">Update
+                        History</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Record Visit Modal -->
+    <div class="modal fade" id="visitModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">New Doctor Visit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <!-- ... existing visit modal body ... -->
+                <div class="modal-body">
+                    <form id="visitForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label>Visit Type</label>
+                                <select id="visitType" class="form-select">
+                                    <option value="OPD">OPD</option>
+                                    <option value="ROUTINE_CHECKUP">Routine Checkup</option>
+                                    <option value="FOLLOW_UP">Follow Up</option>
+                                    <option value="EMERGENCY">Emergency</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3"><label>Symptoms</label><textarea id="visitSymptoms" class="form-control"
+                                rows="2"></textarea></div>
+                        <div class="mb-3"><label>Diagnosis</label><textarea id="visitDiagnosis" class="form-control"
+                                rows="2"></textarea></div>
+                        <div class="mb-3"><label>Clinical Notes</label><textarea id="visitNotes" class="form-control"
+                                rows="3"></textarea></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary-gradient" onclick="saveVisit()">Record Visit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Prescription Modal -->
+    <div class="modal fade" id="prescriptionModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Prescription</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="prescriptionForm">
+                        <input type="hidden" id="prescVisitId">
+                        <div class="mb-3">
+                            <label class="form-label">Pharmacist Notes</label>
+                            <textarea id="pharmacistNotes" class="form-control" rows="2"
+                                placeholder="Notes for pharmacist..."></textarea>
+                        </div>
+                        <h6 class="fw-bold mb-2">Medications</h6>
+                        <div class="table-responsive mb-2">
+                            <table class="table table-bordered table-sm" id="medsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Medicine Name</th>
+                                        <th>Dosage</th>
+                                        <th>Freq</th>
+                                        <th>Duration</th>
+                                        <th>Instructions</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="medsTableBody">
+                                    <!-- Rows added dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addMedicationRow()"><i
+                                class="fas fa-plus"></i> Add Medicine</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary-gradient" onclick="savePrescription()">Issue
+                        Prescription</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audit Trail Modal -->
+    <div class="modal fade" id="auditTrailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Audit Trail - Change History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="auditLogsList" style="max-height: 500px; overflow-y: auto;">
+                        <p class="text-center text-muted py-4">Loading audit logs...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+
+    <script th:inline="javascript">
+        const patientId = /*[[${patient.id}]]*/ 1;
+
+        // Initial Loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadVitals();
+            loadHistory();
+            loadTimeline();
+        });
+
+        // --- API Calls ---
+
+        function loadVitals() {
+            fetch(`/api/emr/patients/${patientId}/vitals/recent`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const v = data[0];
+                        document.getElementById('latestVitals').innerHTML = `
+                            <div class="d-flex justify-content-between mb-2"><span>BP</span> <strong>${v.bp}</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>Heart Rate</span> <strong>${v.heartRate} bpm</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>SpO2</span> <strong>${v.oxygenLevel}%</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>Temp</span> <strong>${v.temperature}°C</strong></div>
+                            <div class="d-flex justify-content-between text-muted small mt-3">Recorded: ${new Date(v.recordedAt).toLocaleString()}</div>
+                        `;
+                        renderChart(data);
+                    } else {
+                        document.getElementById('latestVitals').innerHTML = '<p class="text-muted text-center">No vitals recorded.</p>';
+                    }
+                });
+        }
+
+        function saveVitals() {
+            const data = {
+                systolicBP: document.getElementById('sysBp').value,
+                diastolicBP: document.getElementById('diaBp').value,
+                heartRate: document.getElementById('heartRate').value,
+                oxygenLevel: document.getElementById('spo2').value,
+                temperature: document.getElementById('temp').value,
+                weight: document.getElementById('weight').value
+            };
+
+            fetch(`/api/emr/patients/${patientId}/vitals`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(res => {
+                if (res.ok) {
+                    location.reload();
+                } else alert('Error saving vitals');
+            });
+        }
+
+        function loadHistory() {
+            fetch(`/api/emr/patients/${patientId}/history`)
+                .then(r => r.json())
+                .then(h => {
+                    document.getElementById('medicalHistoryContent').innerHTML = `
+                        <div class="mb-2"><small class="text-uppercase text-muted fw-bold">Allergies</small><div class="text-danger">${h.allergies || 'None'}</div></div>
+                        <div class="mb-2"><small class="text-uppercase text-muted fw-bold">Conditions</small><div>${h.chronicConditions || 'None'}</div></div>
+                        <div class="mb-2"><small class="text-uppercase text-muted fw-bold">Blood Group</small><div>${h.bloodGroup || 'Unknown'}</div></div>
+                    `;
+                    // Populate edit form
+                    document.getElementById('histAllergies').value = h.allergies || '';
+                    document.getElementById('histConditions').value = h.chronicConditions || '';
+                    document.getElementById('histSurgeries').value = h.pastSurgeries || '';
+                    document.getElementById('histBlood').value = h.bloodGroup || '';
+                    document.getElementById('histFamily').value = h.familyHistory || '';
+                });
+        }
+
+        function editHistory() {
+            new bootstrap.Modal(document.getElementById('historyModal')).show();
+        }
+
+        function saveHistory() {
+            const data = {
+                allergies: document.getElementById('histAllergies').value,
+                chronicConditions: document.getElementById('histConditions').value,
+                pastSurgeries: document.getElementById('histSurgeries').value,
+                familyHistory: document.getElementById('histFamily').value,
+                bloodGroup: document.getElementById('histBlood').value
+            };
+            fetch(`/api/emr/patients/${patientId}/history`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(res => {
+                if (res.ok) {
+                    location.reload();
+                } else alert('Error saving history');
+            });
+        }
+
+        function loadTimeline() {
+            const container = document.getElementById('patientTimeline');
+            container.innerHTML = '<p class="text-muted text-center">Loading timeline...</p>';
+
+            Promise.all([
+                fetch(`/api/emr/patients/${patientId}/visits`).then(r => r.json()),
+                fetch(`/api/lab/orders/patient/${patientId}`).then(r => r.json())
+            ]).then(([visitsPage, orders]) => {
+                container.innerHTML = '';
+                const visits = visitsPage.content.map(v => ({
+                    type: 'VISIT',
+                    date: new Date(v.visitDate),
+                    data: v
+                }));
+                const labOrders = orders.map(o => ({
+                    type: 'LAB',
+                    date: new Date(o.createdAt),
+                    data: o
+                }));
+
+                const allEvents = [...visits, ...labOrders].sort((a, b) => b.date - a.date);
+
+                if (allEvents.length === 0) {
+                    container.innerHTML = '<p class="text-muted text-center">No recent activity.</p>';
+                    return;
+                }
+
+                allEvents.forEach(event => {
+                    if (event.type === 'VISIT') {
+                        const visit = event.data;
+                        const statusBadge = getStatusBadge(visit.status);
+                        const actionButtons = getVisitActionButtons(visit);
+                        const isEditable = visit.status === 'CREATED' || visit.status === 'IN_PROGRESS';
+
+                        container.innerHTML += `
+                            <div class="timeline-item">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="timeline-date">${event.date.toLocaleDateString()}</div>
+                                    ${statusBadge}
+                                </div>
+                                <h5 class="fw-bold mb-1 border-start border-4 border-primary ps-2">${visit.visitType} Visit</h5>
+                                <div class="text-muted small mb-2">Dr. ${visit.doctorName || 'Unknown'}</div>
+                                <p class="mb-2 bg-dark bg-opacity-10 p-2 rounded">${visit.diagnosis || 'No diagnosis recorded'}</p>
+                                ${visit.closedBy ? `<div class="small text-muted">Closed by ${visit.closedBy} on ${new Date(visit.closedAt).toLocaleString()}</div>` : ''}
+                                <div class="mt-2">
+                                    ${actionButtons}
+                                    ${!visit.hasPrescription && isEditable ?
+                                `<button class="btn btn-sm btn-outline-primary" onclick="openPrescriptionModal(${visit.id})"><i class="fas fa-prescription me-1"></i> Add Prescription</button>`
+                                : visit.hasPrescription ? `<span class="badge bg-success"><i class="fas fa-check me-1"></i> Prescription Given</span>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        const order = event.data;
+                        const statusClass = order.status === 'VERIFIED' ? 'text-success' : 'text-warning';
+                        container.innerHTML += `
+                            <div class="timeline-item">
+                                <div class="timeline-date mb-1">${event.date.toLocaleDateString()}</div>
+                                <h5 class="fw-bold mb-1 border-start border-4 border-info ps-2">Lab Order <small>#${order.orderNumber}</small></h5>
+                                <div class="mb-2">
+                                    <span class="badge bg-secondary">${order.tests.length} Tests</span>
+                                    <span class="fw-bold small ${statusClass}">${order.status}</span>
+                                </div>
+                                <div class="text-muted small">
+                                    ${order.tests.map(t => t.name).join(', ')}
+                                </div>
+                                <a href="#" onclick="window.location.href='/lab/orders'" class="btn btn-sm btn-link p-0 mt-1">View Details</a>
+                            </div>
+                        `;
+                    }
+                });
+            });
+        }
+
+        function saveVisit() {
+            const data = {
+                visitType: document.getElementById('visitType').value,
+                symptoms: document.getElementById('visitSymptoms').value,
+                diagnosis: document.getElementById('visitDiagnosis').value,
+                doctorNotes: document.getElementById('visitNotes').value
+            };
+
+            fetch(`/api/emr/patients/${patientId}/visits`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(res => {
+                if (res.ok) location.reload();
+                else alert('Error recording visit');
+            });
+        }
+
+        // --- Prescription Logic ---
+
+        function openPrescriptionModal(visitId) {
+            document.getElementById('prescVisitId').value = visitId;
+            document.getElementById('medsTableBody').innerHTML = '';
+            addMedicationRow(); // Add one empty row
+            new bootstrap.Modal(document.getElementById('prescriptionModal')).show();
+        }
+
+        function addMedicationRow() {
+            const tbody = document.getElementById('medsTableBody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="text" class="form-control form-control-sm med-name" placeholder="Medicine"></td>
+                <td><input type="text" class="form-control form-control-sm med-dosage" placeholder="500mg"></td>
+                <td><input type="text" class="form-control form-control-sm med-freq" placeholder="1-0-1"></td>
+                <td><input type="text" class="form-control form-control-sm med-dur" placeholder="5 days"></td>
+                <td><input type="text" class="form-control form-control-sm med-instr" placeholder="After food"></td>
+                <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove()"><i class="fas fa-times"></i></button></td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        function savePrescription() {
+            const visitId = document.getElementById('prescVisitId').value;
+            const medications = [];
+
+            document.querySelectorAll('#medsTableBody tr').forEach(row => {
+                const name = row.querySelector('.med-name').value;
+                if (name) {
+                    medications.push({
+                        medicineName: name,
+                        dosage: row.querySelector('.med-dosage').value,
+                        frequency: row.querySelector('.med-freq').value,
+                        duration: row.querySelector('.med-dur').value,
+                        instructions: row.querySelector('.med-instr').value
+                    });
+                }
+            });
+
+            if (medications.length === 0) {
+                alert('Please add at least one medication');
+                return;
+            }
+
+            const data = {
+                pharmacistNotes: document.getElementById('pharmacistNotes').value,
+                medications: medications
+            };
+
+            fetch(`/api/emr/visits/${visitId}/prescription`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(res => {
+                if (res.ok) location.reload();
+                else alert('Error adding prescription');
+            });
+        }
+
+        function renderChart(vitals) {
+            const ctx = document.getElementById('bpChart').getContext('2d');
+            // Reverse to show oldest to newest
+            const data = [...vitals].reverse();
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(v => new Date(v.recordedAt).toLocaleDateString()),
+                    datasets: [
+                        { label: 'Systolic', data: data.map(v => v.systolicBP), borderColor: '#f87171' },
+                        { label: 'Diastolic', data: data.map(v => v.diastolicBP), borderColor: '#60a5fa' }
+                    ]
+                },
+                options: { responsive: true }
+            });
+        }
+
+        function loadPrescriptions() {
+            fetch(`/api/emr/patients/${patientId}/prescriptions`)
+                .then(r => r.json())
+                .then(list => {
+                    const tbody = document.querySelector('#prescriptionsTable tbody');
+                    tbody.innerHTML = '';
+                    if (list.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No active prescriptions</td></tr>';
+                        return;
+                    }
+                    list.forEach(p => {
+                        const meds = p.medications.map(m => `<div><strong>${m.medicineName}</strong> (${m.dosage}) - ${m.frequency}</div>`).join('');
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${new Date(p.visitDate).toLocaleDateString()}</td>
+                                <td>Dr. ${p.doctorName}</td>
+                                <td>${meds}</td>
+                                <td>${p.medications.map(m => m.instructions || '-').join('<br>')}</td>
+                            </tr>
+                        `;
+                    });
+                });
+        }
+
+        // Call loadPrescriptions on tab switch or init
+        document.addEventListener('DOMContentLoaded', () => {
+            loadVitals();
+            loadHistory();
+            loadTimeline();
+            loadPrescriptions();
+        });
+
+        // Visit Lifecycle Helper Functions
+        function getStatusBadge(status) {
+            const badges = {
+                'CREATED': '<span class="badge bg-secondary"><i class="fas fa-circle me-1"></i> Created</span>',
+                'IN_PROGRESS': '<span class="badge bg-primary"><i class="fas fa-play-circle me-1"></i> In Progress</span>',
+                'CLOSED': '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i> Closed</span>',
+                'LOCKED': '<span class="badge bg-danger"><i class="fas fa-lock me-1"></i> Locked</span>'
+            };
+            return badges[status] || '';
+        }
+
+        function getVisitActionButtons(visit) {
+            if (visit.status === 'CREATED') {
+                return `<button class="btn btn-sm btn-outline-primary me-2" onclick="startVisit(${visit.id})"><i class="fas fa-play me-1"></i> Start Visit</button>`;
+            } else if (visit.status === 'IN_PROGRESS') {
+                return `<button class="btn btn-sm btn-success me-2" onclick="closeVisit(${visit.id})"><i class="fas fa-check me-1"></i> Close Visit</button>`;
+            } else if (visit.status === 'CLOSED') {
+                return `<button class="btn btn-sm btn-outline-secondary me-2" disabled><i class="fas fa-lock me-1"></i> Visit Closed</button>`;
+            }
+            return '';
+        }
+
+        function startVisit(visitId) {
+            if (!confirm('Start this visit? You will be able to add notes and prescriptions.')) return;
+
+            fetch(`/api/emr/visits/${visitId}/start`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            }).then(res => {
+                if (res.ok) {
+                    location.reload();
+                } else {
+                    alert('Error starting visit');
+                }
+            });
+        }
+
+        function closeVisit(visitId) {
+            if (!confirm('Close this visit? Once closed, it cannot be edited for medical-legal compliance.')) return;
+
+            fetch(`/api/emr/visits/${visitId}/close`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            }).then(res => {
+                if (res.ok) {
+                    location.reload();
+                } else {
+                    alert('Error closing visit');
+                }
+            });
+        }
+
+        // Audit Trail Functions
+        function viewAuditTrail(entityType, entityId) {
+            fetch(`/api/emr/audit/entity/${entityType}/${entityId}`)
+                .then(res => res.json())
+                .then(data => {
+                    displayAuditLogs(data.content || []);
+                    const modal = new bootstrap.Modal(document.getElementById('auditTrailModal'));
+                    modal.show();
+                })
+                .catch(err => {
+                    console.error('Error loading audit trail:', err);
+                    document.getElementById('auditLogsList').innerHTML =
+                        '<p class="text-center text-danger">Error loading audit logs</p>';
+                });
+        }
+
+        function displayAuditLogs(logs) {
+            const container = document.getElementById('auditLogsList');
+
+            if (logs.length === 0) {
+                container.innerHTML = '<p class="text-center text-muted py-4">No audit logs found</p>';
+                return;
+            }
+
+            container.innerHTML = logs.map(log => `
+                <div class="border-bottom pb-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <span class="badge ${getActionBadgeClass(log.action)}">${log.action}</span>
+                            <strong class="ms-2">${log.entityType.replace('_', ' ')}</strong>
+                        </div>
+                        <small class="text-muted">${new Date(log.changedAt).toLocaleString()}</small>
+                    </div>
+                    <div class="text-muted small mb-1">
+                        <i class="fas fa-user me-1"></i> ${log.changedBy}
+                    </div>
+                    ${log.changeDiff ? `<div class="mt-2 p-2 bg-light rounded small">${log.changeDiff}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function getActionBadgeClass(action) {
+            switch (action) {
+                case 'CREATE': return 'bg-success';
+                case 'UPDATE': return 'bg-primary';
+                case 'DELETE': return 'bg-danger';
+                default: return 'bg-secondary';
+            }
+        }
+
+    </script>
+</body>
+
+</html>

@@ -31,6 +31,22 @@ public class Patient extends BaseModel {
 
     private String address;
 
+    // Emergency Contact Information
+    @Column(length = 100)
+    private String emergencyContactName;
+
+    @Column(length = 50)
+    private String emergencyContactRelationship;
+
+    @Column(length = 20)
+    private String emergencyContactPhone;
+
+    @Column(length = 20)
+    private String emergencyContactAlternatePhone;
+
+    @Column(unique = true, length = 20)
+    private String uhid; // Unique Hospital ID: H{businessId}-{year}-{sequence}
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner; // Tenant ID

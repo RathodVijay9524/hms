@@ -271,6 +271,9 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
         <div class="container-fluid px-4">
+            <button class="btn btn-link me-3 d-lg-none" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
             <a class="navbar-brand" th:href="@{/}"><i class="fas fa-flask-vial me-2"></i>MedLab Pro</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span
                     class="navbar-toggler-icon"></span></button>
@@ -293,7 +296,7 @@
         <div class="mb-4"><small class="text-muted text-uppercase">Main Menu</small></div>
         <a th:href="@{/dashboard}" class="sidebar-link active"><i class="fas fa-chart-pie"></i> Dashboard</a>
         <a th:href="@{/lab/tests}" class="sidebar-link"><i class="fas fa-flask"></i> Lab Tests</a>
-        <a th:href="@{/lab/patients}" class="sidebar-link"><i class="fas fa-user-injured"></i> Patients</a>
+        <a th:href="@{/lab/patients}" class="sidebar-link"><i class="fas fa-user-injured"></i> Patients & EMR</a>
         <a th:href="@{/lab/orders}" class="sidebar-link"><i class="fas fa-clipboard-list"></i> Lab Orders</a>
         <hr style="border-color: var(--border-color);">
         <a href="#" class="sidebar-link"><i class="fas fa-cog"></i> Settings</a>
@@ -356,8 +359,8 @@
             <div class="col-lg-4">
                 <h6 class="text-muted text-uppercase mb-3">Quick Actions</h6>
                 <div class="d-grid gap-2">
-                    <a th:href="@{/lab/patients}" class="quick-action"><i class="fas fa-user-plus"
-                            style="color: var(--primary-color);"></i>Add New Patient</a>
+                    <a th:href="@{/lab/patients}" class="quick-action"><i class="fas fa-user-injured"
+                            style="color: var(--primary-color);"></i>Patients & EMR Records</a>
                     <a th:href="@{/lab/orders}" class="quick-action"><i class="fas fa-plus-circle"
                             style="color: var(--secondary-color);"></i>Create Lab Order</a>
                     <a th:href="@{/lab/tests}" class="quick-action"><i class="fas fa-flask"

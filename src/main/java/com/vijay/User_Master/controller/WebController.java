@@ -83,4 +83,10 @@ public class WebController {
         model.addAttribute("ordersPage", labOrderService.getAllOrders(page, size));
         return "lab/orders";
     }
+
+    @GetMapping("/lab/patients/{id}")
+    public String patientDetails(@org.springframework.web.bind.annotation.PathVariable Long id, Model model) {
+        model.addAttribute("patient", patientService.getPatientById(id));
+        return "lab/patient-details";
+    }
 }

@@ -22,6 +22,7 @@ public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository patientRepository;
     private final UserRepository userRepository;
+    private final com.vijay.User_Master.util.UHIDGenerator uhidGenerator;
     private final ModelMapper modelMapper;
 
     @Override
@@ -33,6 +34,11 @@ public class PatientServiceImpl implements PatientService {
 
         Patient patient = modelMapper.map(patientDTO, Patient.class);
         patient.setOwner(owner);
+        
+        // Generate UHID if not provided
+        if (patient.getUhid() == null || patient.getUhid().isEmpty()) {
+            patient.setUhid(uhidGenerator.generate(ownerId));
+        }
 
         Patient savedPatient = patientRepository.save(patient);
         return convertToDTO(savedPatient);
@@ -85,6 +91,16 @@ public class PatientServiceImpl implements PatientService {
     public long getPatientCount() {
         Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
         return patientRepository.countByOwnerId(ownerId);
+    }
+
+
+
+    @Override
+    public PatientDTO findByUhid(String uhid) {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        Patient patient = patientRepository.findByUhidAndOwnerId(uhid, ownerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient", "uhid", uhid));
+        return convertToDTO(patient);
     }
 
     private PatientDTO convertToDTO(Patient patient) {

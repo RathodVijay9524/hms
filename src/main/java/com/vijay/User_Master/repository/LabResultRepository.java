@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface LabResultRepository extends JpaRepository<LabResult, Long> {
-    List<LabResult> findByOrderIdAndOwnerId(Long orderId, Long ownerId);
-    Optional<LabResult> findByIdAndOwnerId(Long id, Long ownerId);
+    List<LabResult> findByOrder_IdAndOwner_Id(Long orderId, Long ownerId);
+    Optional<LabResult> findByIdAndOwner_Id(Long id, Long ownerId);
 }

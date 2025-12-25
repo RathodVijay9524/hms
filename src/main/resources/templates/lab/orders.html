@@ -214,9 +214,18 @@
             color: #a78bfa;
         }
 
-        .badge-result {
+        .badge-result_entered {
             background: rgba(6, 182, 212, 0.2);
             color: #22d3ee;
+        }
+
+        .badge-report_ready {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .btn-icon.manage:hover {
+            color: var(--primary-color);
         }
 
         .search-box {
@@ -323,6 +332,9 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
         <div class="container-fluid px-4">
+            <button class="btn btn-link me-3 d-lg-none" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
             <a class="navbar-brand" th:href="@{/}"><i class="fas fa-flask-vial me-2"></i>MedLab Pro</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span
                     class="navbar-toggler-icon"></span></button>
@@ -399,6 +411,8 @@
                         </td>
                         <td th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy')}">Dec 24, 2025</td>
                         <td>
+                            <a href="#" class="btn-icon manage" title="Process Order"
+                                th:onclick="'manageOrder(' + ${order.id} + ')'"><i class="fas fa-tasks"></i></a>
                             <a href="#" class="btn-icon view" title="View Details"
                                 th:onclick="'viewOrder(' + ${order.id} + ')'"><i class="fas fa-eye"></i></a>
                             <a href="#" class="btn-icon ai" th:onclick="'generateAIReport(' + ${order.id} + ')'"
@@ -459,6 +473,7 @@
                                     <tr>
                                         <th>Test Name</th>
                                         <th>Code</th>
+                                        <th>Result Value</th>
                                         <th>Price</th>
                                     </tr>
                                 </thead>
@@ -478,6 +493,52 @@
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                     <a href="#" id="viewPdfBtn" class="btn btn-primary-gradient"><i class="fas fa-file-pdf me-1"></i>
                         Download PDF</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Process Order Modal -->
+    <div class="modal fade" id="manageOrderModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Process Order: <span id="manageOrderNumber"></span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="manageOrderId">
+                    <div id="statusControl" class="mb-4 text-center p-3 bg-tertiary rounded">
+                        <p class="mb-3">Current Status: <span id="currentStatusBadge" class="badge"></span></p>
+                        <div id="statusActions">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <div id="resultEntrySection" style="display: none;">
+                        <h6 class="text-primary mb-3"><i class="fas fa-edit me-2"></i>Enter Test Results</h6>
+                        <form id="resultsForm">
+                            <div id="testResultsContainer">
+                                <!-- Populated via JS -->
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="verificationSection" style="display: none;">
+                        <h6 class="text-success mb-3"><i class="fas fa-check-circle me-2"></i>Verify Report</h6>
+                        <div class="mb-3">
+                            <label class="form-label">Doctor Remarks</label>
+                            <textarea id="doctorRemarks" class="form-control" rows="3"
+                                placeholder="Enter findings or suggestions..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="saveResultsBtn" class="btn btn-primary-gradient" style="display: none;"
+                        onclick="saveResults()">Save Results</button>
+                    <button type="button" id="verifyOrderBtn" class="btn btn-success" style="display: none;"
+                        onclick="verifyOrderFromManage()">Verify & Release Report</button>
                 </div>
             </div>
         </div>
@@ -588,6 +649,132 @@
             });
         }
 
+        const manageOrderModal = new bootstrap.Modal(document.getElementById('manageOrderModal'));
+
+        function manageOrder(id) {
+            fetch(`/api/lab/orders/${id}`)
+                .then(res => res.json())
+                .then(order => {
+                    document.getElementById('manageOrderId').value = order.id;
+                    document.getElementById('manageOrderNumber').innerText = order.orderNumber;
+
+                    const badge = document.getElementById('currentStatusBadge');
+                    badge.innerText = order.status;
+                    badge.className = 'badge badge-status badge-' + order.status.toLowerCase();
+
+                    const actions = document.getElementById('statusActions');
+                    const resultSection = document.getElementById('resultEntrySection');
+                    const verifySection = document.getElementById('verificationSection');
+                    const saveBtn = document.getElementById('saveResultsBtn');
+                    const verifyBtn = document.getElementById('verifyOrderBtn');
+
+                    actions.innerHTML = '';
+                    resultSection.style.display = 'none';
+                    verifySection.style.display = 'none';
+                    saveBtn.style.display = 'none';
+                    verifyBtn.style.display = 'none';
+
+                    if (order.status === 'ORDERED') {
+                        actions.innerHTML = `<button class="btn btn-warning" onclick="updateStatus(${id}, 'SAMPLE_COLLECTED')">Mark Sample Collected</button>`;
+                    } else if (order.status === 'SAMPLE_COLLECTED') {
+                        actions.innerHTML = `<button class="btn btn-info" onclick="updateStatus(${id}, 'IN_PROCESS')">Start Processing</button>`;
+                    } else if (order.status === 'IN_PROCESS' || order.status === 'RESULT_ENTERED') {
+                        resultSection.style.display = 'block';
+                        saveBtn.style.display = 'inline-block';
+                        populateResultEntry(order);
+                        if (order.status === 'RESULT_ENTERED') {
+                            verifySection.style.display = 'block';
+                            verifyBtn.style.display = 'inline-block';
+                        }
+                    } else if (order.status === 'VERIFIED') {
+                        actions.innerHTML = `<button class="btn btn-success" onclick="updateStatus(${id}, 'REPORT_READY')">Release Final Report</button>`;
+                    }
+
+                    manageOrderModal.show();
+                });
+        }
+
+        function updateStatus(id, status) {
+            fetch(`/api/lab/orders/${id}/status?status=${status}`, { method: 'PATCH' })
+                .then(res => {
+                    if (res.ok) {
+                        alert('Status updated to ' + status);
+                        location.reload();
+                    } else {
+                        alert('Failed to update status');
+                    }
+                });
+        }
+
+        function populateResultEntry(order) {
+            const container = document.getElementById('testResultsContainer');
+            container.innerHTML = '';
+
+            order.tests.forEach(test => {
+                let testHtml = `
+                    <div class="card bg-secondary border-color mb-3">
+                        <div class="card-header bg-tertiary"><strong>${test.name}</strong></div>
+                        <div class="card-body">
+                `;
+
+                test.parameters.forEach(param => {
+                    testHtml += `
+                        <div class="row mb-3 align-items-center">
+                            <div class="col-md-4"><label class="small">${param.name} (${param.unit})</label></div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control form-control-sm result-input" 
+                                    data-param-id="${param.id}" placeholder="Enter result">
+                            </div>
+                            <div class="col-md-4 text-muted small">
+                                Ref: ${param.referenceRanges.map(r => r.lowerLimit + '-' + r.upperLimit + ' (' + r.gender + ')').join(', ')}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                testHtml += `</div></div>`;
+                container.innerHTML += testHtml;
+            });
+        }
+
+        function saveResults() {
+            const orderId = document.getElementById('manageOrderId').value;
+            const inputs = document.querySelectorAll('.result-input');
+            const results = Array.from(inputs).map(input => ({
+                parameterId: input.dataset.paramId,
+                resultValue: input.value,
+                technicianNotes: ''
+            }));
+
+            fetch(`/api/lab/orders/${orderId}/results`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(results)
+            }).then(res => {
+                if (res.ok) {
+                    alert('Results saved successfully!');
+                    location.reload();
+                } else {
+                    alert('Failed to save results.');
+                }
+            });
+        }
+
+        function verifyOrderFromManage() {
+            const orderId = document.getElementById('manageOrderId').value;
+            const remarks = document.getElementById('doctorRemarks').value;
+
+            fetch(`/api/lab/orders/${orderId}/verify?doctorRemarks=${encodeURIComponent(remarks)}`, { method: 'POST' })
+                .then(res => {
+                    if (res.ok) {
+                        alert('Order verified successfully!');
+                        location.reload();
+                    } else {
+                        alert('Verification failed.');
+                    }
+                });
+        }
+
         const viewOrderModal = new bootstrap.Modal(document.getElementById('viewOrderModal'));
 
         function viewOrder(id) {
@@ -604,15 +791,35 @@
 
                     const testsBody = document.getElementById('viewOrderTests');
                     testsBody.innerHTML = '';
-                    order.tests.forEach(test => {
-                        testsBody.innerHTML += `
-                            <tr>
-                                <td>${test.name}</td>
-                                <td>${test.code}</td>
-                                <td>₹${test.basePrice}</td>
-                            </tr>
-                        `;
-                    });
+
+                    // Fetch results to show in view modal if available
+                    fetch(`/api/lab/orders/${id}/results`)
+                        .then(r => r.json())
+                        .then(results => {
+                            const resultMap = {};
+                            results.forEach(r => {
+                                if (!resultMap[r.parameterName]) resultMap[r.parameterName] = r.resultValue;
+                            });
+
+                            order.tests.forEach(test => {
+                                let resultsText = '';
+                                if (results.length > 0) {
+                                    // Group results by test name or just show all for this test
+                                    // Simplified: show parameter results in a list
+                                    const testResults = results.filter(r => test.parameters.some(p => p.id == r.parameterId));
+                                    resultsText = testResults.map(tr => `${tr.parameterName}: ${tr.resultValue}`).join('<br>');
+                                }
+
+                                testsBody.innerHTML += `
+                                    <tr>
+                                        <td>${test.name}</td>
+                                        <td>${test.code}</td>
+                                        <td class="small">${resultsText || 'Pending'}</td>
+                                        <td>₹${test.basePrice}</td>
+                                    </tr>
+                                `;
+                            });
+                        });
                     viewOrderModal.show();
                 });
         }

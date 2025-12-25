@@ -35,7 +35,7 @@ public class AIReportServiceImpl implements AIReportService {
         LabOrder order = labOrderRepository.findByIdAndOwnerId(orderId, ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("LabOrder", "id", orderId));
 
-        List<LabResult> results = labResultRepository.findByOrderIdAndOwnerId(orderId, ownerId);
+        List<LabResult> results = labResultRepository.findByOrder_IdAndOwner_Id(orderId, ownerId);
         
         String prompt = constructPrompt(order, results);
         

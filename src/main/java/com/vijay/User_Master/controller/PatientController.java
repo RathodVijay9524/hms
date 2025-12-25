@@ -35,6 +35,22 @@ public class PatientController {
         return ResponseEntity.ok(patients);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<?> searchPatients(
+            @RequestParam(required = false) String uhid,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String mobile) {
+        
+        // Search by UHID takes priority
+        if (uhid != null && !uhid.trim().isEmpty()) {
+            PatientDTO patient = patientService.findByUhid(uhid.trim());
+            return ResponseEntity.ok(patient);
+        }
+        
+        // TODO: Add search by name and mobile if needed
+        return ResponseEntity.badRequest().body("Please provide search criteria");
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<PatientDTO> updatePatient(@PathVariable Long id, @RequestBody PatientDTO patientDTO) {
         PatientDTO updatedPatient = patientService.updatePatient(id, patientDTO);

@@ -13,7 +13,9 @@ public interface LabOrderService {
     LabOrderDTO updateOrderStatus(Long id, OrderStatus status);
     List<LabResultDTO> enterResults(Long orderId, List<LabResultDTO> results);
     LabOrderDTO verifyOrder(Long orderId, String doctorRemarks);
+    List<LabResultDTO> getResultsByOrderId(Long orderId);
     long getPendingOrderCount();
     long getReportsReadyCount();
     List<LabOrderDTO> getRecentOrders(int limit);
+    List<LabOrderDTO> getOrdersByPatient(Long patientId);
 }

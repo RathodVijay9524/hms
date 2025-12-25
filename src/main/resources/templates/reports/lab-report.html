@@ -168,13 +168,16 @@
         </thead>
         <tbody>
             <tr th:each="res : ${results}">
-                <td th:text="${res.parameter.name}">Hemoglobin</td>
+                <td th:text="${res.parameterName}">Hemoglobin</td>
                 <td th:text="${res.resultValue}">14.5</td>
-                <td th:text="${res.parameter.unit}">g/dL</td>
+                <td th:text="${res.unit}">g/dL</td>
                 <td>
-                    <span th:each="range : ${res.parameter.referenceRanges}"
-                        th:if="${range.gender.name() == 'BOTH' or range.gender.name() == order.patient.gender.name()}"
-                        th:text="${range.lowerLimit} + ' - ' + ${range.upperLimit}">13.0 - 17.0</span>
+                    <span th:each="range : ${res.referenceRanges}" th:text="${range}">13.0 - 17.0</span>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(results)}">
+                <td colspan="4" style="text-align: center; color: #7f8c8d; font-style: italic; padding: 20px;">
+                    Results are pending or have not been entered for this order.
                 </td>
             </tr>
         </tbody>

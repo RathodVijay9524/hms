@@ -43,12 +43,23 @@ public class LabOrderController {
         return ResponseEntity.ok(orders);
     }
 
+    @GetMapping("/patient/{patientId}")
+    public ResponseEntity<List<LabOrderDTO>> getOrdersByPatient(@PathVariable Long patientId) {
+        return ResponseEntity.ok(labOrderService.getOrdersByPatient(patientId));
+    }
+
     @PatchMapping("/{id}/status")
     public ResponseEntity<LabOrderDTO> updateOrderStatus(
             @PathVariable Long id,
             @RequestParam OrderStatus status) {
         LabOrderDTO updatedOrder = labOrderService.updateOrderStatus(id, status);
         return ResponseEntity.ok(updatedOrder);
+    }
+
+    @GetMapping("/{orderId}/results")
+    public ResponseEntity<List<LabResultDTO>> getResults(@PathVariable Long orderId) {
+        List<LabResultDTO> results = labOrderService.getResultsByOrderId(orderId);
+        return ResponseEntity.ok(results);
     }
 
     @PostMapping("/{orderId}/results")
