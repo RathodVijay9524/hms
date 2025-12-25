@@ -76,6 +76,10 @@ public class DoctorVisit extends BaseModel {
     @OneToOne(mappedBy = "visit", cascade = CascadeType.ALL)
     private Prescription prescription;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "appointment_id")
+    private Appointment appointment;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;

@@ -359,8 +359,13 @@
         <a th:href="@{/lab/tests}" class="sidebar-link"><i class="fas fa-flask"></i> Lab Tests</a>
         <a th:href="@{/lab/patients}" class="sidebar-link"><i class="fas fa-user-injured"></i> Patients</a>
         <a th:href="@{/lab/orders}" class="sidebar-link active"><i class="fas fa-clipboard-list"></i> Lab Orders</a>
-        <hr style="border-color: var(--border-color);"><a href="#" class="sidebar-link"><i class="fas fa-cog"></i>
-            Settings</a>
+        <hr style="border-color: var(--border-color);">
+        <div class="mb-4"><small class="text-muted text-uppercase">Revenue & Billing</small></div>
+        <a th:href="@{/admin/billing}" class="sidebar-link"><i class="fas fa-file-invoice-dollar"></i> Patient
+            Billing</a>
+        <a th:href="@{/masters/charges}" class="sidebar-link"><i class="fas fa-list-check"></i> Charge Master</a>
+        <hr style="border-color: var(--border-color);">
+        <a href="#" class="sidebar-link"><i class="fas fa-cog"></i> Settings</a>
     </div>
 
     <div class="main-content">

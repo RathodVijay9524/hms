@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment - MedLab Pro</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .navbar-custom {
+            background: var(--navbar-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar {
+            background: var(--bg-secondary);
+            min-height: calc(100vh - 56px);
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem 1rem;
+            position: fixed;
+            width: 250px;
+            top: 56px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            margin-bottom: 0.25rem;
+            transition: all 0.3s;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary-color);
+        }
+
+        .sidebar-link i {
+            width: 24px;
+            margin-right: 12px;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            margin-top: 56px;
+        }
+
+        .card-custom {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary-gradient {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            font-weight: 600;
+        }
+
+        .form-control,
+        .form-select {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .slot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .slot-btn {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .slot-btn:hover:not(.disabled) {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .slot-btn.selected {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .slot-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .patient-result {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .patient-result:hover {
+            background: var(--bg-hover);
+        }
+
+        .patient-result:last-child {
+            border-bottom: none;
+        }
+
+        #patientResultsContainer {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" th:href="@{/dashboard}"
+                style="font-family: 'Outfit'; font-weight: 700; background: var(--gradient-primary); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                <i class="fas fa-flask-vial me-2"></i>MedLab Pro
+            </a>
+            <div class="ms-auto d-flex align-items-center">
+                <a th:href="@{/logout}" class="btn btn-outline-danger btn-sm">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="sidebar">
+        <div class="mb-4"><small class="text-muted text-uppercase">Management</small></div>
+        <a th:href="@{/dashboard}" class="sidebar-link"><i class="fas fa-chart-pie"></i> Dashboard</a>
+        <a th:href="@{/lab/patients}" class="sidebar-link"><i class="fas fa-user-injured"></i> Patients & EMR</a>
+        <a th:href="@{/lab/appointments}" class="sidebar-link active"><i class="fas fa-calendar-check"></i> Book
+            Appointment</a>
+        <hr style="border-color: var(--border-color);">
+        <a th:href="@{/admin/appointment-dashboard}" class="sidebar-link"><i class="fas fa-list-ul"></i> Today's
+            Queue</a>
+        <hr style="border-color: var(--border-color);">
+        <div class="mb-4"><small class="text-muted text-uppercase">Revenue & Billing</small></div>
+        <a th:href="@{/admin/billing}" class="sidebar-link"><i class="fas fa-file-invoice-dollar"></i> Patient
+            Billing</a>
+        <a th:href="@{/masters/charges}" class="sidebar-link"><i class="fas fa-list-check"></i> Charge Master</a>
+    </div>
+
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 style="font-family: 'Outfit'; font-weight: 700;">New Appointment</h2>
+                <p class="text-muted">Register a new patient appointment and select a time slot.</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Step 1 & 2: Patient & Doctor Selection -->
+            <div class="col-lg-5">
+                <div class="card card-custom p-4 mb-4">
+                    <h5 class="mb-3"><i class="fas fa-user-circle me-2 text-primary"></i>1. Select Patient</h5>
+                    <div class="position-relative">
+                        <input type="text" id="patientSearch" class="form-control"
+                            placeholder="Search by name, UHID or Phone..." autocomplete="off">
+                        <div id="patientResultsContainer"></div>
+                    </div>
+                    <div id="selectedPatientSection" class="mt-3 p-3 bg-tertiary rounded"
+                        style="display: none; background: var(--bg-tertiary);">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-0" id="selectedPatientName">John Doe</h6>
+                                <small class="text-muted" id="selectedPatientUhid">UHID: PAT-001</small>
+                            </div>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="clearPatient()">Change</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-custom p-4">
+                    <h5 class="mb-3"><i class="fas fa-user-md me-2 text-primary"></i>2. Provider & Date</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Select Doctor</label>
+                        <select id="doctorId" class="form-select" onchange="resetSlots()">
+                            <option value="">Choose a doctor...</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Appointment Date</label>
+                        <input type="date" id="appointmentDate" class="form-control" onchange="loadSlots()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Slot Selection -->
+            <div class="col-lg-7">
+                <div class="card card-custom p-4 h-100">
+                    <h5 class="mb-3"><i class="fas fa-clock me-2 text-primary"></i>3. Choose Time Slot</h5>
+                    <div id="slotsLoader" class="text-center py-5" style="display: none;">
+                        <div class="spinner-border text-primary"></div>
+                        <p class="mt-2 text-muted">Loading available slots...</p>
+                    </div>
+                    <div id="slotsMessage" class="text-center py-5 text-muted">
+                        <i class="fas fa-calendar-day fa-3x mb-3 opacity-25"></i>
+                        <p>Select a doctor and date to view available slots</p>
+                    </div>
+                    <div id="slotsGrid" class="slot-grid"></div>
+
+                    <div id="bookingSection" class="mt-auto pt-4"
+                        style="display: none; border-top: 1px solid var(--border-color);">
+                        <div class="mb-3">
+                            <label class="form-label">Reason for Visit</label>
+                            <textarea id="reasonForVisit" class="form-control"
+                                placeholder="e.g. Regular Checkup, Fever, etc."></textarea>
+                        </div>
+                        <button class="btn btn-primary-gradient w-100 py-3" onclick="confirmBooking()">
+                            <i class="fas fa-check-circle me-2"></i>Confirm Appointment
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedPatientId = null;
+        let selectedSlotId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDoctors();
+            setupPatientSearch();
+
+            // Default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('appointmentDate').min = today;
+            document.getElementById('appointmentDate').value = today;
+        });
+
+        async function loadDoctors() {
+            try {
+                const response = await fetch('/api/masters/doctors');
+                const doctors = await response.json();
+                const select = document.getElementById('doctorId');
+                doctors.forEach(doc => {
+                    const option = document.createElement('option');
+                    option.value = doc.id;
+                    option.textContent = `${doc.doctorName} (${doc.departmentName})`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading doctors:', error);
+            }
+        }
+
+        function setupPatientSearch() {
+            const input = document.getElementById('patientSearch');
+            const container = document.getElementById('patientResultsContainer');
+
+            input.addEventListener('input', async (e) => {
+                const query = e.target.value;
+                if (query.length < 2) {
+                    container.style.display = 'none';
+                    return;
+                }
+
+                try {
+                    // Reusing existing patient list API for search for now
+                    // In a real app, there would be a dedicated search endpoint
+                    const response = await fetch('/api/lab/patients');
+                    const data = await response.json();
+                    const patients = data.content || [];
+
+                    const filtered = patients.filter(p =>
+                        p.name.toLowerCase().includes(query.toLowerCase()) ||
+                        (p.uhid && p.uhid.toLowerCase().includes(query.toLowerCase())) ||
+                        p.phone.includes(query)
+                    );
+
+                    container.innerHTML = '';
+                    if (filtered.length === 0) {
+                        container.innerHTML = '<div class="p-3 text-muted">No patients found</div>';
+                    } else {
+                        filtered.forEach(p => {
+                            const div = document.createElement('div');
+                            div.className = 'patient-result';
+                            div.innerHTML = `
+                                <div><strong>${p.name}</strong></div>
+                                <div class="small text-muted">UHID: ${p.uhid || 'N/A'} | Phone: ${p.phone}</div>
+                            `;
+                            div.onclick = () => selectPatient(p);
+                            container.appendChild(div);
+                        });
+                    }
+                    container.style.display = 'block';
+                } catch (error) {
+                    console.error('Error searching patients:', error);
+                }
+            });
+
+            // Close results on click outside
+            document.addEventListener('click', (e) => {
+                if (!input.contains(e.target) && !container.contains(e.target)) {
+                    container.style.display = 'none';
+                }
+            });
+        }
+
+        function selectPatient(patient) {
+            selectedPatientId = patient.id;
+            document.getElementById('patientSearch').style.display = 'none';
+            document.getElementById('patientResultsContainer').style.display = 'none';
+            document.getElementById('selectedPatientSection').style.display = 'block';
+            document.getElementById('selectedPatientName').textContent = patient.name;
+            document.getElementById('selectedPatientUhid').textContent = `UHID: ${patient.uhid || 'N/A'}`;
+        }
+
+        function clearPatient() {
+            selectedPatientId = null;
+            document.getElementById('patientSearch').style.display = 'block';
+            document.getElementById('patientSearch').value = '';
+            document.getElementById('selectedPatientSection').style.display = 'none';
+        }
+
+        function resetSlots() {
+            document.getElementById('slotsGrid').innerHTML = '';
+            document.getElementById('slotsMessage').style.display = 'block';
+            document.getElementById('bookingSection').style.display = 'none';
+            selectedSlotId = null;
+        }
+
+        async function loadSlots() {
+            const doctorId = document.getElementById('doctorId').value;
+            const date = document.getElementById('appointmentDate').value;
+
+            if (!doctorId || !date) return;
+
+            resetSlots();
+            document.getElementById('slotsMessage').style.display = 'none';
+            document.getElementById('slotsLoader').style.display = 'block';
+
+            try {
+                const response = await fetch(`/api/scheduling/slots?doctorId=${doctorId}&date=${date}`);
+                const data = await response.json();
+                const slots = data.data || [];
+
+                document.getElementById('slotsLoader').style.display = 'none';
+                const grid = document.getElementById('slotsGrid');
+
+                if (slots.length === 0) {
+                    document.getElementById('slotsMessage').innerHTML = '<i class="fas fa-calendar-times fa-3x mb-3 opacity-25"></i><p>No available slots for this date.</p>';
+                    document.getElementById('slotsMessage').style.display = 'block';
+                    return;
+                }
+
+                slots.forEach(slot => {
+                    const btn = document.createElement('div');
+                    btn.className = `slot-btn ${slot.status !== 'AVAILABLE' ? 'disabled' : ''}`;
+                    btn.textContent = slot.startTime.substring(0, 5);
+                    btn.onclick = () => {
+                        if (slot.status === 'AVAILABLE') selectSlot(btn, slot.id);
+                    };
+                    grid.appendChild(btn);
+                });
+            } catch (error) {
+                console.error('Error loading slots:', error);
+                document.getElementById('slotsLoader').style.display = 'none';
+                document.getElementById('slotsMessage').innerHTML = '<p class="text-danger">Error loading slots. Please try again.</p>';
+                document.getElementById('slotsMessage').style.display = 'block';
+            }
+        }
+
+        function selectSlot(element, slotId) {
+            document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedSlotId = slotId;
+            document.getElementById('bookingSection').style.display = 'block';
+        }
+
+        async function confirmBooking() {
+            if (!selectedPatientId || !selectedSlotId) {
+                alert('Please select a patient and a time slot.');
+                return;
+            }
+
+            const payload = {
+                patientId: selectedPatientId,
+                doctorId: document.getElementById('doctorId').value,
+                slotId: selectedSlotId,
+                reasonForVisit: document.getElementById('reasonForVisit').value,
+                notes: ""
+            };
+
+            try {
+                const response = await fetch('/api/appointments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert(`Appointment booked successfully! Number: ${result.data.appointmentNumber}`);
+                    window.location.href = '/admin/appointment-dashboard';
+                } else {
+                    const error = await response.json();
+                    alert(`Error: ${error.message || 'Failed to book appointment'}`);
+                }
+            } catch (error) {
+                console.error('Error booking appointment:', error);
+                alert('An unexpected error occurred.');
+            }
+        }
+    </script>
+</body>
+
+</html>

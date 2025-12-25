@@ -110,4 +110,35 @@ public class WebController {
     public String workers() {
         return "admin/workers";
     }
+
+    @GetMapping("/admin/schedules")
+    public String schedules() {
+        return "admin/schedules";
+    }
+
+    @GetMapping("/lab/appointments")
+    public String appointments() {
+        return "lab/appointments";
+    }
+
+    @GetMapping("/admin/appointment-dashboard")
+    public String appointmentDashboard() {
+        return "admin/appointment-dashboard";
+    }
+
+    @GetMapping("/masters/charges")
+    public String charges() {
+        return "masters/charges";
+    }
+
+    @GetMapping("/admin/billing")
+    public String billing() {
+        return "admin/billing";
+    }
+
+    @GetMapping("/admin/invoice/{id}")
+    public String invoice(@org.springframework.web.bind.annotation.PathVariable Long id, Model model) {
+        model.addAttribute("billId", id);
+        return "admin/invoice";
+    }
 }
