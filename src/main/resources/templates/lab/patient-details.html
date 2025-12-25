@@ -269,6 +269,8 @@
                                     class="form-control" step="0.1"></div>
                             <div class="col-6"><label>Weight (kg)</label><input type="number" id="weight"
                                     class="form-control" step="0.1"></div>
+                            <div class="col-6"><label>Height (cm)</label><input type="number" id="height"
+                                    class="form-control" step="0.1"></div>
                         </div>
                     </form>
                 </div>
@@ -297,6 +299,8 @@
                                 class="form-control"></textarea></div>
                         <div class="mb-3"><label>Family History</label><textarea id="histFamily"
                                 class="form-control"></textarea></div>
+                        <div class="mb-3"><label>Medication History</label><textarea id="histMedications"
+                                class="form-control" placeholder="Current or long-term medications..."></textarea></div>
                         <div class="mb-3"><label>Blood Group</label><input type="text" id="histBlood"
                                 class="form-control"></div>
                     </form>
@@ -331,12 +335,66 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="mb-3"><label>Symptoms</label><textarea id="visitSymptoms" class="form-control"
-                                rows="2"></textarea></div>
+
+                        <!-- Structured Symptom Entry -->
+                        <div class="mb-3">
+                            <label class="fw-bold mb-2">Symptoms</label>
+                            <div class="card p-3 bg-light">
+                                <div class="row g-2 mb-2">
+                                    <div class="col-md-4">
+                                        <input type="text" id="symptomName" class="form-control"
+                                            placeholder="Enter symptom" list="symptomSuggestions">
+                                        <datalist id="symptomSuggestions"></datalist>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select id="symptomSeverity" class="form-select">
+                                            <option value="">Select Severity</option>
+                                            <option value="MILD" style="color: #28a745;">🟢 Mild</option>
+                                            <option value="MODERATE" style="color: #ffc107;">🟡 Moderate</option>
+                                            <option value="SEVERE" style="color: #fd7e14;">🟠 Severe</option>
+                                            <option value="CRITICAL" style="color: #dc3545;">🔴 Critical</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" id="symptomDuration" class="form-control"
+                                            placeholder="Duration (e.g., 2 days)">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-primary w-100" onclick="addSymptom()">
+                                            <i class="fas fa-plus"></i> Add
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="symptomsList" class="mt-2"></div>
+                            </div>
+                        </div>
+
                         <div class="mb-3"><label>Diagnosis</label><textarea id="visitDiagnosis" class="form-control"
                                 rows="2"></textarea></div>
-                        <div class="mb-3"><label>Clinical Notes</label><textarea id="visitNotes" class="form-control"
-                                rows="3"></textarea></div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-uppercase">Subjective (S)</label>
+                                <textarea id="visitSubjective" class="form-control" rows="3"
+                                    placeholder="History, complaints..."></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-uppercase">Objective (O)</label>
+                                <textarea id="visitObjective" class="form-control" rows="3"
+                                    placeholder="Physical exam, vitals..."></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-uppercase">Assessment (A)</label>
+                                <textarea id="visitAssessment" class="form-control" rows="3"
+                                    placeholder="Clinical diagnosis reasoning..."></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-uppercase">Plan (P)</label>
+                                <textarea id="visitPlan" class="form-control" rows="3"
+                                    placeholder="Treatment, medications, follow-up..."></textarea>
+                            </div>
+                        </div>
+                        <input type="hidden" id="visitNotes">
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -420,7 +478,100 @@
             loadVitals();
             loadHistory();
             loadTimeline();
+            loadSymptomSuggestions();
         });
+
+        // --- Symptom Management ---
+        let visitSymptoms = []; // Track symptoms for current visit
+
+        function loadSymptomSuggestions() {
+            fetch('/api/emr/symptoms/master')
+                .then(r => r.json())
+                .then(symptoms => {
+                    const datalist = document.getElementById('symptomSuggestions');
+                    datalist.innerHTML = symptoms.map(s => `<option value="${s.name}">`).join('');
+                })
+                .catch(err => console.error('Error loading symptoms:', err));
+        }
+
+        function addSymptom() {
+            const name = document.getElementById('symptomName').value.trim();
+            const severity = document.getElementById('symptomSeverity').value;
+            const duration = document.getElementById('symptomDuration').value.trim();
+
+            if (!name) {
+                alert('Please enter a symptom name');
+                return;
+            }
+            if (!severity) {
+                alert('Please select severity');
+                return;
+            }
+
+            visitSymptoms.push({ symptomName: name, severity, duration });
+            displaySymptoms();
+
+            // Clear inputs
+            document.getElementById('symptomName').value = '';
+            document.getElementById('symptomSeverity').value = '';
+            document.getElementById('symptomDuration').value = '';
+        }
+
+        function removeSymptom(index) {
+            visitSymptoms.splice(index, 1);
+            displaySymptoms();
+        }
+
+        function displaySymptoms() {
+            const container = document.getElementById('symptomsList');
+            if (visitSymptoms.length === 0) {
+                container.innerHTML = '<p class="text-muted small mb-0">No symptoms added yet</p>';
+                return;
+            }
+
+            container.innerHTML = visitSymptoms.map((s, i) => `
+                <div class="d-flex align-items-center justify-content-between mb-2 p-2 border rounded">
+                    <div>
+                        <span class="badge ${getSeverityBadgeClass(s.severity)} me-2">${s.severity}</span>
+                        <strong>${s.symptomName}</strong>
+                        ${s.duration ? `<span class="text-muted ms-2">(${s.duration})</span>` : ''}
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeSymptom(${i})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function getSeverityBadgeClass(severity) {
+            switch (severity) {
+                case 'MILD': return 'bg-success';
+                case 'MODERATE': return 'bg-warning';
+                case 'SEVERE': return 'bg-orange';
+                case 'CRITICAL': return 'bg-danger';
+                default: return 'bg-secondary';
+            }
+        }
+
+        function getBMIBadgeClass(category) {
+            switch (category) {
+                case 'Underweight': return 'bg-info text-white';
+                case 'Normal': return 'bg-success text-white';
+                case 'Overweight': return 'bg-warning text-dark';
+                case 'Obese': return 'bg-danger text-white';
+                default: return 'bg-secondary text-white';
+            }
+        }
+
+        function getBMITextClass(category) {
+            switch (category) {
+                case 'Underweight': return 'text-info';
+                case 'Normal': return 'text-success';
+                case 'Overweight': return 'text-warning';
+                case 'Obese': return 'text-danger';
+                default: return 'text-muted';
+            }
+        }
 
         // --- API Calls ---
 
@@ -435,6 +586,16 @@
                             <div class="d-flex justify-content-between mb-2"><span>Heart Rate</span> <strong>${v.heartRate} bpm</strong></div>
                             <div class="d-flex justify-content-between mb-2"><span>SpO2</span> <strong>${v.oxygenLevel}%</strong></div>
                             <div class="d-flex justify-content-between mb-2"><span>Temp</span> <strong>${v.temperature}°C</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>Weight</span> <strong>${v.weight} kg</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>Height</span> <strong>${v.height} cm</strong></div>
+                            ${v.bmi ? `
+                            <hr class="my-2">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span>BMI</span> 
+                                <span class="badge ${getBMIBadgeClass(v.bmiCategory)}">${v.bmi}</span>
+                            </div>
+                            <div class="text-end small ${getBMITextClass(v.bmiCategory)}">${v.bmiCategory}</div>
+                            ` : ''}
                             <div class="d-flex justify-content-between text-muted small mt-3">Recorded: ${new Date(v.recordedAt).toLocaleString()}</div>
                         `;
                         renderChart(data);
@@ -451,7 +612,8 @@
                 heartRate: document.getElementById('heartRate').value,
                 oxygenLevel: document.getElementById('spo2').value,
                 temperature: document.getElementById('temp').value,
-                weight: document.getElementById('weight').value
+                weight: document.getElementById('weight').value,
+                height: document.getElementById('height').value
             };
 
             fetch(`/api/emr/patients/${patientId}/vitals`, {
@@ -472,6 +634,7 @@
                     document.getElementById('medicalHistoryContent').innerHTML = `
                         <div class="mb-2"><small class="text-uppercase text-muted fw-bold">Allergies</small><div class="text-danger">${h.allergies || 'None'}</div></div>
                         <div class="mb-2"><small class="text-uppercase text-muted fw-bold">Conditions</small><div>${h.chronicConditions || 'None'}</div></div>
+                        <div class="mb-2"><small class="text-uppercase text-muted fw-bold">Medications</small><div>${h.medicationHistory || 'None'}</div></div>
                         <div class="mb-2"><small class="text-uppercase text-muted fw-bold">Blood Group</small><div>${h.bloodGroup || 'Unknown'}</div></div>
                     `;
                     // Populate edit form
@@ -480,6 +643,7 @@
                     document.getElementById('histSurgeries').value = h.pastSurgeries || '';
                     document.getElementById('histBlood').value = h.bloodGroup || '';
                     document.getElementById('histFamily').value = h.familyHistory || '';
+                    document.getElementById('histMedications').value = h.medicationHistory || '';
                 });
         }
 
@@ -493,6 +657,7 @@
                 chronicConditions: document.getElementById('histConditions').value,
                 pastSurgeries: document.getElementById('histSurgeries').value,
                 familyHistory: document.getElementById('histFamily').value,
+                medicationHistory: document.getElementById('histMedications').value,
                 bloodGroup: document.getElementById('histBlood').value
             };
             fetch(`/api/emr/patients/${patientId}/history`, {
@@ -549,6 +714,16 @@
                                 <h5 class="fw-bold mb-1 border-start border-4 border-primary ps-2">${visit.visitType} Visit</h5>
                                 <div class="text-muted small mb-2">Dr. ${visit.doctorName || 'Unknown'}</div>
                                 <p class="mb-2 bg-dark bg-opacity-10 p-2 rounded">${visit.diagnosis || 'No diagnosis recorded'}</p>
+                                
+                                ${visit.subjectiveNotes || visit.objectiveNotes || visit.assessmentNotes || visit.planNotes ? `
+                                <div class="soap-notes small mb-3">
+                                    ${visit.subjectiveNotes ? `<div class="mb-1"><strong>S:</strong> ${visit.subjectiveNotes}</div>` : ''}
+                                    ${visit.objectiveNotes ? `<div class="mb-1"><strong>O:</strong> ${visit.objectiveNotes}</div>` : ''}
+                                    ${visit.assessmentNotes ? `<div class="mb-1"><strong>A:</strong> ${visit.assessmentNotes}</div>` : ''}
+                                    ${visit.planNotes ? `<div class="mb-1"><strong>P:</strong> ${visit.planNotes}</div>` : ''}
+                                </div>
+                                ` : ''}
+
                                 ${visit.closedBy ? `<div class="small text-muted">Closed by ${visit.closedBy} on ${new Date(visit.closedAt).toLocaleString()}</div>` : ''}
                                 <div class="mt-2">
                                     ${actionButtons}
@@ -583,9 +758,13 @@
         function saveVisit() {
             const data = {
                 visitType: document.getElementById('visitType').value,
-                symptoms: document.getElementById('visitSymptoms').value,
+                symptoms: visitSymptoms.map(s => s.symptomName).join(', '), // Legacy field
                 diagnosis: document.getElementById('visitDiagnosis').value,
-                doctorNotes: document.getElementById('visitNotes').value
+                doctorNotes: document.getElementById('visitNotes').value,
+                subjectiveNotes: document.getElementById('visitSubjective').value,
+                objectiveNotes: document.getElementById('visitObjective').value,
+                assessmentNotes: document.getElementById('visitAssessment').value,
+                planNotes: document.getElementById('visitPlan').value
             };
 
             fetch(`/api/emr/patients/${patientId}/visits`, {
@@ -593,8 +772,27 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             }).then(res => {
-                if (res.ok) location.reload();
-                else alert('Error recording visit');
+                if (res.ok) {
+                    return res.json();
+                } else {
+                    throw new Error('Error recording visit');
+                }
+            }).then(visit => {
+                // Save each symptom separately
+                const symptomPromises = visitSymptoms.map(symptom =>
+                    fetch(`/api/emr/visits/${visit.id}/symptoms`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(symptom)
+                    })
+                );
+
+                return Promise.all(symptomPromises);
+            }).then(() => {
+                visitSymptoms = []; // Clear symptoms array
+                location.reload();
+            }).catch(err => {
+                alert('Error recording visit: ' + err.message);
             });
         }
 

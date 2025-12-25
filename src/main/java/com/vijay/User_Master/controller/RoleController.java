@@ -80,7 +80,7 @@ public class RoleController {
      * @return ResponseEntity containing all roles.
      */
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN', 'HOSPITAL_MANAGER', 'DEPARTMENT_HEAD')")
     public ResponseEntity<?> getAllRoles() {
         log.info("Received request to fetch all roles");
 
@@ -148,7 +148,7 @@ public class RoleController {
      * @return ResponseEntity containing all active roles.
      */
     @GetMapping("/active")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN', 'HOSPITAL_MANAGER', 'DEPARTMENT_HEAD')")
     public ResponseEntity<?> getAllActiveRoles() {
         log.info("Received request to fetch all active roles");
         

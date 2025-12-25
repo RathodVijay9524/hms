@@ -21,6 +21,8 @@ public class VitalSignDTO {
     private Double temperature;
     private Double weight;
     private Double height;
+    private Double bmi;
+    private String bmiCategory;
     private Integer oxygenLevel;
     
     // Helper for formatted display

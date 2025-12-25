@@ -32,6 +32,9 @@ public class MedicalHistory extends BaseModel {
     @Column(columnDefinition = "TEXT")
     private String familyHistory;
 
+    @Column(columnDefinition = "TEXT")
+    private String medicationHistory;
+
     private String bloodGroup;
     
     @ManyToOne(fetch = FetchType.LAZY)

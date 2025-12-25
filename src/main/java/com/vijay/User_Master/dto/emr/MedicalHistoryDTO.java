@@ -16,5 +16,6 @@ public class MedicalHistoryDTO {
     private String chronicConditions;
     private String pastSurgeries;
     private String familyHistory;
+    private String medicationHistory;
     private String bloodGroup;
 }

@@ -23,6 +23,10 @@ public class DoctorVisitDTO {
     private String symptoms;
     private String diagnosis;
     private String doctorNotes;
+    private String subjectiveNotes;
+    private String objectiveNotes;
+    private String assessmentNotes;
+    private String planNotes;
     
     // Visit Lifecycle
     private VisitStatus status;

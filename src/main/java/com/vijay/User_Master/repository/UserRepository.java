@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
@@ -39,6 +40,9 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     Page<User> findAllByAccountStatus_IsActive(boolean isActive, Pageable pageable);
 
     Page<User> findAllByIsDeletedAndAccountStatus_IsActive(boolean isDeleted, boolean isActive, Pageable pageable);
+
+    @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = :roleName AND u.isDeleted = false")
+    List<User> findByRolesNameAndIsDeletedFalse(@Param("roleName") String roleName);
 
     @Query("SELECT u FROM User u WHERE " +
             "(:keyword IS NULL OR u.name LIKE %:keyword% OR u.email LIKE %:keyword% OR u.username LIKE %:keyword%) AND " +

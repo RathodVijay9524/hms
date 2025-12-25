@@ -246,8 +246,8 @@ public class AuthServiceImpl implements AuthService {
                 throw new UserAlreadyExistsException("Username or email is already taken");
             }
             User user = mapper.map(request, User.class);
-            Role role = roleRepository.findByName("ROLE_NORMAL").orElseThrow(() -> {
-                log.error("Role 'User' not found");
+            Role role = roleRepository.findByName("ROLE_ADMIN").orElseThrow(() -> {
+                log.error("Role 'ROLE_ADMIN' not found");
                 return new BadApiRequestException("Role not found with name 'ROLE_ADMIN'");
             });
             user.setRoles(Set.of(role));
@@ -302,30 +302,48 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserResponse registerForNormalUser(UserRequest request) {
-        log.info("Attempting to create a new normal user with username: {}", request.getUsername());
+        log.info("Attempting to create a new worker with username: {} and roles: {}", request.getUsername(), request.getRoles());
+        
         if (existsByUsernameOrEmail(request.getUsername()) || existsByUsernameOrEmail(request.getEmail())) {
             log.error("Username '{}' or email '{}' already exists", request.getUsername(), request.getEmail());
             throw new UserAlreadyExistsException("Username or email is already taken");
         }
-        UserResponse currentUser = userService.getCurrentUser();
-        User user = mapper.map(currentUser, User.class);
+
+        // The current logged in Admin (Owner)
+        CustomUserDetails currentLoggedInUser = CommonUtils.getLoggedInUser();
+        User owner = userRepository.findById(currentLoggedInUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Owner", "ID", currentLoggedInUser.getId()));
 
         Worker worker = mapper.map(request, Worker.class);
         worker.setPassword(passwordEncoder.encode(request.getPassword()));
+        worker.setUser(owner); // Set the owner who created this worker
 
-        // Fetch the worker role from the repository
-        Role workerRole = roleRepository.findByName("ROLE_WORKER")
-                .orElseThrow(() -> new BadApiRequestException("Worker role not found."));
-
-        // Initialize the roles field if it's null
-        if (worker.getRoles() == null) {
-            worker.setRoles(new HashSet<>());
+        // Assign roles provided in the request
+        Set<Role> roles = new HashSet<>();
+        if (request.getRoles() != null && !request.getRoles().isEmpty()) {
+            for (String roleName : request.getRoles()) {
+                Role role = roleRepository.findByName(roleName)
+                        .orElseThrow(() -> new BadApiRequestException("Role not found: " + roleName));
+                roles.add(role);
+            }
+        } else {
+            // Default role if none provided
+            Role workerRole = roleRepository.findByName("ROLE_WORKER")
+                    .orElseThrow(() -> new BadApiRequestException("Default worker role not found."));
+            roles.add(workerRole);
         }
-        // Add the worker role to the roles set
-        worker.getRoles().add(workerRole);
-        worker.setUser(user);
-        workerRepository.save(worker);
-        return mapper.map(worker, UserResponse.class);
+        worker.setRoles(roles);
+
+        // Set account status as active immediately for workers registered by admin
+        AccountStatus status = AccountStatus.builder()
+                .isActive(true)
+                .build();
+        worker.setAccountStatus(status);
+
+        Worker savedWorker = workerRepository.save(worker);
+        log.info("Worker '{}' registered successfully by owner '{}'", savedWorker.getUsername(), owner.getUsername());
+        
+        return mapper.map(savedWorker, UserResponse.class);
     }
 
     /*

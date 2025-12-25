@@ -28,6 +28,8 @@ public interface UserService extends iCrudService<UserRequest, UserResponse,Long
 
     Page<UserResponse> getUsersWithFilter(Boolean isDeleted, Boolean isActive, String keyword, Pageable pageable);
 
+    List<UserResponse> getUsersByRole(String roleName);
+
     void softDeleteUser(Long id);
 
     void permanentlyDelete(Long id);

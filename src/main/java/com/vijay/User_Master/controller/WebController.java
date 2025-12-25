@@ -12,6 +12,8 @@ public class WebController {
     private final com.vijay.User_Master.service.LabTestService labTestService;
     private final com.vijay.User_Master.service.PatientService patientService;
     private final com.vijay.User_Master.service.LabOrderService labOrderService;
+    private final com.vijay.User_Master.service.DepartmentService departmentService;
+    private final com.vijay.User_Master.service.DoctorProfileService doctorProfileService;
 
     @GetMapping("/login")
     public String login() {
@@ -88,5 +90,24 @@ public class WebController {
     public String patientDetails(@org.springframework.web.bind.annotation.PathVariable Long id, Model model) {
         model.addAttribute("patient", patientService.getPatientById(id));
         return "lab/patient-details";
+    }
+
+    // Master Management
+    @GetMapping("/masters/departments")
+    public String departments(Model model) {
+        model.addAttribute("departments", departmentService.getAllDepartments());
+        return "masters/departments";
+    }
+
+    @GetMapping("/masters/doctors")
+    public String doctors(Model model) {
+        model.addAttribute("doctors", doctorProfileService.getAllDoctorProfiles());
+        model.addAttribute("departments", departmentService.getAllDepartments());
+        return "masters/doctors";
+    }
+
+    @GetMapping("/admin/workers")
+    public String workers() {
+        return "admin/workers";
     }
 }

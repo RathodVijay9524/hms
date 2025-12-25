@@ -11,10 +11,16 @@ public class CommonUtils {
     @Transactional
     public static CustomUserDetails getLoggedInUser() {
         try {
-            CustomUserDetails logUser = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return logUser;
+            if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                return null;
+            }
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal instanceof CustomUserDetails) {
+                return (CustomUserDetails) principal;
+            }
+            return null;
         } catch (Exception e) {
-            throw new RuntimeException("User is not authenticated.", e);
+            return null;
         }
     }
 

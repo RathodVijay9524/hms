@@ -139,6 +139,15 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    public List<UserResponse> getUsersByRole(String roleName) {
+        log.info("Fetching users with role: {}", roleName);
+        List<User> users = userRepository.findByRolesNameAndIsDeletedFalse(roleName);
+        return users.stream()
+                .map(user -> mapper.map(user, UserResponse.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void softDeleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
         user.setDeleted(true);

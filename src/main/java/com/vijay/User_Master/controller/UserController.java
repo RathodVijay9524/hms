@@ -179,6 +179,12 @@ public class UserController {
         return ExceptionUtil.createBuildResponse("Account status updated successfully", HttpStatus.OK);
     }
 
+    @GetMapping("/role/{roleName}")
+    public ResponseEntity<?> getUsersByRole(@PathVariable String roleName) {
+        log.info("Received request to fetch users with role: {}", roleName);
+        return ResponseEntity.ok(userService.getUsersByRole(roleName));
+    }
+
     // ✅ NEW: Delete user
     @DeleteMapping("/{id}")
     public ResponseEntity<?> softDeleteUser(@PathVariable Long id) {

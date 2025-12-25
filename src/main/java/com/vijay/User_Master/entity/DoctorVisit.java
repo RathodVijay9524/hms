@@ -40,6 +40,18 @@ public class DoctorVisit extends BaseModel {
     @Column(columnDefinition = "TEXT")
     private String doctorNotes;
 
+    @Column(columnDefinition = "TEXT")
+    private String subjectiveNotes;
+
+    @Column(columnDefinition = "TEXT")
+    private String objectiveNotes;
+
+    @Column(columnDefinition = "TEXT")
+    private String assessmentNotes;
+
+    @Column(columnDefinition = "TEXT")
+    private String planNotes;
+
     @Column(name = "doctor_name")
     private String doctorName;
 

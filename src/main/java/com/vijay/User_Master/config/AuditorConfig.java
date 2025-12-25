@@ -15,7 +15,10 @@ public class AuditorConfig implements AuditorAware<Integer> {
     @Override
     public Optional<Integer> getCurrentAuditor() {
         CustomUserDetails loggedInUser = CommonUtils.getLoggedInUser();
-        return Optional.of(Math.toIntExact(loggedInUser.getId()));
+        if (loggedInUser != null) {
+            return Optional.of(Math.toIntExact(loggedInUser.getId()));
+        }
+        return Optional.empty();
     }
 
 
