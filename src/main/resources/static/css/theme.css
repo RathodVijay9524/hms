@@ -239,6 +239,7 @@ body,
         justify-content: center;
     }
 }
+
 /* --- Portal-Specific Enhancements (Unified Theme v2.0) --- */
 
 /* Global Navbar */
@@ -337,7 +338,23 @@ body,
 
 /* Success/Warning Badges */
 .badge-gold {
-    background: rgba(245, 158, 11, 0.15);
+    background: rgba(11, 10, 8, 0.15);
     color: var(--warning);
     border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Main Content Layout - Fix Sidebar Overlap */
+.main-content {
+    margin-left: 250px;
+    padding: 2rem;
+    margin-top: 56px;
+    min-height: calc(100vh - 56px);
+}
+
+/* Mobile responsiveness for main content */
+@media (max-width: 992px) {
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
 }
