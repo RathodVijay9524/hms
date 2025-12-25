@@ -34,6 +34,7 @@ public class WebSecurityConfig {
 
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final com.vijay.User_Master.config.security.CustomAuthenticationSuccessHandler successHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -61,7 +62,7 @@ public class WebSecurityConfig {
                         // 3) Public endpoints
                         .requestMatchers(
                                 "/api/auth/login",
-                                "/login", "/signin", "/register", "/forgot-password", "/reset-password", "/verify-account",
+                                "/login", "/signin", "/register", "/forgot-password", "/reset-password", "/verify-account", "/select-role",
                                 "/api/auth/register/**",
                                 "/api/v1/home/**",
                                 "/api/v1/tokens/**",
@@ -71,6 +72,20 @@ public class WebSecurityConfig {
                                 "/swagger-ui/**",
                                 "/tutorials/**" // Assuming tutorials is public or has its own logic
                         ).permitAll()
+                        
+                        // Portal Specific Restrictions
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/owner/**").hasAnyRole("OWNER", "ADMIN")
+                        .requestMatchers("/doctor/**").hasAnyRole("DOCTOR", "ADMIN")
+                        .requestMatchers("/reception/**").hasAnyRole("RECEPTIONIST", "ADMIN")
+                        .requestMatchers("/lab/**").hasAnyRole("LAB_TECHNICIAN", "DOCTOR", "ADMIN")
+                        .requestMatchers("/billing/**").hasAnyRole("BILLING", "ACCOUNTANT", "ADMIN")
+                        .requestMatchers("/patient/**").hasAnyRole("PATIENT", "ADMIN")
+                        .requestMatchers("/pharmacy/**").hasAnyRole("PHARMACIST", "ADMIN")
+                        .requestMatchers("/nurse/**").hasAnyRole("NURSE", "ADMIN")
+                        .requestMatchers("/insurance/**").hasAnyRole("INSURANCE", "ADMIN")
+                        .requestMatchers("/analytics/**").hasAnyRole("ANALYST", "ADMIN")
+                        
                         // Require authentication for all other endpoints
                         .anyRequest().authenticated()
                 )
@@ -79,7 +94,7 @@ public class WebSecurityConfig {
                         .loginProcessingUrl("/login")
                         .usernameParameter("usernameOrEmail")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/dashboard", true)
+                        .successHandler(successHandler)
                         .permitAll()
                 )
                 .logout(logout -> logout

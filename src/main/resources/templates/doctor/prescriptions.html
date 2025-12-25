@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Prescriptions - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+</head>
+
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/sidebars/doctor_sidebar :: doctor_sidebar('doc-presc')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #6366f1;">Rx Management</h1>
+                    <p class="text-muted mb-0">Review and issue digital prescriptions</p>
+                </div>
+                <button class="btn btn-indigo" style="background: #6366f1; color: white;">
+                    <i class="fas fa-file-signature me-2"></i>New Prescription
+                </button>
+            </div>
+
+            <div class="card border-0 shadow-sm" style="background: var(--bg-secondary);">
+                <div class="card-body p-5 text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-prescription-bottle-medical fs-1 text-muted opacity-50"></i>
+                    </div>
+                    <h4>Digital RX Engine Ready</h4>
+                    <p class="text-muted mx-auto" style="max-width: 500px;">
+                        The clinical prescription module is ready to be linked with the pharmacy inventory system for
+                        real-time drug availability checks.
+                    </p>
+                    <button class="btn btn-outline-indigo mt-3 border-indigo"
+                        style="border-color: #6366f1; color: #6366f1;">
+                        <i class="fas fa-link me-2"></i>Link with Pharmacy Hub
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

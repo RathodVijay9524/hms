@@ -24,34 +24,6 @@
     </script>
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            transition: all 0.3s;
-        }
-
-        .navbar-custom {
-            background: var(--navbar-bg);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .navbar-brand {
-            font-family: 'Outfit', sans-serif;
-            font-weight: 700;
-            background: var(--gradient-primary);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .main-content {
-            padding: 2rem;
-            margin-top: 56px;
-        }
-
         .btn-primary-gradient {
             background: var(--gradient-primary);
             border: none;
@@ -114,33 +86,13 @@
             padding: 0.5rem;
             border-radius: 0.5rem;
         }
-
-        .form-control,
-        .form-select {
-            background: var(--input-bg);
-            border-color: var(--border-color);
-            color: var(--text-primary);
-        }
     </style>
 </head>
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
-        <div class="container-fluid px-4">
-            <button class="btn btn-link me-3 d-lg-none" id="sidebarToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-            <a class="navbar-brand" th:href="@{/}"><i class="fas fa-flask-vial me-2"></i>MedLab Pro</a>
-            <div class="ms-auto d-flex align-items-center gap-3">
-                <a th:href="@{/lab/patients}" class="btn btn-outline-secondary btn-sm"><i
-                        class="fas fa-arrow-left me-1"></i> Back to Patients</a>
-                <button class="theme-toggle btn btn-sm btn-icon" title="Toggle Theme">
-                    <i class="fas fa-adjust"></i>
-                </button>
-            </div>
-        </div>
-    </nav>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/sidebars/lab_sidebar :: lab_sidebar('patients')}"></div>
 
     <div class="main-content container-fluid px-4">
         <!-- Patient Header -->

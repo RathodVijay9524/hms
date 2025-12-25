@@ -27,4 +27,7 @@ public interface BillingService {
     
     // Status Management
     BillResponse cancelBill(Long id, String reason);
+
+    // Statistics
+    BillingStatsDto getBillingStats();
 }

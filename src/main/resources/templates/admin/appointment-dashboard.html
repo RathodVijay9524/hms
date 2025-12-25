@@ -122,33 +122,9 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand" th:href="@{/dashboard}"
-                style="font-family: 'Outfit'; font-weight: 700; background: var(--gradient-primary); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                <i class="fas fa-flask-vial me-2"></i>MedLab Pro
-            </a>
-            <div class="ms-auto d-flex align-items-center">
-                <a th:href="@{/logout}" class="btn btn-outline-danger btn-sm">Logout</a>
-            </div>
-        </div>
-    </nav>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-    <div class="sidebar">
-        <div class="mb-4"><small class="text-muted text-uppercase">Management</small></div>
-        <a th:href="@{/dashboard}" class="sidebar-link"><i class="fas fa-chart-pie"></i> Dashboard</a>
-        <a th:href="@{/lab/patients}" class="sidebar-link"><i class="fas fa-user-injured"></i> Patients & EMR</a>
-        <a th:href="@{/lab/appointments}" class="sidebar-link"><i class="fas fa-calendar-plus"></i> Book Appointment</a>
-        <a th:href="@{/admin/appointment-dashboard}" class="sidebar-link active"><i class="fas fa-list-ul"></i> Today's
-            Queue</a>
-        <hr style="border-color: var(--border-color);">
-        <a th:href="@{/admin/schedules}" class="sidebar-link"><i class="fas fa-calendar-alt"></i> Doctor Schedules</a>
-        <hr style="border-color: var(--border-color);">
-        <div class="mb-4"><small class="text-muted text-uppercase">Revenue & Billing</small></div>
-        <a th:href="@{/admin/billing}" class="sidebar-link"><i class="fas fa-file-invoice-dollar"></i> Patient
-            Billing</a>
-        <a th:href="@{/masters/charges}" class="sidebar-link"><i class="fas fa-list-check"></i> Charge Master</a>
-    </div>
+    <div th:replace="~{fragments/sidebar :: sidebar('queue')}"></div>
 
     <div class="main-content">
         <div class="d-flex justify-content-between align-items-center mb-4">

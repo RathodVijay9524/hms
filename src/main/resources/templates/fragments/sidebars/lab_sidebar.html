@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head></head>
+
+<body>
+    <div th:fragment="lab_sidebar(activeLink)" class="sidebar">
+        <!-- Lab Header -->
+        <div class="mb-4 px-2">
+            <div class="d-flex align-items-center mb-3">
+                <div class="flex-shrink-0 bg-amber-500/10 text-amber-500 rounded-3 p-2 me-3">
+                    <i class="fas fa-microscope fs-5"></i>
+                </div>
+                <div>
+                    <small class="text-muted text-uppercase fw-bold d-block"
+                        style="font-size: 0.65rem; letter-spacing: 0.05em;">Workspace</small>
+                    <span class="fw-bold" style="font-family: 'Outfit';">Laboratory</span>
+                </div>
+            </div>
+            <hr style="border-color: var(--border-color); opacity: 0.1; margin: 0 -1rem;">
+        </div>
+
+        <!-- Main Navigation -->
+        <div class="px-2">
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.7rem; letter-spacing: 0.05em;">Main Menu</small></div>
+
+            <a th:href="@{/lab/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'lab-dash' ? 'active' : ''}">
+                <i class="fas fa-chart-pie"></i>
+                <span>Lab Dashboard</span>
+            </a>
+
+            <a th:href="@{/lab/orders}" class="sidebar-link" th:classappend="${activeLink == 'orders' ? 'active' : ''}">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Lab Orders</span>
+            </a>
+
+            <a th:href="@{/lab/tests}" class="sidebar-link" th:classappend="${activeLink == 'tests' ? 'active' : ''}">
+                <i class="fas fa-flask"></i>
+                <span>Test Catalog</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.7rem; letter-spacing: 0.05em;">Clinical Ops</small></div>
+
+            <a th:href="@{/lab/patients}" class="sidebar-link"
+                th:classappend="${activeLink == 'patients' ? 'active' : ''}">
+                <i class="fas fa-user-injured"></i>
+                <span>Patient EMR</span>
+            </a>
+
+            <a th:href="@{/lab/appointments}" class="sidebar-link"
+                th:classappend="${activeLink == 'lab-appointments' ? 'active' : ''}">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Appointments</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.7rem; letter-spacing: 0.05em;">System</small></div>
+
+            <a th:href="@{/select-role}" class="sidebar-link"
+                sec:authorize="hasRole('ADMIN') or principal.authorities.size() > 1">
+                <i class="fas fa-th-large"></i>
+                <span>Switch Portal</span>
+            </a>
+
+            <a href="#" class="sidebar-link">
+                <i class="fas fa-cog"></i>
+                <span>Lab Settings</span>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Dashboard - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .main-content {
+            padding: 2rem;
+            margin-top: 56px;
+        }
+
+        .section-title {
+            font-family: 'Outfit';
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .stat-icon.amber {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .stat-icon.green {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .stat-icon.blue {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .stat-value {
+            font-family: 'Outfit';
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .badge-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-ORDERED {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .status-SAMPLE_COLLECTED {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .status-VERIFIED {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/sidebars/lab_sidebar :: lab_sidebar('lab-dash')}"></div>
+
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="section-title mb-0">Laboratory Operations</h1>
+            <div class="d-flex gap-2">
+                <a th:href="@{/lab/orders}" class="btn btn-primary">
+                    <i class="fas fa-list me-2"></i> View All Orders
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-bold mb-1">Pending Processing</div>
+                            <div class="stat-value" th:text="${pendingOrders}">0</div>
+                        </div>
+                        <div class="stat-icon amber"><i class="fas fa-microscope"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-bold mb-1">Reports Ready Today</div>
+                            <div class="stat-value" th:text="${reportsReady}">0</div>
+                        </div>
+                        <div class="stat-icon green"><i class="fas fa-file-circle-check"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-bold mb-1">Recent Activities</div>
+                            <div class="stat-value">Active</div>
+                        </div>
+                        <div class="stat-icon blue"><i class="fas fa-pulse"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Recent Orders -->
+            <div class="col-lg-8">
+                <div class="stat-card h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0 fw-bold">Recent Lab Orders</h5>
+                        <a th:href="@{/lab/orders}" class="btn btn-sm btn-link text-decoration-none p-0">Manage
+                            Orders</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr class="text-muted small text-uppercase">
+                                    <th>Order #</th>
+                                    <th>Patient</th>
+                                    <th>Tests</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="order : ${recentOrders}">
+                                    <td class="fw-bold" th:text="${order.orderNumber}">#ORD-001</td>
+                                    <td>
+                                        <div th:text="${order.patientName}">Patient Name</div>
+                                    </td>
+                                    <td>
+                                        <div class="small" th:each="test, iter : ${order.tests}"
+                                            th:text="${test.name} + ${!iter.last ? ', ' : ''}">Test Name</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge-status" th:if="${order.status != null}"
+                                            th:classappend="'status-' + ${order.status}"
+                                            th:text="${order.status.toString().replace('_', ' ')}">ORDERED</span>
+                                        <span class="badge-status status-ORDERED"
+                                            th:if="${order.status == null}">PENDING</span>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/lab/orders}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(recentOrders)}">
+                                    <td colspan="5" class="text-center text-muted py-4">No recent orders found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lab Utilities -->
+            <div class="col-lg-4">
+                <div class="stat-card mb-4">
+                    <h5 class="fw-bold mb-3">Lab Utilities</h5>
+                    <div class="d-grid gap-3">
+                        <a th:href="@{/lab/tests}"
+                            class="btn btn-outline-secondary text-start p-3 d-flex align-items-center">
+                            <i class="fas fa-flask fs-4 me-3 text-primary"></i>
+                            <div>
+                                <div class="fw-bold">Test Catalog</div>
+                                <div class="extra-small text-muted">Manage available tests and parameters</div>
+                            </div>
+                        </a>
+                        <a th:href="@{/lab/patients}"
+                            class="btn btn-outline-secondary text-start p-3 d-flex align-items-center">
+                            <i class="fas fa-user-injured fs-4 me-3 text-success"></i>
+                            <div>
+                                <div class="fw-bold">Patient Records</div>
+                                <div class="extra-small text-muted">Search patients and view EMR</div>
+                            </div>
+                        </a>
+                        <a href="#"
+                            class="btn btn-outline-secondary text-start p-3 d-flex align-items-center opacity-75">
+                            <i class="fas fa-vial-circle-check fs-4 me-3 text-warning"></i>
+                            <div>
+                                <div class="fw-bold">QA Controls</div>
+                                <div class="extra-small text-muted">Monitor lab quality metrics (Soon)</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

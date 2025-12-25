@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head></head>
+
+<body>
+    <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <div class="container-fluid px-4">
+            <button class="btn btn-link me-3 d-lg-none" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a class="navbar-brand" th:href="@{/}"><i class="fas fa-flask-vial me-2"></i>MedLab Pro</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item me-2" sec:authorize="hasRole('ROLE_ADMIN') or principal.authorities.size() > 1">
+                        <a class="nav-link" th:href="@{/select-role}" title="Switch Portal">
+                            <i class="fas fa-th-large me-1"></i> Portals
+                        </a>
+                    </li>
+                    <li class="nav-item me-2">
+                        <button class="theme-toggle" title="Toggle Theme">
+                            <i class="fas fa-sun icon-sun"></i>
+                            <i class="fas fa-moon icon-moon" style="display:none;"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/logout}">
+                            <i class="fas fa-sign-out-alt me-1"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</body>
+
+</html>

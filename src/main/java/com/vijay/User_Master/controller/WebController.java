@@ -14,10 +14,19 @@ public class WebController {
     private final com.vijay.User_Master.service.LabOrderService labOrderService;
     private final com.vijay.User_Master.service.DepartmentService departmentService;
     private final com.vijay.User_Master.service.DoctorProfileService doctorProfileService;
+    private final com.vijay.User_Master.service.BillingService billingService;
+    private final com.vijay.User_Master.service.UserService userService;
 
     @GetMapping("/login")
     public String login() {
         return "login";
+    }
+
+    @GetMapping("/select-role")
+    public String selectRole(Model model) {
+        com.vijay.User_Master.config.security.CustomUserDetails user = com.vijay.User_Master.Helper.CommonUtils.getLoggedInUser();
+        model.addAttribute("userName", user.getName());
+        return "select-role";
     }
 
     @GetMapping("/register")
@@ -53,12 +62,141 @@ public class WebController {
     // Dashboard
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
+        // Legacy fallback - ideally we redirect from here too if needed
+        populateCommonDashboardStats(model);
+        return "dashboard";
+    }
+
+    @GetMapping("/admin/dashboard")
+    public String adminDashboard(Model model) {
+        populateCommonDashboardStats(model);
+        return "admin/dashboard";
+    }
+
+    @GetMapping("/lab/dashboard")
+    public String labDashboard(Model model) {
+        model.addAttribute("pendingOrders", labOrderService.getPendingOrderCount());
+        model.addAttribute("reportsReady", labOrderService.getReportsReadyCount());
+        model.addAttribute("recentOrders", labOrderService.getRecentOrders(10));
+        return "lab/dashboard";
+    }
+
+    @GetMapping("/doctor/dashboard")
+    public String doctorDashboard(Model model) {
+        // Placeholder clinical stats
+        model.addAttribute("todayAppointments", 0);
+        model.addAttribute("pendingReports", 0);
+        model.addAttribute("criticalAlerts", 0);
+        return "doctor/dashboard";
+    }
+
+    @GetMapping("/doctor/appointments")
+    public String doctorAppointments() {
+        return "doctor/appointments";
+    }
+
+    @GetMapping("/doctor/patients")
+    public String doctorPatients() {
+        return "doctor/patients";
+    }
+
+    @GetMapping("/doctor/prescriptions")
+    public String doctorPrescriptions() {
+        return "doctor/prescriptions";
+    }
+
+    @GetMapping("/reception/dashboard")
+    public String receptionDashboard() {
+        return "reception/dashboard";
+    }
+
+    @GetMapping("/patient/dashboard")
+    public String patientDashboard(Model model) {
+        model.addAttribute("totalPatients", patientService.getPatientCount());
+        // Placeholder for daily stats
+        model.addAttribute("newPatientsToday", 0);
+        model.addAttribute("pendingAppointments", 0);
+        return "patient/dashboard";
+    }
+
+    @GetMapping("/patient/list")
+    public String patientList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
+        model.addAttribute("patientsPage", patientService.getAllPatients(page, size));
+        return "patient/list";
+    }
+
+    @GetMapping("/patient/register")
+    public String patientRegister() {
+        return "patient/register";
+    }
+
+    @GetMapping("/patient/emr-dashboard")
+    public String patientEmrDashboard() {
+        return "patient/emr-dashboard";
+    }
+
+    @GetMapping("/patient/appointments")
+    public String patientAppointments() {
+        return "patient/appointments";
+    }
+
+    @GetMapping("/patient/details/{id}")
+    public String patientFullDetails(@org.springframework.web.bind.annotation.PathVariable Long id, Model model) {
+        model.addAttribute("patient", patientService.getPatientById(id));
+        return "patient/details";
+    }
+
+    @GetMapping("/owner/dashboard")
+    public String ownerDashboard(Model model) {
+        // Populate owner-specific stats
+        model.addAttribute("activeStaff", 0); // Placeholder
+        model.addAttribute("todayAppointments", 0); // Placeholder
+        model.addAttribute("todayRevenue", 0.0); // Placeholder
+        model.addAttribute("pendingDues", 0.0); // Placeholder
+        model.addAttribute("staffOnDuty", java.util.Collections.emptyList()); // Placeholder
+        return "owner/dashboard";
+    }
+
+    @GetMapping("/pharmacy/dashboard")
+    public String pharmacyDashboard(Model model) {
+        // Placeholder stats for Pharmacy
+        model.addAttribute("pendingPrescriptions", 0);
+        model.addAttribute("lowStockCount", 0);
+        model.addAttribute("todayDispensed", 0);
+        model.addAttribute("expiringCount", 0);
+        model.addAttribute("activePrescriptions", java.util.Collections.emptyList());
+        model.addAttribute("watchlist", java.util.Collections.emptyList());
+        return "pharmacy/dashboard";
+    }
+
+    @GetMapping("/nurse/dashboard")
+    public String nurseDashboard(Model model) {
+        // Placeholder stats for Nurse
+        model.addAttribute("activePatients", 0);
+        model.addAttribute("dueMedications", 0);
+        model.addAttribute("pendingVitals", 0);
+        model.addAttribute("criticalAlerts", 0);
+        model.addAttribute("medSchedule", java.util.Collections.emptyList());
+        model.addAttribute("patientWatchlist", java.util.Collections.emptyList());
+        return "nurse/dashboard";
+    }
+
+    @GetMapping("/billing/dashboard")
+    public String billingDashboard(Model model) {
+        model.addAttribute("stats", billingService.getBillingStats());
+        model.addAttribute("recentBills", billingService.getAllBills().stream().limit(5).collect(java.util.stream.Collectors.toList()));
+        return "billing/dashboard";
+    }
+
+    private void populateCommonDashboardStats(Model model) {
         model.addAttribute("totalPatients", patientService.getPatientCount());
         model.addAttribute("totalTests", labTestService.getLabTestCount());
         model.addAttribute("pendingOrders", labOrderService.getPendingOrderCount());
         model.addAttribute("reportsReadyCount", labOrderService.getReportsReadyCount());
         model.addAttribute("recentOrders", labOrderService.getRecentOrders(5));
-        return "dashboard";
     }
 
     // Lab Management Pages

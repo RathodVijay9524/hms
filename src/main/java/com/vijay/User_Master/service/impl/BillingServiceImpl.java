@@ -94,7 +94,10 @@ public class BillingServiceImpl implements BillingService {
 
         // Generate Bill Number
         String dateStr = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        long count = billRepository.countByCreatedOnBetween(LocalDateTime.now().withHour(0).withMinute(0), LocalDateTime.now().withHour(23).withMinute(59)) + 1;
+        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+        
+        long count = billRepository.countByOwnerIdAndCreatedOnBetween(getOwnerId(), startOfDay, endOfDay) + 1;
         String billNumber = String.format("INV-%s-%03d", dateStr, count);
 
         Bill bill = Bill.builder()
@@ -200,6 +203,25 @@ public class BillingServiceImpl implements BillingService {
         // Logical restoration of any slots/resources if needed
         
         return convertToResponse(billRepository.save(bill));
+    }
+
+    @Override
+    public BillingStatsDto getBillingStats() {
+        Long ownerId = getOwnerId();
+        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+
+        Double revenue = billRepository.sumTotalRevenue(ownerId);
+        Double collected = billRepository.sumTotalCollected(ownerId);
+        Double dues = billRepository.sumPendingDues(ownerId);
+
+        return BillingStatsDto.builder()
+                .totalRevenue(revenue != null ? revenue : 0.0)
+                .totalCollected(collected != null ? collected : 0.0)
+                .pendingDues(dues != null ? dues : 0.0)
+                .billsToday(billRepository.countByOwnerIdAndCreatedOnBetween(ownerId, startOfDay, endOfDay))
+                .partialPaymentsCount(billRepository.countByOwnerIdAndStatus(ownerId, Bill.BillStatus.PARTIALLY_PAID))
+                .build();
     }
 
     // --- Helpers ---

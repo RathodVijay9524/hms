@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head></head>
+
+<body>
+    <div th:fragment="patient_sidebar(activeLink)" class="sidebar">
+        <!-- Patient Module VERSION-2.0 -->
+        <div class="mb-4 px-2">
+            <div class="d-flex align-items-center mb-3">
+                <div class="flex-shrink-0 bg-info-subtle text-info rounded-3 p-2 me-3">
+                    <i class="fas fa-user-injured fs-5"></i>
+                </div>
+                <div>
+                    <small class="text-muted text-uppercase fw-bold d-block"
+                        style="font-size: 0.65rem; letter-spacing: 0.05em;">Healthcare Portal</small>
+                    <span class="fw-bold" style="font-family: 'Outfit'; color: var(--secondary-color);">Patient
+                        Mgmt</span>
+                </div>
+            </div>
+            <hr style="border-color: var(--border-color); opacity: 0.1; margin: 0 -1rem;">
+        </div>
+
+        <!-- Main Navigation -->
+        <div class="px-2">
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.7rem; letter-spacing: 0.05em;">Main Menu</small></div>
+
+            <a th:href="@{/patient/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'patient-dash' ? 'active' : ''}">
+                <i class="fas fa-th-large"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a th:href="@{/patient/list}" class="sidebar-link"
+                th:classappend="${activeLink == 'patient-list' ? 'active' : ''}">
+                <i class="fas fa-users"></i>
+                <span>Patient Directory</span>
+            </a>
+
+            <a th:href="@{/patient/register}" class="sidebar-link"
+                th:classappend="${activeLink == 'patient-reg' ? 'active' : ''}">
+                <i class="fas fa-user-plus"></i>
+                <span>Register Patient</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.7rem; letter-spacing: 0.05em;">EMR & Analytics</small></div>
+
+            <a th:href="@{/patient/emr-dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'patient-emr' ? 'active' : ''}">
+                <i class="fas fa-file-medical-alt"></i>
+                <span>EMR Dashboard</span>
+            </a>
+
+            <a th:href="@{/patient/appointments}" class="sidebar-link"
+                th:classappend="${activeLink == 'patient-app' ? 'active' : ''}">
+                <i class="fas fa-calendar-check"></i>
+                <span>Appointments</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.7rem; letter-spacing: 0.05em;">System</small></div>
+
+            <a th:href="@{/select-role}" class="sidebar-link">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Switch Portal</span>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

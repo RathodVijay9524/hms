@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Dashboard - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            margin-top: 56px;
+        }
+
+        .section-title {
+            font-family: 'Outfit';
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .pharmacy-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            height: 100%;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon.emerald {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .stat-icon.blue {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .stat-icon.rose {
+            background: rgba(244, 63, 94, 0.1);
+            color: #f43f5e;
+        }
+
+        .stat-icon.amber {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .inventory-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .low-stock {
+            border-left: 4px solid #f43f5e;
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar('pharmacy-dash')}"></div>
+
+    <div class="main-content">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="section-title mb-1">Pharmacy Operations</h1>
+                <p class="text-muted mb-0">Inventory management and prescription fulfillment center</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-primary"><i class="fas fa-barcode me-2"></i>Scan SKU</button>
+                <button class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add Inventory</button>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="pharmacy-card">
+                    <div class="stat-icon blue"><i class="fas fa-file-prescription"></i></div>
+                    <div class="small text-muted text-uppercase fw-bold">Pending Prescriptions</div>
+                    <div class="h3 fw-bold mb-0" th:text="${pendingPrescriptions ?: 0}">8</div>
+                    <div class="small text-blue mt-1"><i class="fas fa-clock me-1"></i>3 Urgent cases</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="pharmacy-card">
+                    <div class="stat-icon rose"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="small text-muted text-uppercase fw-bold">Low Stock Alerts</div>
+                    <div class="h3 fw-bold mb-0" th:text="${lowStockCount ?: 0}">12</div>
+                    <div class="small text-rose mt-1"><i class="fas fa-redo me-1"></i>Needs reordering</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="pharmacy-card">
+                    <div class="stat-icon emerald"><i class="fas fa-check-double"></i></div>
+                    <div class="small text-muted text-uppercase fw-bold">Today Dispensed</div>
+                    <div class="h3 fw-bold mb-0" th:text="${todayDispensed ?: 0}">45</div>
+                    <div class="small text-emerald mt-1"><i class="fas fa-arrow-up me-1"></i>12% more than yesterday
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="pharmacy-card">
+                    <div class="stat-icon amber"><i class="fas fa-hourglass-half"></i></div>
+                    <div class="small text-muted text-uppercase fw-bold">Expiring Soon (30d)</div>
+                    <div class="h3 fw-bold mb-0" th:text="${expiringCount ?: 0}">4</div>
+                    <div class="small text-amber mt-1"><i class="fas fa-calendar-times me-1"></i>Action required</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Recent Prescriptions Feed -->
+            <div class="col-lg-8">
+                <div class="pharmacy-card">
+                    <h5 class="fw-bold mb-4">Live Prescription Feed</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr class="text-muted small text-uppercase">
+                                    <th>Patient</th>
+                                    <th>Doctor</th>
+                                    <th>Medications</th>
+                                    <th>Priority</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="p : ${activePrescriptions}">
+                                    <td>
+                                        <div class="fw-bold" th:text="${p.patientName}">Patient Name</div>
+                                        <div class="small text-muted" th:text="${p.uhid}">UHID-123</div>
+                                    </td>
+                                    <td th:text="${p.doctorName}">Dr. Smith</td>
+                                    <td>
+                                        <span class="badge bg-secondary" th:text="${p.medCount + ' Items'}">3
+                                            Items</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge" th:classappend="${p.urgent ? 'bg-danger' : 'bg-info'}"
+                                            th:text="${p.urgent ? 'URGENT' : 'Normal'}">Normal</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary">Process</button>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(activePrescriptions)}">
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        <i class="fas fa-receipt d-block mb-3 opacity-20" style="font-size: 3rem;"></i>
+                                        No pending prescriptions found
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Watchlist -->
+            <div class="col-lg-4">
+                <div class="pharmacy-card">
+                    <h5 class="fw-bold mb-4">Inventory Watchlist</h5>
+                    <div class="inventory-list px-2">
+                        <div th:each="item : ${watchlist}" class="p-3 mb-3 border rounded-3"
+                            th:classappend="${item.stock < item.minStock ? 'low-stock' : ''}">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="fw-bold" th:text="${item.name}">Paracetamol 500mg</div>
+                                <span class="badge bg-secondary" th:text="${item.stock + ' units'}">120 units</span>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar"
+                                    th:classappend="${item.stock < item.minStock ? 'bg-danger' : 'bg-success'}"
+                                    role="progressbar" th:style="'width: ' + ${item.stockPercent} + '%'"></div>
+                            </div>
+                        </div>
+                        <div th:if="${#lists.isEmpty(watchlist)}" class="text-center py-4 text-muted small">
+                            All stock levels optimal
+                        </div>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary w-100 mt-3">Advanced Inventory Hub</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

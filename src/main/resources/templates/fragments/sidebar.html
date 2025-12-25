@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head></head>
+
+<body>
+    <div th:fragment="sidebar(activeLink)" class="sidebar">
+        <!-- Hospital Owner Section -->
+        <div sec:authorize="hasAnyRole('OWNER', 'ADMIN')">
+            <div class="mb-4"><small class="text-muted text-uppercase">Owner Portal</small></div>
+            <a th:href="@{/owner/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'owner-dash' ? 'active' : ''}">
+                <i class="fas fa-hospital"></i> Branch Overview
+            </a>
+            <a th:href="@{/admin/workers}" class="sidebar-link"
+                th:classappend="${activeLink == 'workers' ? 'active' : ''}">
+                <i class="fas fa-user-nurse"></i> Staff Management
+            </a>
+            <a th:href="@{/admin/appointment-dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'queue' ? 'active' : ''}">
+                <i class="fas fa-calendar-check"></i> Appointments
+            </a>
+            <a th:href="@{/billing/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'billing-dash' ? 'active' : ''}">
+                <i class="fas fa-chart-line"></i> Financial Reports
+            </a>
+            <hr style="border-color: var(--border-color);">
+        </div>
+
+        <!-- Admin Section -->
+        <div sec:authorize="hasRole('ADMIN')">
+            <div class="mb-4"><small class="text-muted text-uppercase">Admin Portal</small></div>
+            <a th:href="@{/admin/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'admin-dash' ? 'active' : ''}">
+                <i class="fas fa-chart-line"></i> Admin Dashboard
+            </a>
+            <a th:href="@{/admin/workers}" class="sidebar-link"
+                th:classappend="${activeLink == 'workers' ? 'active' : ''}">
+                <i class="fas fa-users-cog"></i> User Management
+            </a>
+            <a th:href="@{/masters/departments}" class="sidebar-link"
+                th:classappend="${activeLink == 'depts' ? 'active' : ''}">
+                <i class="fas fa-building"></i> Departments
+            </a>
+            <a th:href="@{/masters/doctors}" class="sidebar-link"
+                th:classappend="${activeLink == 'docs' ? 'active' : ''}">
+                <i class="fas fa-user-md"></i> Doctor Profiles
+            </a>
+            <a th:href="@{/admin/schedules}" class="sidebar-link"
+                th:classappend="${activeLink == 'schedules' ? 'active' : ''}">
+                <i class="fas fa-calendar-alt"></i> Doctor Schedules
+            </a>
+            <hr style="border-color: var(--border-color);">
+        </div>
+
+        <!-- Doctor Section -->
+        <div sec:authorize="hasAnyRole('DOCTOR', 'ADMIN')">
+            <div class="mb-4"><small class="text-muted text-uppercase">Doctor Portal</small></div>
+            <a th:href="@{/doctor/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'doc-dash' ? 'active' : ''}">
+                <i class="fas fa-user-md"></i> My Dashboard
+            </a>
+            <a th:href="@{/lab/patients}" class="sidebar-link"
+                th:classappend="${activeLink == 'patients' ? 'active' : ''}">
+                <i class="fas fa-user-injured"></i> Patient Records (EMR)
+            </a>
+            <hr style="border-color: var(--border-color);">
+        </div>
+
+        <!-- Reception Section -->
+        <div sec:authorize="hasAnyRole('RECEPTIONIST', 'ADMIN')">
+            <div class="mb-4"><small class="text-muted text-uppercase">Reception Desk</small></div>
+            <a th:href="@{/reception/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'rec-dash' ? 'active' : ''}">
+                <i class="fas fa-desktop"></i> Front Desk
+            </a>
+            <a th:href="@{/lab/appointments}" class="sidebar-link"
+                th:classappend="${activeLink == 'book-appt' ? 'active' : ''}">
+                <i class="fas fa-calendar-plus"></i> Book Appointment
+            </a>
+            <a th:href="@{/admin/appointment-dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'queue' ? 'active' : ''}">
+                <i class="fas fa-list-ul"></i> Today's Queue
+            </a>
+            <hr style="border-color: var(--border-color);">
+        </div>
+
+        <!-- Lab Section -->
+        <div sec:authorize="hasAnyRole('LAB_TECHNICIAN', 'ADMIN', 'DOCTOR')">
+            <div class="mb-4"><small class="text-muted text-uppercase">Laboratory</small></div>
+            <a th:href="@{/lab/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'lab-dash' ? 'active' : ''}">
+                <i class="fas fa-microscope"></i> Lab Dashboard
+            </a>
+            <a th:href="@{/lab/orders}" class="sidebar-link" th:classappend="${activeLink == 'orders' ? 'active' : ''}">
+                <i class="fas fa-clipboard-list"></i> Lab Orders
+            </a>
+            <a th:href="@{/lab/tests}" class="sidebar-link" th:classappend="${activeLink == 'tests' ? 'active' : ''}">
+                <i class="fas fa-flask"></i> Test Catalog
+            </a>
+            <hr style="border-color: var(--border-color);">
+        </div>
+
+        <!-- Pharmacy Section -->
+        <div sec:authorize="hasAnyRole('PHARMACIST', 'ADMIN')">
+            <div class="mb-4"><small class="text-muted text-uppercase">Pharmacy Hub</small></div>
+            <a th:href="@{/pharmacy/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'pharmacy-dash' ? 'active' : ''}">
+                <i class="fas fa-pills"></i> Pharmacy Dashboard
+            </a>
+            <a href="#" class="sidebar-link">
+                <i class="fas fa-boxes-stacked"></i> Inventory Mgmt
+            </a>
+            <a href="#" class="sidebar-link">
+                <i class="fas fa-file-prescription"></i> Prescriptions
+            </a>
+            <hr style="border-color: var(--border-color);">
+        </div>
+
+        <!-- Nurse Section -->
+        <div sec:authorize="hasAnyRole('NURSE', 'ADMIN')">
+            <div class="mb-4"><small class="text-muted text-uppercase">Nursing Station</small></div>
+            <a th:href="@{/nurse/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'nurse-dash' ? 'active' : ''}">
+                <i class="fas fa-user-nurse"></i> Nurse Dashboard
+            </a>
+            <a href="#" class="sidebar-link">
+                <i class="fas fa-heartbeat"></i> Vitals tracking
+            </a>
+            <a href="#" class="sidebar-link">
+                <i class="fas fa-tasks"></i> Ward Tasks
+            </a>
+            <hr style="border-color: var(--border-color);">
+        </div>
+
+        <!-- Revenue & Billing Section -->
+        <div sec:authorize="hasAnyRole('BILLING', 'ACCOUNTANT', 'ADMIN')">
+            <div class="mb-4"><small class="text-muted text-uppercase">Finance</small></div>
+            <a th:href="@{/billing/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'billing-dash' ? 'active' : ''}">
+                <i class="fas fa-chart-pie"></i> Revenue Dashboard
+            </a>
+            <a th:href="@{/admin/billing}" class="sidebar-link"
+                th:classappend="${activeLink == 'billing' ? 'active' : ''}">
+                <i class="fas fa-file-invoice-dollar"></i> Patient Billing
+            </a>
+            <a th:href="@{/masters/charges}" class="sidebar-link"
+                th:classappend="${activeLink == 'charges' ? 'active' : ''}">
+                <i class="fas fa-list-check"></i> Charge Master
+            </a>
+            <hr style="border-color: var(--border-color);">
+        </div>
+
+        <!-- Patient Section -->
+        <div sec:authorize="hasAnyRole('PATIENT', 'ADMIN')">
+            <div class="mb-4"><small class="text-muted text-uppercase">Patient Portal</small></div>
+            <a th:href="@{/patient/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'patient-dash' ? 'active' : ''}">
+                <i class="fas fa-user"></i> My Dashboard
+            </a>
+            <a th:href="@{/patient/appointments}" class="sidebar-link"
+                th:classappend="${activeLink == 'my-appts' ? 'active' : ''}">
+                <i class="fas fa-calendar-alt"></i> My Appointments
+            </a>
+            <a th:href="@{/patient/records}" class="sidebar-link"
+                th:classappend="${activeLink == 'my-records' ? 'active' : ''}">
+                <i class="fas fa-file-medical"></i> My Medical Records
+            </a>
+            <hr style="border-color: var(--border-color);">
+        </div>
+
+        <!-- General Links -->
+        <a th:href="@{/dashboard}" class="sidebar-link" th:classappend="${activeLink == 'dashboard' ? 'active' : ''}"
+            sec:authorize="hasRole('ADMIN')">
+            <i class="fas fa-chart-pie"></i> Master Stats
+        </a>
+        <a href="#" class="sidebar-link">
+            <i class="fas fa-cog"></i> Settings
+        </a>
+    </div>
+</body>
+
+</html>

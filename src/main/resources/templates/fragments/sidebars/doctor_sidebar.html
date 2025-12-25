@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head></head>
+
+<body>
+    <div th:fragment="doctor_sidebar(activeLink)" class="sidebar">
+        <!-- Doctor Module Profile -->
+        <div class="mb-4 px-2">
+            <div class="d-flex align-items-center mb-3">
+                <div class="flex-shrink-0 bg-indigo-subtle text-indigo-500 rounded-3 p-2 me-3"
+                    style="background: rgba(99, 102, 241, 0.1); color: #6366f1;">
+                    <i class="fas fa-user-md fs-5"></i>
+                </div>
+                <div>
+                    <small class="text-muted text-uppercase fw-bold d-block"
+                        style="font-size: 0.65rem; letter-spacing: 0.05em;">Duty Portal</small>
+                    <span class="fw-bold" style="font-family: 'Outfit'; color: #6366f1;">Clinical Care</span>
+                </div>
+            </div>
+            <hr style="border-color: var(--border-color); opacity: 0.1; margin: 0 -1rem;">
+        </div>
+
+        <!-- Main Workspace -->
+        <div class="px-2">
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.7rem; letter-spacing: 0.05em;">Clinical Desktop</small></div>
+
+            <a th:href="@{/doctor/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'doc-dash' ? 'active' : ''}">
+                <i class="fas fa-columns"></i>
+                <span>My Dashboard</span>
+            </a>
+
+            <a th:href="@{/doctor/appointments}" class="sidebar-link"
+                th:classappend="${activeLink == 'doc-app' ? 'active' : ''}">
+                <i class="fas fa-calendar-alt"></i>
+                <span>My Schedule</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.7rem; letter-spacing: 0.05em;">Patient Care</small></div>
+
+            <a th:href="@{/doctor/patients}" class="sidebar-link"
+                th:classappend="${activeLink == 'doc-patients' ? 'active' : ''}">
+                <i class="fas fa-users-medical"></i>
+                <span>Assigned Patients</span>
+            </a>
+
+            <a th:href="@{/doctor/prescriptions}" class="sidebar-link"
+                th:classappend="${activeLink == 'doc-presc' ? 'active' : ''}">
+                <i class="fas fa-prescription-bottle-medical"></i>
+                <span>Prescriptions</span>
+            </a>
+
+            <a th:href="@{/lab/orders}" class="sidebar-link"
+                th:classappend="${activeLink == 'doc-labs' ? 'active' : ''}">
+                <i class="fas fa-flask-vial"></i>
+                <span>Lab Orders</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.7rem; letter-spacing: 0.05em;">System</small></div>
+
+            <a th:href="@{/select-role}" class="sidebar-link">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Switch Portal</span>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

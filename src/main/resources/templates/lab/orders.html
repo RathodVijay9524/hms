@@ -21,81 +21,6 @@
     </script>
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #0f172a;
-            color: #f8fafc;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            transition: all 0.3s;
-        }
-
-        .navbar-custom {
-            background: var(--navbar-bg);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
-            transition: all 0.3s;
-        }
-
-        .navbar-brand {
-            font-family: 'Outfit', sans-serif;
-            font-weight: 700;
-            font-size: 1.5rem;
-            background: var(--gradient-primary);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .nav-link {
-            color: var(--text-muted) !important;
-            font-weight: 500;
-        }
-
-        .nav-link:hover {
-            color: var(--text-primary) !important;
-        }
-
-        .sidebar {
-            background: var(--bg-secondary);
-            min-height: calc(100vh - 56px);
-            border-right: 1px solid var(--border-color);
-            padding: 1.5rem 1rem;
-            position: fixed;
-            width: 250px;
-            top: 56px;
-            transition: all 0.3s;
-        }
-
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            color: var(--text-muted);
-            text-decoration: none;
-            border-radius: 0.5rem;
-            margin-bottom: 0.25rem;
-            transition: all 0.3s;
-        }
-
-        .sidebar-link:hover,
-        .sidebar-link.active {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--primary-color);
-        }
-
-        .sidebar-link i {
-            width: 24px;
-            margin-right: 12px;
-        }
-
-        .main-content {
-            margin-left: 250px;
-            padding: 2rem;
-            margin-top: 56px;
-        }
-
         .page-header {
             display: flex;
             justify-content: space-between;
@@ -296,77 +221,13 @@
             color: var(--text-primary);
             box-shadow: none;
         }
-
-        .theme-toggle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid var(--border-color);
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .theme-toggle:hover {
-            background: var(--bg-hover);
-            border-color: var(--primary-color);
-        }
-
-        @media (max-width: 992px) {
-            .sidebar {
-                display: none;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-        }
     </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
-        <div class="container-fluid px-4">
-            <button class="btn btn-link me-3 d-lg-none" id="sidebarToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-            <a class="navbar-brand" th:href="@{/}"><i class="fas fa-flask-vial me-2"></i>MedLab Pro</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span
-                    class="navbar-toggler-icon"></span></button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item me-2">
-                        <button class="theme-toggle" title="Toggle Theme">
-                            <i class="fas fa-sun icon-sun"></i><i class="fas fa-moon icon-moon"
-                                style="display:none;"></i>
-                        </button>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/logout}"><i
-                                class="fas fa-sign-out-alt me-1"></i> Logout</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-    <div class="sidebar">
-        <div class="mb-4"><small class="text-muted text-uppercase">Main Menu</small></div>
-        <a th:href="@{/dashboard}" class="sidebar-link"><i class="fas fa-chart-pie"></i> Dashboard</a>
-        <a th:href="@{/lab/tests}" class="sidebar-link"><i class="fas fa-flask"></i> Lab Tests</a>
-        <a th:href="@{/lab/patients}" class="sidebar-link"><i class="fas fa-user-injured"></i> Patients</a>
-        <a th:href="@{/lab/orders}" class="sidebar-link active"><i class="fas fa-clipboard-list"></i> Lab Orders</a>
-        <hr style="border-color: var(--border-color);">
-        <div class="mb-4"><small class="text-muted text-uppercase">Revenue & Billing</small></div>
-        <a th:href="@{/admin/billing}" class="sidebar-link"><i class="fas fa-file-invoice-dollar"></i> Patient
-            Billing</a>
-        <a th:href="@{/masters/charges}" class="sidebar-link"><i class="fas fa-list-check"></i> Charge Master</a>
-        <hr style="border-color: var(--border-color);">
-        <a href="#" class="sidebar-link"><i class="fas fa-cog"></i> Settings</a>
-    </div>
+    <div th:replace="~{fragments/sidebars/lab_sidebar :: lab_sidebar('orders')}"></div>
 
     <div class="main-content">
         <div class="page-header">
