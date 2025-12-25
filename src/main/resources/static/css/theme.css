@@ -239,3 +239,105 @@ body,
         justify-content: center;
     }
 }
+/* --- Portal-Specific Enhancements (Unified Theme v2.0) --- */
+
+/* Global Navbar */
+.navbar-custom {
+    background: var(--bg-secondary) !important;
+    border-bottom: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    z-index: 1050;
+}
+
+/* Sidebar Links */
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    color: var(--text-secondary);
+    text-decoration: none !important;
+    border-radius: 0.75rem;
+    margin-bottom: 0.4rem;
+    transition: all 0.2s ease;
+    gap: 12px;
+}
+
+.sidebar-link:hover {
+    background: var(--bg-tertiary);
+    color: var(--primary-color);
+}
+
+.sidebar-link.active {
+    background: var(--primary-color);
+    color: white !important;
+}
+
+/* Owner Executive Overrides (Gold) */
+.sidebar-owner .sidebar-link.active {
+    background: var(--warning) !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.sidebar-owner .sidebar-link.active i {
+    color: #0f172a !important;
+}
+
+/* Doctor Portal Overrides (Indigo) */
+.sidebar-doctor .sidebar-link.active {
+    background: #6366f1 !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4) !important;
+}
+
+.sidebar-doctor .sidebar-link.active i {
+    color: #ffffff !important;
+}
+
+.sidebar-doctor .sidebar-link:hover:not(.active) {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+/* Card Styling */
+.card-executive {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 1.25rem;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Dark Mode Specific Overrides for Contrast */
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+    background-color: var(--bg-tertiary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .form-label,
+[data-theme="dark"] .form-check-label,
+[data-theme="dark"] label {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .modal-content {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .table {
+    --bs-table-color: var(--text-primary);
+    --bs-table-bg: transparent;
+    --bs-table-border-color: var(--border-color);
+}
+
+/* Success/Warning Badges */
+.badge-gold {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--warning);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
