@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nurse Dashboard - MedLab Pro</title>
+    <title>Nursing Station - MedLab Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
@@ -18,36 +18,137 @@
         })();
     </script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
+        /* Nursing Station Pink Theme */
+        .nurse-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
         }
 
-        .main-content {
-            margin-left: 250px;
-            padding: 2rem;
-            margin-top: 56px;
+        .nurse-header::after {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
         }
 
-        .section-title {
-            font-family: 'Outfit';
-            font-weight: 700;
-            margin-bottom: 1.5rem;
+        .metric-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            padding: 1.75rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
-        .nurse-card {
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px -15px rgba(236, 72, 153, 0.3);
+            border-color: rgba(236, 72, 153, 0.3);
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #ec4899 0%, #f472b6 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .metric-card:hover::before {
+            opacity: 1;
+        }
+
+        .metric-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .urgent-badge {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .patient-row {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 1rem;
-            padding: 1.5rem;
-            height: 100%;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .patient-row:hover {
+            border-color: rgba(236, 72, 153, 0.4);
+            transform: translateX(5px);
+        }
+
+        .vitals-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .vitals-normal {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+
+        .vitals-warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+
+        .vitals-critical {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .task-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            overflow: hidden;
         }
 
         .task-item {
+            padding: 1rem 1.25rem;
             border-bottom: 1px solid var(--border-color);
-            padding: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
             transition: all 0.2s ease;
         }
 
@@ -56,162 +157,278 @@
         }
 
         .task-item:hover {
-            background: rgba(var(--primary-rgb), 0.05);
+            background: rgba(236, 72, 153, 0.05);
         }
 
-        .vitals-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
+        .task-time {
+            width: 60px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.85rem;
         }
 
-        @media (max-width: 992px) {
-            .main-content {
-                margin-left: 0;
-            }
+        .quick-action {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .quick-action:hover {
+            border-color: #ec4899;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px -10px rgba(236, 72, 153, 0.3);
+        }
+
+        .quick-action i {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            color: #ec4899;
+        }
+
+        .section-title {
+            font-family: 'Outfit';
+            font-weight: 700;
+        }
+
+        [data-theme="light"] .nurse-header {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         }
     </style>
 </head>
 
 <body>
+    <!-- Navbar -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
-    <div th:replace="~{fragments/sidebar :: sidebar('nurse-dash')}"></div>
 
-    <div class="main-content">
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h1 class="section-title mb-1">Nursing Station</h1>
-                <p class="text-muted mb-0">Patient vitals, medication administration, and ward tasks</p>
-            </div>
-            <div class="d-flex gap-2">
-                <button class="btn btn-outline-primary"><i class="fas fa-notes-medical me-2"></i>Shift Report</button>
-                <button class="btn btn-primary"><i class="fas fa-plus me-2"></i>Record Vitals</button>
-            </div>
-        </div>
+    <!-- Sidebar (Independent Nurse Sidebar) -->
+    <div th:replace="~{fragments/sidebars/nurse_sidebar :: nurse_sidebar('nurse-dash')}"></div>
 
-        <!-- Quick Metrics -->
-        <div class="row g-4 mb-4">
-            <div class="col-md-3">
-                <div class="nurse-card">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <div class="small text-muted text-uppercase fw-bold">Active Patients</div>
-                            <div class="h3 fw-bold mb-0" th:text="${activePatients ?: 0}">12</div>
-                        </div>
-                        <i class="fas fa-user-injured text-primary h4 opacity-50"></i>
-                    </div>
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Innovative Header -->
+            <div class="nurse-header d-flex justify-content-between align-items-center">
+                <div class="position-relative" style="z-index: 1;">
+                    <h1 class="fw-bold mb-2" style="font-family: 'Outfit';">Nursing Station</h1>
+                    <p class="mb-0 opacity-75">Patient vitals, medication administration, and ward task management.</p>
+                </div>
+                <div class="d-none d-md-flex gap-2" style="z-index: 1;">
+                    <button class="btn btn-outline-light px-4 rounded-pill">
+                        <i class="fas fa-file-medical me-2"></i>Shift Report
+                    </button>
+                    <button class="btn text-dark fw-bold px-4 rounded-pill" style="background: #ec4899;">
+                        <i class="fas fa-heartbeat me-2"></i>Record Vitals
+                    </button>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="nurse-card">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <div class="small text-muted text-uppercase fw-bold">Due Meds</div>
-                            <div class="h3 fw-bold mb-0 text-warning" th:text="${dueMedications ?: 0}">5</div>
-                        </div>
-                        <i class="fas fa-pills text-warning h4 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="nurse-card">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <div class="small text-muted text-uppercase fw-bold">Pending Vitals</div>
-                            <div class="h3 fw-bold mb-0 text-info" th:text="${pendingVitals ?: 0}">3</div>
-                        </div>
-                        <i class="fas fa-heartbeat text-info h4 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="nurse-card">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <div class="small text-muted text-uppercase fw-bold">Critical Alerts</div>
-                            <div class="h3 fw-bold mb-0 text-danger" th:text="${criticalAlerts ?: 0}">0</div>
-                        </div>
-                        <i class="fas fa-bell text-danger h4 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="row g-4">
-            <!-- Medication Schedule -->
-            <div class="col-lg-6">
-                <div class="nurse-card">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="fw-bold mb-0">Medication Schedule</h5>
-                        <span class="badge bg-secondary">Next 4 Hours</span>
-                    </div>
-                    <div class="med-feed">
-                        <div th:each="med : ${medSchedule}" class="task-item">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <div class="fw-bold" th:text="${med.patientName}">John Doe</div>
-                                    <div class="small text-muted" th:text="${med.name + ' - ' + med.dose}">Aspirin -
-                                        100mg</div>
-                                </div>
-                                <div class="text-end">
-                                    <div class="small fw-bold" th:text="${med.dueTime}">14:30</div>
-                                    <button class="btn btn-sm btn-outline-success mt-1">Administer</button>
-                                </div>
+            <!-- Quick Stats Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="metric-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="metric-icon" style="background: rgba(236, 72, 153, 0.1);">
+                                <i class="fas fa-bed" style="color: #ec4899;"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted text-uppercase fw-bold">Ward Patients</div>
+                                <div class="h3 fw-bold mb-0">24</div>
                             </div>
                         </div>
-                        <div th:if="${#lists.isEmpty(medSchedule)}" class="text-center py-4 text-muted small">
-                            No medications scheduled for this period
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="metric-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="metric-icon" style="background: rgba(245, 158, 11, 0.1);">
+                                <i class="fas fa-pills" style="color: #f59e0b;"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted text-uppercase fw-bold">Meds Due</div>
+                                <div class="h3 fw-bold mb-0 text-warning">8</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="metric-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="metric-icon" style="background: rgba(59, 130, 246, 0.1);">
+                                <i class="fas fa-heartbeat" style="color: #3b82f6;"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted text-uppercase fw-bold">Vitals Pending</div>
+                                <div class="h3 fw-bold mb-0 text-info">5</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="metric-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="metric-icon urgent-badge">
+                                <i class="fas fa-exclamation-triangle text-white"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted text-uppercase fw-bold">Critical Alerts</div>
+                                <div class="h3 fw-bold mb-0 text-danger">2</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Patient Vitals Watch -->
-            <div class="col-lg-6">
-                <div class="nurse-card">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="fw-bold mb-0">Patient Watchlist</h5>
-                        <button class="btn btn-sm btn-link text-decoration-none p-0">View All</button>
+            <!-- Quick Actions -->
+            <div class="row g-4 mb-4">
+                <div class="col-12">
+                    <h5 class="section-title mb-3">Quick Actions</h5>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="quick-action">
+                        <i class="fas fa-heartbeat"></i>
+                        <div class="fw-bold">Record Vitals</div>
+                        <div class="small text-muted">BP, Temp, Pulse</div>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead>
-                                <tr class="text-muted small text-uppercase">
-                                    <th>Patient</th>
-                                    <th>Latest Vitals</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="p : ${patientWatchlist}">
-                                    <td>
-                                        <div class="fw-bold" th:text="${p.name}">Mary Jane</div>
-                                        <div class="small text-muted" th:text="${'Room ' + p.room}">Room 402</div>
-                                    </td>
-                                    <td class="small">
-                                        BP: <span th:text="${p.bp ?: '--'}">120/80</span> |
-                                        HR: <span th:text="${p.hr ?: '--'}">72</span> |
-                                        Temp: <span th:text="${p.temp ?: '--'}">98.6</span>
-                                    </td>
-                                    <td>
-                                        <span class="vitals-dot"
-                                            th:classappend="${p.stable ? 'bg-success' : 'bg-warning'}"></span>
-                                        <span class="small" th:text="${p.stable ? 'Stable' : 'Monitor'}">Stable</span>
-                                    </td>
-                                </tr>
-                                <tr th:if="${#lists.isEmpty(patientWatchlist)}">
-                                    <td colspan="3" class="text-center py-4 text-muted">No patient alerts</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="quick-action">
+                        <i class="fas fa-pills"></i>
+                        <div class="fw-bold">Administer Meds</div>
+                        <div class="small text-muted">Medication Log</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="quick-action">
+                        <i class="fas fa-notes-medical"></i>
+                        <div class="fw-bold">Add Note</div>
+                        <div class="small text-muted">Patient Notes</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="quick-action">
+                        <i class="fas fa-bell"></i>
+                        <div class="fw-bold">Alert Doctor</div>
+                        <div class="small text-muted">Urgent Call</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Patient Watchlist -->
+                <div class="col-lg-7">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="section-title mb-0">Patient Watchlist</h5>
+                        <a href="#" class="btn btn-sm btn-link text-decoration-none" style="color: #ec4899;">View All <i
+                                class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+
+                    <div class="patient-row">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width: 45px; height: 45px; background: rgba(236, 72, 153, 0.1);">
+                                    <i class="fas fa-user" style="color: #ec4899;"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">Sarah Mitchell</div>
+                                    <div class="small text-muted">Room 201 • Bed A • Post-Op Recovery</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="vitals-badge vitals-warning">Monitor</span>
+                                <span class="small text-muted">BP: 140/90</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="patient-row">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width: 45px; height: 45px; background: rgba(59, 130, 246, 0.1);">
+                                    <i class="fas fa-user" style="color: #3b82f6;"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">James Anderson</div>
+                                    <div class="small text-muted">Room 203 • Bed B • Cardiac Care</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="vitals-badge vitals-normal">Stable</span>
+                                <span class="small text-muted">BP: 120/80</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="patient-row">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width: 45px; height: 45px; background: rgba(239, 68, 68, 0.1);">
+                                    <i class="fas fa-user" style="color: #ef4444;"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">Emily Davis</div>
+                                    <div class="small text-muted">Room 205 • ICU • Critical</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="vitals-badge vitals-critical">Critical</span>
+                                <span class="small text-muted">BP: 160/100</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medication Schedule -->
+                <div class="col-lg-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="section-title mb-0">Medication Schedule</h5>
+                        <span class="badge rounded-pill"
+                            style="background: rgba(236, 72, 153, 0.15); color: #ec4899;">Next 2 Hours</span>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-item">
+                            <div class="task-time text-warning">10:30</div>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold">Sarah Mitchell - Room 201</div>
+                                <div class="small text-muted">Metoprolol 50mg • Oral</div>
+                            </div>
+                            <button class="btn btn-sm btn-outline-success rounded-pill">Give</button>
+                        </div>
+                        <div class="task-item">
+                            <div class="task-time" style="color: #ec4899;">10:45</div>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold">James Anderson - Room 203</div>
+                                <div class="small text-muted">Lisinopril 10mg • Oral</div>
+                            </div>
+                            <button class="btn btn-sm btn-outline-success rounded-pill">Give</button>
+                        </div>
+                        <div class="task-item">
+                            <div class="task-time" style="color: #ec4899;">11:00</div>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold">Emily Davis - ICU</div>
+                                <div class="small text-muted">Morphine 5mg • IV Push</div>
+                            </div>
+                            <button class="btn btn-sm btn-outline-success rounded-pill">Give</button>
+                        </div>
+                        <div class="task-item">
+                            <div class="task-time text-muted">11:30</div>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold">Robert Wilson - Room 210</div>
+                                <div class="small text-muted">Insulin 10 units • Subcutaneous</div>
+                            </div>
+                            <button class="btn btn-sm btn-outline-secondary rounded-pill" disabled>Scheduled</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>

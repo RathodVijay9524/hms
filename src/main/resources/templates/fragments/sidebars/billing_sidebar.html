@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head></head>
+
+<body>
+    <div th:fragment="billing_sidebar(activeLink)" class="sidebar sidebar-billing">
+        <!-- Billing Header -->
+        <div class="mb-4 px-2">
+            <div class="d-flex align-items-center mb-3">
+                <div class="flex-shrink-0 rounded-3 p-2 me-3"
+                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(244, 63, 94, 0.1);">
+                    <i class="fas fa-file-invoice-dollar fs-5" style="color: #f43f5e;"></i>
+                </div>
+                <div>
+                    <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.6rem;">Revenue
+                        Center</small>
+                    <span class="fw-bold" style="font-family: 'Outfit';">Finance & Billing</span>
+                </div>
+            </div>
+            <hr style="opacity: 0.1; margin: 0 -1rem;">
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="px-2">
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">Overview</small></div>
+
+            <a th:href="@{/billing/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'billing-dash' ? 'active' : ''}">
+                <i class="fas fa-chart-line"></i>
+                <span>Billing Dashboard</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">Invoicing</small></div>
+
+            <a th:href="@{/billing/invoices}" class="sidebar-link"
+                th:classappend="${activeLink == 'invoices' ? 'active' : ''}">
+                <i class="fas fa-file-invoice"></i>
+                <span>All Invoices</span>
+            </a>
+
+            <a th:href="@{/billing/create}" class="sidebar-link"
+                th:classappend="${activeLink == 'create-invoice' ? 'active' : ''}">
+                <i class="fas fa-plus-circle"></i>
+                <span>Create Invoice</span>
+            </a>
+
+            <a th:href="@{/billing/pending}" class="sidebar-link"
+                th:classappend="${activeLink == 'pending' ? 'active' : ''}">
+                <i class="fas fa-clock"></i>
+                <span>Pending Bills</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">Payments</small></div>
+
+            <a th:href="@{/billing/collections}" class="sidebar-link"
+                th:classappend="${activeLink == 'collections' ? 'active' : ''}">
+                <i class="fas fa-hand-holding-dollar"></i>
+                <span>Collections</span>
+            </a>
+
+            <a th:href="@{/billing/refunds}" class="sidebar-link"
+                th:classappend="${activeLink == 'refunds' ? 'active' : ''}">
+                <i class="fas fa-rotate-left"></i>
+                <span>Refunds</span>
+            </a>
+
+            <a th:href="@{/billing/dues}" class="sidebar-link" th:classappend="${activeLink == 'dues' ? 'active' : ''}">
+                <i class="fas fa-user-clock"></i>
+                <span>Outstanding Dues</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">Reports</small></div>
+
+            <a th:href="@{/billing/reports}" class="sidebar-link"
+                th:classappend="${activeLink == 'reports' ? 'active' : ''}">
+                <i class="fas fa-chart-pie"></i>
+                <span>Revenue Reports</span>
+            </a>
+
+            <a th:href="@{/billing/statements}" class="sidebar-link"
+                th:classappend="${activeLink == 'statements' ? 'active' : ''}">
+                <i class="fas fa-file-lines"></i>
+                <span>Statements</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">System</small></div>
+
+            <a th:href="@{/select-role}" class="sidebar-link">
+                <i class="fas fa-th-large"></i>
+                <span>Switch Portal</span>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -153,7 +153,6 @@ public class WebController {
         return "owner/dashboard";
     }
 
-
     @GetMapping("/owner/departments")
     public String ownerDepartments(Model model) {
         Object depts = departmentService.getAllDepartments();
@@ -263,6 +262,12 @@ public class WebController {
     @GetMapping("/masters/charges")
     public String charges() {
         return "masters/charges";
+    }
+
+    @GetMapping("/admin/dashboard")
+    public String adminDashboard(Model model) {
+        populateCommonDashboardStats(model);
+        return "admin/dashboard";
     }
 
 

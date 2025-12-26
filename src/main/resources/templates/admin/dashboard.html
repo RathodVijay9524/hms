@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - MedLab Pro</title>
+    <title>Super Admin - MedLab Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
@@ -18,146 +18,485 @@
         })();
     </script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
+        /* Admin Control Center Emerald Theme */
+        .admin-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
         }
 
-        .main-content {
-            margin-left: 250px;
-            padding: 2rem;
-            margin-top: 56px;
+        .admin-header::after {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .metric-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            padding: 1.75rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px -15px rgba(16, 185, 129, 0.3);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .metric-card:hover::before {
+            opacity: 1;
+        }
+
+        .metric-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .user-row {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .user-row:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            transform: translateX(5px);
+        }
+
+        .status-active {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            padding: 0.35rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            padding: 0.35rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            padding: 0.35rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .quick-action {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .quick-action:hover {
+            border-color: #10b981;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.3);
+        }
+
+        .quick-action i {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            color: #10b981;
+        }
+
+        .hospital-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .hospital-item {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .hospital-item:last-child {
+            border-bottom: none;
+        }
+
+        .hospital-item:hover {
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 0.5rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            margin-right: 0.25rem;
+        }
+
+        .role-admin {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+
+        .role-doctor {
+            background: rgba(99, 102, 241, 0.15);
+            color: #6366f1;
+        }
+
+        .role-nurse {
+            background: rgba(236, 72, 153, 0.15);
+            color: #ec4899;
+        }
+
+        .role-lab {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+
+        .role-pharmacy {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
         }
 
         .section-title {
             font-family: 'Outfit';
             font-weight: 700;
-            margin-bottom: 1.5rem;
         }
 
-        .stat-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            padding: 1.5rem;
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-        }
-
-        .stat-icon.green {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--primary-color);
-        }
-
-        .stat-icon.blue {
-            background: rgba(59, 130, 246, 0.1);
-            color: #3b82f6;
-        }
-
-        .stat-icon.purple {
-            background: rgba(139, 92, 246, 0.1);
-            color: #8b5cf6;
-        }
-
-        .stat-value {
-            font-family: 'Outfit';
-            font-size: 2rem;
-            font-weight: 700;
-        }
-
-        @media (max-width: 992px) {
-            .main-content {
-                margin-left: 0;
-            }
+        [data-theme="light"] .admin-header {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         }
     </style>
 </head>
 
 <body>
+    <!-- Navbar -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
-    <div th:replace="~{fragments/sidebar :: sidebar('admin-dash')}"></div>
 
-    <div class="main-content">
-        <h1 class="section-title">Hospital Administration</h1>
+    <!-- Sidebar (Independent Admin Sidebar) -->
+    <div th:replace="~{fragments/sidebars/admin_sidebar :: admin_sidebar('admin-dash')}"></div>
 
-        <div class="row g-4 mb-4">
-            <div class="col-md-6 col-lg-3">
-                <div class="stat-card">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="stat-value" th:text="${totalPatients}">0</div>
-                            <div class="text-muted">Total Patients</div>
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Innovative Header -->
+            <div class="admin-header d-flex justify-content-between align-items-center">
+                <div class="position-relative" style="z-index: 1;">
+                    <h1 class="fw-bold mb-2" style="font-family: 'Outfit';">Control Center</h1>
+                    <p class="mb-0 opacity-75">Complete system oversight, user management, and hospital configuration.
+                    </p>
+                </div>
+                <div class="d-none d-md-flex gap-2" style="z-index: 1;">
+                    <button class="btn btn-outline-light px-4 rounded-pill">
+                        <i class="fas fa-download me-2"></i>Export Report
+                    </button>
+                    <button class="btn text-dark fw-bold px-4 rounded-pill" style="background: #10b981;">
+                        <i class="fas fa-plus me-2"></i>Add User
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Stats Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="metric-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="metric-icon" style="background: rgba(16, 185, 129, 0.1);">
+                                <i class="fas fa-users" style="color: #10b981;"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted text-uppercase fw-bold">Total Users</div>
+                                <div class="h3 fw-bold mb-0">247</div>
+                            </div>
                         </div>
-                        <div class="stat-icon green"><i class="fas fa-users"></i></div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="metric-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="metric-icon" style="background: rgba(59, 130, 246, 0.1);">
+                                <i class="fas fa-hospital" style="color: #3b82f6;"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted text-uppercase fw-bold">Hospitals</div>
+                                <div class="h3 fw-bold mb-0">3</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="metric-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="metric-icon" style="background: rgba(245, 158, 11, 0.1);">
+                                <i class="fas fa-microscope" style="color: #f59e0b;"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted text-uppercase fw-bold">Laboratories</div>
+                                <div class="h3 fw-bold mb-0">5</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="metric-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="metric-icon" style="background: rgba(239, 68, 68, 0.1);">
+                                <i class="fas fa-user-clock" style="color: #ef4444;"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted text-uppercase fw-bold">Pending Activation</div>
+                                <div class="h3 fw-bold mb-0 text-danger">12</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="stat-card">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="stat-value" th:text="${totalTests}">0</div>
-                            <div class="text-muted">Active Services</div>
-                        </div>
-                        <div class="stat-icon blue"><i class="fas fa-flask"></i></div>
+
+            <!-- Quick Actions -->
+            <div class="row g-4 mb-4">
+                <div class="col-12">
+                    <h5 class="section-title mb-3">Quick Actions</h5>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div class="quick-action">
+                        <i class="fas fa-user-plus"></i>
+                        <div class="fw-bold small">Add User</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div class="quick-action">
+                        <i class="fas fa-user-tag"></i>
+                        <div class="fw-bold small">Assign Role</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div class="quick-action">
+                        <i class="fas fa-hospital-alt"></i>
+                        <div class="fw-bold small">New Hospital</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div class="quick-action">
+                        <i class="fas fa-flask"></i>
+                        <div class="fw-bold small">New Lab</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div class="quick-action">
+                        <i class="fas fa-shield-halved"></i>
+                        <div class="fw-bold small">Audit Logs</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3 col-lg-2">
+                    <div class="quick-action">
+                        <i class="fas fa-cog"></i>
+                        <div class="fw-bold small">Settings</div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-3">
-                <div class="stat-card">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="stat-value" th:text="${pendingOrders}">0</div>
-                            <div class="text-muted">Pending Orders</div>
-                        </div>
-                        <div class="stat-icon purple"><i class="fas fa-clock"></i></div>
+
+            <div class="row g-4">
+                <!-- Recent Users -->
+                <div class="col-lg-7">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="section-title mb-0">Recent Users</h5>
+                        <a href="#" class="btn btn-sm btn-link text-decoration-none" style="color: #10b981;">View All <i
+                                class="fas fa-arrow-right ms-1"></i></a>
                     </div>
+
+                    <div class="user-row">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width: 45px; height: 45px; background: rgba(16, 185, 129, 0.1);">
+                                    <i class="fas fa-user" style="color: #10b981;"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">Dr. Vijay Sharma</div>
+                                    <div class="small text-muted">vijay@medlab.com • Registered: Today</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="role-badge role-doctor">DOCTOR</span>
+                                <span class="role-badge role-admin">ADMIN</span>
+                                <span class="status-active">Active</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="user-row">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width: 45px; height: 45px; background: rgba(236, 72, 153, 0.1);">
+                                    <i class="fas fa-user" style="color: #ec4899;"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">Nurse Priya Patel</div>
+                                    <div class="small text-muted">priya@medlab.com • Registered: Yesterday</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="role-badge role-nurse">NURSE</span>
+                                <span class="status-pending">Pending</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="user-row">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width: 45px; height: 45px; background: rgba(245, 158, 11, 0.1);">
+                                    <i class="fas fa-user" style="color: #f59e0b;"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">Tech. Rahul Singh</div>
+                                    <div class="small text-muted">rahul@medlab.com • Registered: 2 days ago</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="role-badge role-lab">LAB TECH</span>
+                                <span class="status-active">Active</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="user-row">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width: 45px; height: 45px; background: rgba(239, 68, 68, 0.1);">
+                                    <i class="fas fa-user" style="color: #ef4444;"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">John Doe</div>
+                                    <div class="small text-muted">john@example.com • Registered: 3 days ago</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="role-badge role-pharmacy">PHARMACIST</span>
+                                <span class="status-inactive">Deactivated</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hospitals & Labs -->
+                <div class="col-lg-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="section-title mb-0">Hospitals & Labs</h5>
+                        <span class="badge rounded-pill" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">8
+                            Active</span>
+                    </div>
+
+                    <div class="hospital-card mb-3">
+                        <div class="hospital-item">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded d-flex align-items-center justify-content-center"
+                                    style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1);">
+                                    <i class="fas fa-hospital" style="color: #3b82f6;"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">City General Hospital</div>
+                                    <div class="small text-muted">45 Staff • 12 Depts</div>
+                                </div>
+                            </div>
+                            <span class="status-active">Active</span>
+                        </div>
+                        <div class="hospital-item">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded d-flex align-items-center justify-content-center"
+                                    style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1);">
+                                    <i class="fas fa-hospital" style="color: #3b82f6;"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">Metro Health Center</div>
+                                    <div class="small text-muted">32 Staff • 8 Depts</div>
+                                </div>
+                            </div>
+                            <span class="status-active">Active</span>
+                        </div>
+                        <div class="hospital-item">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded d-flex align-items-center justify-content-center"
+                                    style="width: 40px; height: 40px; background: rgba(245, 158, 11, 0.1);">
+                                    <i class="fas fa-microscope" style="color: #f59e0b;"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">Central Diagnostics Lab</div>
+                                    <div class="small text-muted">8 Staff • 150 Tests/day</div>
+                                </div>
+                            </div>
+                            <span class="status-active">Active</span>
+                        </div>
+                        <div class="hospital-item">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded d-flex align-items-center justify-content-center"
+                                    style="width: 40px; height: 40px; background: rgba(245, 158, 11, 0.1);">
+                                    <i class="fas fa-microscope" style="color: #f59e0b;"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">PathCare Laboratory</div>
+                                    <div class="small text-muted">5 Staff • 80 Tests/day</div>
+                                </div>
+                            </div>
+                            <span class="status-active">Active</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-outline-primary w-100 rounded-pill">
+                        <i class="fas fa-building me-2"></i>Manage Infrastructure
+                    </button>
                 </div>
             </div>
         </div>
-
-        <div class="row g-4">
-            <div class="col-lg-6">
-                <div class="stat-card h-100">
-                    <h5 class="mb-4">System Utilities</h5>
-                    <div class="list-group list-group-flush">
-                        <a th:href="@{/owner/workers}"
-                            class="list-group-item bg-transparent text-primary border-0 px-0 d-flex align-items-center">
-                            <i class="fas fa-user-shield me-3"></i> User Access Control
-                        </a>
-                        <a th:href="@{/owner/departments}"
-                            class="list-group-item bg-transparent text-primary border-0 px-0 d-flex align-items-center">
-                            <i class="fas fa-building me-3"></i> Infrastructure Management
-                        </a>
-                        <a th:href="@{/admin/billing}"
-                            class="list-group-item bg-transparent text-primary border-0 px-0 d-flex align-items-center">
-                            <i class="fas fa-file-invoice-dollar me-3"></i> Revenue Oversight
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="stat-card h-100 text-center d-flex flex-column justify-content-center">
-                    <i class="fas fa-shield-halved fa-3x mb-3 text-muted opacity-50"></i>
-                    <h4>Security & Audit</h4>
-                    <p class="text-muted">Monitor system logs and user activities from the audit trail module.</p>
-                    <div class="mt-3">
-                        <button class="btn btn-outline-primary btn-sm">View System Logs</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>

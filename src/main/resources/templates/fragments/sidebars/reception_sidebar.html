@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head></head>
+
+<body>
+    <div th:fragment="reception_sidebar(activeLink)" class="sidebar sidebar-reception">
+        <!-- Reception Header -->
+        <div class="mb-4 px-2">
+            <div class="d-flex align-items-center mb-3">
+                <div class="flex-shrink-0 rounded-3 p-2 me-3"
+                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(139, 92, 246, 0.1);">
+                    <i class="fas fa-desktop fs-5" style="color: #8b5cf6;"></i>
+                </div>
+                <div>
+                    <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.6rem;">Front
+                        Office</small>
+                    <span class="fw-bold" style="font-family: 'Outfit';">Reception Desk</span>
+                </div>
+            </div>
+            <hr style="opacity: 0.1; margin: 0 -1rem;">
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="px-2">
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">Overview</small></div>
+
+            <a th:href="@{/reception/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'reception-dash' ? 'active' : ''}">
+                <i class="fas fa-chart-line"></i>
+                <span>Reception Dashboard</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Patient
+                    Services</small></div>
+
+            <a th:href="@{/reception/register}" class="sidebar-link"
+                th:classappend="${activeLink == 'register' ? 'active' : ''}">
+                <i class="fas fa-user-plus"></i>
+                <span>New Registration</span>
+            </a>
+
+            <a th:href="@{/reception/patients}" class="sidebar-link"
+                th:classappend="${activeLink == 'patients' ? 'active' : ''}">
+                <i class="fas fa-users"></i>
+                <span>Patient Directory</span>
+            </a>
+
+            <a th:href="@{/reception/tokens}" class="sidebar-link"
+                th:classappend="${activeLink == 'tokens' ? 'active' : ''}">
+                <i class="fas fa-ticket"></i>
+                <span>Token Queue</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">Appointments</small></div>
+
+            <a th:href="@{/reception/appointments}" class="sidebar-link"
+                th:classappend="${activeLink == 'appointments' ? 'active' : ''}">
+                <i class="fas fa-calendar-check"></i>
+                <span>Today's Appointments</span>
+            </a>
+
+            <a th:href="@{/reception/book}" class="sidebar-link"
+                th:classappend="${activeLink == 'book' ? 'active' : ''}">
+                <i class="fas fa-calendar-plus"></i>
+                <span>Book Appointment</span>
+            </a>
+
+            <a th:href="@{/reception/schedule}" class="sidebar-link"
+                th:classappend="${activeLink == 'schedule' ? 'active' : ''}">
+                <i class="fas fa-calendar-week"></i>
+                <span>Weekly Schedule</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">Services</small></div>
+
+            <a th:href="@{/reception/enquiry}" class="sidebar-link"
+                th:classappend="${activeLink == 'enquiry' ? 'active' : ''}">
+                <i class="fas fa-question-circle"></i>
+                <span>Enquiry Desk</span>
+            </a>
+
+            <a th:href="@{/reception/visitors}" class="sidebar-link"
+                th:classappend="${activeLink == 'visitors' ? 'active' : ''}">
+                <i class="fas fa-id-badge"></i>
+                <span>Visitor Log</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">System</small></div>
+
+            <a th:href="@{/select-role}" class="sidebar-link">
+                <i class="fas fa-th-large"></i>
+                <span>Switch Portal</span>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -302,6 +302,91 @@ body,
     color: #6366f1;
 }
 
+/* Nurse Portal Overrides (Pink/Rose) */
+.sidebar-nurse .sidebar-link.active {
+    background: #ec4899 !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4) !important;
+}
+
+.sidebar-nurse .sidebar-link.active i {
+    color: #ffffff !important;
+}
+
+.sidebar-nurse .sidebar-link:hover:not(.active) {
+    background: rgba(236, 72, 153, 0.1);
+    color: #ec4899;
+}
+
+/* Pharmacy Portal Overrides (Blue/Cyan) */
+.sidebar-pharmacy .sidebar-link.active {
+    background: #38bdf8 !important;
+    color: #0f172a !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4) !important;
+}
+
+.sidebar-pharmacy .sidebar-link.active i {
+    color: #0f172a !important;
+}
+
+.sidebar-pharmacy .sidebar-link:hover:not(.active) {
+    background: rgba(56, 189, 248, 0.1);
+    color: #38bdf8;
+}
+
+/* Admin Portal Overrides (Emerald) */
+.sidebar-admin .sidebar-link.active {
+    background: #10b981 !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
+}
+
+.sidebar-admin .sidebar-link.active i {
+    color: #ffffff !important;
+}
+
+.sidebar-admin .sidebar-link:hover:not(.active) {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+/* Billing Portal Overrides (Rose/Red) */
+.sidebar-billing .sidebar-link.active {
+    background: #f43f5e !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.4) !important;
+}
+
+.sidebar-billing .sidebar-link.active i {
+    color: #ffffff !important;
+}
+
+.sidebar-billing .sidebar-link:hover:not(.active) {
+    background: rgba(244, 63, 94, 0.1);
+    color: #f43f5e;
+}
+
+/* Reception Portal Overrides (Purple/Violet) */
+.sidebar-reception .sidebar-link.active {
+    background: #8b5cf6 !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4) !important;
+}
+
+.sidebar-reception .sidebar-link.active i {
+    color: #ffffff !important;
+}
+
+.sidebar-reception .sidebar-link:hover:not(.active) {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+}
+
 /* Card Styling */
 .card-executive {
     background: var(--bg-secondary);
@@ -358,6 +443,7 @@ body,
         width: 100%;
     }
 }
+
 /* ========== ENHANCED VISIBILITY FOR BOTH THEMES ========== */
 
 /* Sidebar Link Improvements */
@@ -438,27 +524,32 @@ body,
 }
 
 /* Enhanced Badge Visibility */
-.badge-info, .bg-info-subtle {
+.badge-info,
+.bg-info-subtle {
     background: rgba(6, 182, 212, 0.15) !important;
     color: #06b6d4 !important;
 }
 
-.badge-success, .bg-success-subtle {
+.badge-success,
+.bg-success-subtle {
     background: rgba(34, 197, 94, 0.15) !important;
     color: #22c55e !important;
 }
 
-.badge-warning, .bg-warning-subtle {
+.badge-warning,
+.bg-warning-subtle {
     background: rgba(245, 158, 11, 0.15) !important;
     color: #f59e0b !important;
 }
 
-.badge-danger, .bg-danger-subtle {
+.badge-danger,
+.bg-danger-subtle {
     background: rgba(239, 68, 68, 0.15) !important;
     color: #ef4444 !important;
 }
 
-.badge-purple, .bg-purple-subtle {
+.badge-purple,
+.bg-purple-subtle {
     background: rgba(168, 85, 247, 0.15) !important;
     color: #a855f7 !important;
 }

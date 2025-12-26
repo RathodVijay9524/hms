@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head></head>
+
+<body>
+    <div th:fragment="admin_sidebar(activeLink)" class="sidebar sidebar-admin">
+        <!-- Admin Header -->
+        <div class="mb-4 px-2">
+            <div class="d-flex align-items-center mb-3">
+                <div class="flex-shrink-0 rounded-3 p-2 me-3"
+                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(16, 185, 129, 0.1);">
+                    <i class="fas fa-user-shield fs-5" style="color: #10b981;"></i>
+                </div>
+                <div>
+                    <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.6rem;">Control
+                        Center</small>
+                    <span class="fw-bold" style="font-family: 'Outfit';">Super Admin</span>
+                </div>
+            </div>
+            <hr style="opacity: 0.1; margin: 0 -1rem;">
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="px-2">
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">Overview</small></div>
+
+            <a th:href="@{/admin/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'admin-dash' ? 'active' : ''}">
+                <i class="fas fa-chart-line"></i>
+                <span>Admin Dashboard</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">User
+                    Management</small></div>
+
+            <a th:href="@{/admin/users}" class="sidebar-link" th:classappend="${activeLink == 'users' ? 'active' : ''}">
+                <i class="fas fa-users"></i>
+                <span>All Users</span>
+            </a>
+
+            <a th:href="@{/admin/roles}" class="sidebar-link" th:classappend="${activeLink == 'roles' ? 'active' : ''}">
+                <i class="fas fa-user-tag"></i>
+                <span>Role Assignment</span>
+            </a>
+
+            <a th:href="@{/admin/permissions}" class="sidebar-link"
+                th:classappend="${activeLink == 'permissions' ? 'active' : ''}">
+                <i class="fas fa-key"></i>
+                <span>Permissions</span>
+            </a>
+
+            <a th:href="@{/admin/accounts}" class="sidebar-link"
+                th:classappend="${activeLink == 'accounts' ? 'active' : ''}">
+                <i class="fas fa-user-check"></i>
+                <span>Account Status</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">Infrastructure</small></div>
+
+            <a th:href="@{/admin/hospitals}" class="sidebar-link"
+                th:classappend="${activeLink == 'hospitals' ? 'active' : ''}">
+                <i class="fas fa-hospital"></i>
+                <span>Hospitals</span>
+            </a>
+
+            <a th:href="@{/admin/laboratories}" class="sidebar-link"
+                th:classappend="${activeLink == 'laboratories' ? 'active' : ''}">
+                <i class="fas fa-microscope"></i>
+                <span>Laboratories</span>
+            </a>
+
+            <a th:href="@{/admin/departments}" class="sidebar-link"
+                th:classappend="${activeLink == 'departments' ? 'active' : ''}">
+                <i class="fas fa-sitemap"></i>
+                <span>Departments</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">System</small></div>
+
+            <a th:href="@{/admin/audit}" class="sidebar-link" th:classappend="${activeLink == 'audit' ? 'active' : ''}">
+                <i class="fas fa-shield-halved"></i>
+                <span>Audit Logs</span>
+            </a>
+
+            <a th:href="@{/admin/settings}" class="sidebar-link"
+                th:classappend="${activeLink == 'settings' ? 'active' : ''}">
+                <i class="fas fa-cog"></i>
+                <span>System Settings</span>
+            </a>
+
+            <a th:href="@{/select-role}" class="sidebar-link">
+                <i class="fas fa-th-large"></i>
+                <span>Switch Portal</span>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

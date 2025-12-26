@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head></head>
+
+<body>
+    <div th:fragment="nurse_sidebar(activeLink)" class="sidebar sidebar-nurse">
+        <!-- Nurse Header -->
+        <div class="mb-4 px-2">
+            <div class="d-flex align-items-center mb-3">
+                <div class="flex-shrink-0 rounded-3 p-2 me-3"
+                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(236, 72, 153, 0.1);">
+                    <i class="fas fa-user-nurse fs-5" style="color: #ec4899;"></i>
+                </div>
+                <div>
+                    <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.6rem;">Care
+                        Portal</small>
+                    <span class="fw-bold" style="font-family: 'Outfit';">Nursing Station</span>
+                </div>
+            </div>
+            <hr style="opacity: 0.1; margin: 0 -1rem;">
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="px-2">
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">Dashboard</small></div>
+
+            <a th:href="@{/nurse/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'nurse-dash' ? 'active' : ''}">
+                <i class="fas fa-chart-line"></i>
+                <span>Nursing Dashboard</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Patient
+                    Care</small></div>
+
+            <a th:href="@{/nurse/patients}" class="sidebar-link"
+                th:classappend="${activeLink == 'nurse-patients' ? 'active' : ''}">
+                <i class="fas fa-bed"></i>
+                <span>Ward Patients</span>
+            </a>
+
+            <a th:href="@{/nurse/vitals}" class="sidebar-link"
+                th:classappend="${activeLink == 'nurse-vitals' ? 'active' : ''}">
+                <i class="fas fa-heartbeat"></i>
+                <span>Vitals Tracking</span>
+            </a>
+
+            <a th:href="@{/nurse/medications}" class="sidebar-link"
+                th:classappend="${activeLink == 'nurse-meds' ? 'active' : ''}">
+                <i class="fas fa-pills"></i>
+                <span>Medication Schedule</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Ward
+                    Operations</small></div>
+
+            <a th:href="@{/nurse/tasks}" class="sidebar-link"
+                th:classappend="${activeLink == 'nurse-tasks' ? 'active' : ''}">
+                <i class="fas fa-tasks"></i>
+                <span>Ward Tasks</span>
+            </a>
+
+            <a th:href="@{/nurse/handover}" class="sidebar-link"
+                th:classappend="${activeLink == 'nurse-handover' ? 'active' : ''}">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Shift Handover</span>
+            </a>
+
+            <a th:href="@{/nurse/alerts}" class="sidebar-link"
+                th:classappend="${activeLink == 'nurse-alerts' ? 'active' : ''}">
+                <i class="fas fa-bell"></i>
+                <span>Critical Alerts</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">System</small></div>
+
+            <a th:href="@{/select-role}" class="sidebar-link">
+                <i class="fas fa-th-large"></i>
+                <span>Switch Portal</span>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

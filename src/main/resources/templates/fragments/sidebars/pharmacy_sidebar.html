@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head></head>
+
+<body>
+    <div th:fragment="pharmacy_sidebar(activeLink)" class="sidebar sidebar-pharmacy">
+        <!-- Pharmacy Header -->
+        <div class="mb-4 px-2">
+            <div class="d-flex align-items-center mb-3">
+                <div class="flex-shrink-0 rounded-3 p-2 me-3"
+                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(56, 189, 248, 0.1);">
+                    <i class="fas fa-pills fs-5" style="color: #38bdf8;"></i>
+                </div>
+                <div>
+                    <small class="text-muted text-uppercase fw-bold d-block"
+                        style="font-size: 0.6rem;">Dispensary</small>
+                    <span class="fw-bold" style="font-family: 'Outfit';">Pharmacy Hub</span>
+                </div>
+            </div>
+            <hr style="opacity: 0.1; margin: 0 -1rem;">
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="px-2">
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">Dashboard</small></div>
+
+            <a th:href="@{/pharmacy/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'pharmacy-dash' ? 'active' : ''}">
+                <i class="fas fa-chart-line"></i>
+                <span>Pharmacy Dashboard</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">Dispensing</small></div>
+
+            <a th:href="@{/pharmacy/prescriptions}" class="sidebar-link"
+                th:classappend="${activeLink == 'prescriptions' ? 'active' : ''}">
+                <i class="fas fa-file-prescription"></i>
+                <span>Prescriptions</span>
+            </a>
+
+            <a th:href="@{/pharmacy/dispense}" class="sidebar-link"
+                th:classappend="${activeLink == 'dispense' ? 'active' : ''}">
+                <i class="fas fa-hand-holding-medical"></i>
+                <span>Dispense Meds</span>
+            </a>
+
+            <a th:href="@{/pharmacy/returns}" class="sidebar-link"
+                th:classappend="${activeLink == 'returns' ? 'active' : ''}">
+                <i class="fas fa-undo-alt"></i>
+                <span>Returns</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">Inventory</small></div>
+
+            <a th:href="@{/pharmacy/inventory}" class="sidebar-link"
+                th:classappend="${activeLink == 'inventory' ? 'active' : ''}">
+                <i class="fas fa-boxes-stacked"></i>
+                <span>Stock Management</span>
+            </a>
+
+            <a th:href="@{/pharmacy/orders}" class="sidebar-link"
+                th:classappend="${activeLink == 'orders' ? 'active' : ''}">
+                <i class="fas fa-truck"></i>
+                <span>Purchase Orders</span>
+            </a>
+
+            <a th:href="@{/pharmacy/expiry}" class="sidebar-link"
+                th:classappend="${activeLink == 'expiry' ? 'active' : ''}">
+                <i class="fas fa-calendar-times"></i>
+                <span>Expiry Tracker</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">System</small></div>
+
+            <a th:href="@{/select-role}" class="sidebar-link">
+                <i class="fas fa-th-large"></i>
+                <span>Switch Portal</span>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>
