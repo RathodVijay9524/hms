@@ -59,6 +59,12 @@
                 <span>Prescriptions</span>
             </a>
 
+            <a th:href="@{/doctor/doctors}" class="sidebar-link"
+                th:classappend="${activeLink == 'doc-doctors' ? 'active' : ''}">
+                <i class="fas fa-user-md"></i>
+                <span>Our Doctors</span>
+            </a>
+
             <a th:href="@{/lab/orders}" class="sidebar-link"
                 th:classappend="${activeLink == 'doc-labs' ? 'active' : ''}">
                 <i class="fas fa-flask-vial"></i>

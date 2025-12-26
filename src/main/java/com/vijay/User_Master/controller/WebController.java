@@ -205,9 +205,21 @@ public class WebController {
         return "billing/dashboard";
     }
 
+    @GetMapping("/billing/charges")
+    public String billingCharges() {
+        return "billing/charges";
+    }
+
     @GetMapping("/doctor/schedules")
     public String doctorSchedules() {
         return "doctor/schedules";
+    }
+
+    @GetMapping("/doctor/doctors")
+    public String doctorDoctors(Model model) {
+        Object docs = doctorProfileService.getAllDoctorProfiles();
+        model.addAttribute("doctors", docs != null ? docs : java.util.Collections.emptyList());
+        return "doctor/doctors";
     }
 
     private void populateCommonDashboardStats(Model model) {

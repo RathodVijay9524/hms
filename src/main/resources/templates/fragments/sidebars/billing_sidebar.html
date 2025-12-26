@@ -82,10 +82,10 @@
                 <span>Revenue Reports</span>
             </a>
 
-            <a th:href="@{/billing/statements}" class="sidebar-link"
-                th:classappend="${activeLink == 'statements' ? 'active' : ''}">
-                <i class="fas fa-file-lines"></i>
-                <span>Statements</span>
+            <a th:href="@{/billing/charges}" class="sidebar-link"
+                th:classappend="${activeLink == 'charges' ? 'active' : ''}">
+                <i class="fas fa-list-check"></i>
+                <span>Charge Master</span>
             </a>
 
             <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
