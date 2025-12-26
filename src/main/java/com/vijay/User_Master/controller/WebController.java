@@ -205,6 +205,11 @@ public class WebController {
         return "billing/dashboard";
     }
 
+    @GetMapping("/doctor/schedules")
+    public String doctorSchedules() {
+        return "doctor/schedules";
+    }
+
     private void populateCommonDashboardStats(Model model) {
         model.addAttribute("totalPatients", patientService.getPatientCount());
         model.addAttribute("totalTests", labTestService.getLabTestCount());

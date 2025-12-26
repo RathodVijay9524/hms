@@ -38,6 +38,12 @@
                 <span>My Schedule</span>
             </a>
 
+            <a th:href="@{/doctor/schedules}" class="sidebar-link"
+                th:classappend="${activeLink == 'doc-schedules' ? 'active' : ''}">
+                <i class="fas fa-calendar-cog"></i>
+                <span>Manage Availability</span>
+            </a>
+
             <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
                     style="font-size: 0.7rem; letter-spacing: 0.05em;">Patient Care</small></div>
 

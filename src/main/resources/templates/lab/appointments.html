@@ -21,11 +21,52 @@
     </script>
 
     <style>
-        .btn-primary-gradient {
-            background: var(--gradient-primary);
-            border: none;
-            color: white;
-            font-weight: 600;
+        /* Laboratory Amber Theme for Appointments */
+        .lab-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            border-radius: 1.5rem;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lab-header::after {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .appointment-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            padding: 1.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .appointment-card:hover {
+            border-color: rgba(245, 158, 11, 0.3);
+            box-shadow: 0 5px 20px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
         }
 
         .form-control,
@@ -33,18 +74,26 @@
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
             color: var(--text-primary);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
         }
 
         .slot-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
             gap: 10px;
             margin-top: 1rem;
         }
 
         .slot-btn {
-            padding: 10px;
-            border-radius: 8px;
+            padding: 12px 8px;
+            border-radius: 10px;
             border: 1px solid var(--border-color);
             background: var(--bg-tertiary);
             color: var(--text-primary);
@@ -52,35 +101,37 @@
             cursor: pointer;
             transition: all 0.2s;
             font-size: 0.9rem;
+            font-weight: 500;
         }
 
         .slot-btn:hover:not(.disabled) {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-            background: rgba(16, 185, 129, 0.05);
+            border-color: #f59e0b;
+            color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
         }
 
         .slot-btn.selected {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
+            background: #f59e0b;
+            color: #0f172a;
+            border-color: #f59e0b;
+            font-weight: 700;
         }
 
         .slot-btn.disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
             background: rgba(0, 0, 0, 0.1);
         }
 
         .patient-result {
-            padding: 10px;
+            padding: 12px 16px;
             border-bottom: 1px solid var(--border-color);
             cursor: pointer;
             transition: background 0.2s;
         }
 
         .patient-result:hover {
-            background: var(--bg-hover);
+            background: rgba(245, 158, 11, 0.05);
         }
 
         .patient-result:last-child {
@@ -95,10 +146,27 @@
             z-index: 1000;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            border-radius: 0 0 8px 8px;
+            border-radius: 0 0 12px 12px;
             max-height: 200px;
             overflow-y: auto;
             display: none;
+        }
+
+        .btn-amber {
+            background: #f59e0b;
+            color: #0f172a;
+            font-weight: 600;
+            border: none;
+            border-radius: 0.75rem;
+        }
+
+        .btn-amber:hover {
+            background: #d97706;
+            color: #0f172a;
+        }
+
+        [data-theme="light"] .lab-header {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         }
     </style>
 </head>
@@ -108,45 +176,68 @@
     <div th:replace="~{fragments/sidebars/lab_sidebar :: lab_sidebar('lab-appointments')}"></div>
 
     <div class="main-content">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 style="font-family: 'Outfit'; font-weight: 700;">New Appointment</h2>
-                <p class="text-muted">Register a new patient appointment and select a time slot.</p>
+        <!-- Innovative Header -->
+        <div class="lab-header d-flex justify-content-between align-items-center">
+            <div class="position-relative" style="z-index: 1;">
+                <h1 class="fw-bold mb-2" style="font-family: 'Outfit';">New Appointment</h1>
+                <p class="mb-0 opacity-75">Register a new patient appointment and select a time slot.</p>
+            </div>
+            <div class="d-none d-md-flex gap-2" style="z-index: 1;">
+                <a th:href="@{/lab/dashboard}" class="btn btn-outline-light px-4 rounded-pill">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Lab
+                </a>
             </div>
         </div>
 
         <div class="row g-4">
             <!-- Step 1 & 2: Patient & Doctor Selection -->
             <div class="col-lg-5">
-                <div class="card card-custom p-4 mb-4">
-                    <h5 class="mb-3"><i class="fas fa-user-circle me-2 text-primary"></i>1. Select Patient</h5>
+                <div class="appointment-card mb-4">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="section-icon">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 fw-bold">1. Select Patient</h5>
+                            <small class="text-muted">Search or register a patient</small>
+                        </div>
+                    </div>
                     <div class="position-relative">
                         <input type="text" id="patientSearch" class="form-control"
                             placeholder="Search by name, UHID or Phone..." autocomplete="off">
                         <div id="patientResultsContainer"></div>
                     </div>
-                    <div id="selectedPatientSection" class="mt-3 p-3 bg-tertiary rounded"
-                        style="display: none; background: var(--bg-tertiary);">
+                    <div id="selectedPatientSection" class="mt-3 p-3 rounded-3"
+                        style="display: none; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3);">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="mb-0" id="selectedPatientName">John Doe</h6>
+                                <h6 class="mb-0 fw-bold" id="selectedPatientName">John Doe</h6>
                                 <small class="text-muted" id="selectedPatientUhid">UHID: PAT-001</small>
                             </div>
-                            <button class="btn btn-sm btn-outline-secondary" onclick="clearPatient()">Change</button>
+                            <button class="btn btn-sm btn-outline-secondary rounded-pill"
+                                onclick="clearPatient()">Change</button>
                         </div>
                     </div>
                 </div>
 
-                <div class="card card-custom p-4">
-                    <h5 class="mb-3"><i class="fas fa-user-md me-2 text-primary"></i>2. Provider & Date</h5>
+                <div class="appointment-card">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="section-icon" style="background: rgba(59, 130, 246, 0.1);">
+                            <i class="fas fa-user-md" style="color: #3b82f6;"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 fw-bold">2. Provider & Date</h5>
+                            <small class="text-muted">Choose doctor and appointment date</small>
+                        </div>
+                    </div>
                     <div class="mb-3">
-                        <label class="form-label">Select Doctor</label>
+                        <label class="form-label small text-muted text-uppercase fw-bold">Select Doctor</label>
                         <select id="doctorId" class="form-select" onchange="resetSlots()">
                             <option value="">Choose a doctor...</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Appointment Date</label>
+                        <label class="form-label small text-muted text-uppercase fw-bold">Appointment Date</label>
                         <input type="date" id="appointmentDate" class="form-control" onchange="loadSlots()">
                     </div>
                 </div>
@@ -154,13 +245,23 @@
 
             <!-- Step 3: Slot Selection -->
             <div class="col-lg-7">
-                <div class="card card-custom p-4 h-100">
-                    <h5 class="mb-3"><i class="fas fa-clock me-2 text-primary"></i>3. Choose Time Slot</h5>
+                <div class="appointment-card h-100 d-flex flex-column">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="section-icon" style="background: rgba(34, 197, 94, 0.1);">
+                            <i class="fas fa-clock" style="color: #22c55e;"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 fw-bold">3. Choose Time Slot</h5>
+                            <small class="text-muted">Select an available time slot</small>
+                        </div>
+                    </div>
+
                     <div id="slotsLoader" class="text-center py-5" style="display: none;">
-                        <div class="spinner-border text-primary"></div>
+                        <div class="spinner-border" style="color: #f59e0b;"></div>
                         <p class="mt-2 text-muted">Loading available slots...</p>
                     </div>
-                    <div id="slotsMessage" class="text-center py-5 text-muted">
+                    <div id="slotsMessage"
+                        class="text-center py-5 text-muted flex-grow-1 d-flex flex-column justify-content-center">
                         <i class="fas fa-calendar-day fa-3x mb-3 opacity-25"></i>
                         <p>Select a doctor and date to view available slots</p>
                     </div>
@@ -169,11 +270,11 @@
                     <div id="bookingSection" class="mt-auto pt-4"
                         style="display: none; border-top: 1px solid var(--border-color);">
                         <div class="mb-3">
-                            <label class="form-label">Reason for Visit</label>
-                            <textarea id="reasonForVisit" class="form-control"
+                            <label class="form-label small text-muted text-uppercase fw-bold">Reason for Visit</label>
+                            <textarea id="reasonForVisit" class="form-control" rows="2"
                                 placeholder="e.g. Regular Checkup, Fever, etc."></textarea>
                         </div>
-                        <button class="btn btn-primary-gradient w-100 py-3" onclick="confirmBooking()">
+                        <button class="btn btn-amber w-100 py-3 rounded-pill" onclick="confirmBooking()">
                             <i class="fas fa-check-circle me-2"></i>Confirm Appointment
                         </button>
                     </div>
@@ -183,6 +284,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
     <script>
         let selectedPatientId = null;
         let selectedSlotId = null;
@@ -284,7 +386,7 @@
 
         function resetSlots() {
             document.getElementById('slotsGrid').innerHTML = '';
-            document.getElementById('slotsMessage').style.display = 'block';
+            document.getElementById('slotsMessage').style.display = 'flex';
             document.getElementById('bookingSection').style.display = 'none';
             selectedSlotId = null;
         }
@@ -309,7 +411,7 @@
 
                 if (slots.length === 0) {
                     document.getElementById('slotsMessage').innerHTML = '<i class="fas fa-calendar-times fa-3x mb-3 opacity-25"></i><p>No available slots for this date.</p>';
-                    document.getElementById('slotsMessage').style.display = 'block';
+                    document.getElementById('slotsMessage').style.display = 'flex';
                     return;
                 }
 
@@ -326,7 +428,7 @@
                 console.error('Error loading slots:', error);
                 document.getElementById('slotsLoader').style.display = 'none';
                 document.getElementById('slotsMessage').innerHTML = '<p class="text-danger">Error loading slots. Please try again.</p>';
-                document.getElementById('slotsMessage').style.display = 'block';
+                document.getElementById('slotsMessage').style.display = 'flex';
             }
         }
 
