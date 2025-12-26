@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Departments - Owner Portal - MedLab Pro</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Owner Sidebar -->
+    <div th:replace="~{fragments/sidebars/owner_sidebar :: owner_sidebar('owner-depts')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Executive Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/owner/dashboard}"
+                            class="text-warning text-decoration-none">Executive Dashboard</a></li>
+                    <li class="breadcrumb-item active text-muted">Clinical Architecture</li>
+                </ol>
+            </nav>
+
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #f59e0b;">Clinical Architecture</h2>
+                    <p class="text-muted mb-0">Manage hospital wings, functional departments, and clinical units</p>
+                </div>
+                <button class="btn btn-warning fw-bold text-dark px-4" onclick="openModal()">
+                    <i class="fas fa-plus-circle me-2"></i>Add Department
+                </button>
+            </div>
+
+            <!-- Departments Table -->
+            <div class="card border-0 shadow-sm" style="background: var(--bg-secondary);">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead style="background: var(--bg-tertiary);">
+                                <tr>
+                                    <th class="ps-4 py-3">Department Name</th>
+                                    <th class="py-3">Description</th>
+                                    <th class="py-3 pe-4 text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="dept : ${departments}">
+                                    <td class="ps-4 py-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-3 p-2 me-3"
+                                                style="background: rgba(245, 158, 11, 0.1);">
+                                                <i class="fas fa-building text-warning"></i>
+                                            </div>
+                                            <strong th:text="${dept.name}">Cardiology</strong>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 text-muted" th:text="${dept.description}">Heart and blood vessel
+                                        specialist</td>
+                                    <td class="py-3 pe-4 text-end">
+                                        <button class="btn btn-sm btn-outline-warning me-1"
+                                            th:onclick="'editDept(' + ${dept.id} + ')'">
+                                            <i class="fas fa-pen"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger"
+                                            th:onclick="'deleteDept(' + ${dept.id} + ')'">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal fade" id="deptModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold" id="modalTitle">Add Department</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="deptForm">
+                        <input type="hidden" id="deptId">
+                        <div class="mb-3">
+                            <label class="form-label">Department Name</label>
+                            <input type="text" id="deptName" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea id="deptDescription" class="form-control" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-warning fw-bold text-dark" onclick="saveDept()">Save
+                        Department</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+    <script>
+        const modal = new bootstrap.Modal(document.getElementById('deptModal'));
+
+        function openModal() {
+            document.getElementById('deptForm').reset();
+            document.getElementById('deptId').value = '';
+            document.getElementById('modalTitle').innerText = 'Add Department';
+            modal.show();
+        }
+
+        function editDept(id) {
+            fetch(`/api/masters/departments/${id}`)
+                .then(r => r.json())
+                .then(d => {
+                    document.getElementById('deptId').value = d.id;
+                    document.getElementById('deptName').value = d.name;
+                    document.getElementById('deptDescription').value = d.description || '';
+                    document.getElementById('modalTitle').innerText = 'Edit Department';
+                    modal.show();
+                });
+        }
+
+        function saveDept() {
+            const id = document.getElementById('deptId').value;
+            const data = {
+                name: document.getElementById('deptName').value,
+                description: document.getElementById('deptDescription').value
+            };
+            fetch(id ? `/api/masters/departments/${id}` : '/api/masters/departments', {
+                method: id ? 'PUT' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(() => location.reload());
+        }
+
+        function deleteDept(id) {
+            if (confirm('Delete this department?')) {
+                fetch(`/api/masters/departments/${id}`, { method: 'DELETE' }).then(() => location.reload());
+            }
+        }
+    </script>
+</body>
+
+</html>

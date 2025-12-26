@@ -66,13 +66,6 @@ public class WebController {
         populateCommonDashboardStats(model);
         return "dashboard";
     }
-
-    @GetMapping("/admin/dashboard")
-    public String adminDashboard(Model model) {
-        populateCommonDashboardStats(model);
-        return "admin/dashboard";
-    }
-
     @GetMapping("/lab/dashboard")
     public String labDashboard(Model model) {
         model.addAttribute("pendingOrders", labOrderService.getPendingOrderCount());
@@ -160,6 +153,28 @@ public class WebController {
         return "owner/dashboard";
     }
 
+
+    @GetMapping("/owner/departments")
+    public String ownerDepartments(Model model) {
+        Object depts = departmentService.getAllDepartments();
+        model.addAttribute("departments", depts != null ? depts : java.util.Collections.emptyList());
+        return "owner/departments";
+    }
+
+    @GetMapping("/owner/doctors")
+    public String ownerDoctors(Model model) {
+        Object docs = doctorProfileService.getAllDoctorProfiles();
+        Object depts = departmentService.getAllDepartments();
+        model.addAttribute("doctors", docs != null ? docs : java.util.Collections.emptyList());
+        model.addAttribute("departments", depts != null ? depts : java.util.Collections.emptyList());
+        return "owner/doctors";
+    }
+
+    @GetMapping("/owner/workers")
+    public String ownerWorkers() {
+        return "owner/workers";
+    }
+
     @GetMapping("/pharmacy/dashboard")
     public String pharmacyDashboard(Model model) {
         // Placeholder stats for Pharmacy
@@ -230,25 +245,6 @@ public class WebController {
         return "lab/patient-details";
     }
 
-    // Master Management
-    @GetMapping("/masters/departments")
-    public String departments(Model model) {
-        model.addAttribute("departments", departmentService.getAllDepartments());
-        return "masters/departments";
-    }
-
-    @GetMapping("/masters/doctors")
-    public String doctors(Model model) {
-        model.addAttribute("doctors", doctorProfileService.getAllDoctorProfiles());
-        model.addAttribute("departments", departmentService.getAllDepartments());
-        return "masters/doctors";
-    }
-
-    @GetMapping("/admin/workers")
-    public String workers() {
-        return "admin/workers";
-    }
-
     @GetMapping("/admin/schedules")
     public String schedules() {
         return "admin/schedules";
@@ -266,6 +262,19 @@ public class WebController {
 
     @GetMapping("/masters/charges")
     public String charges() {
+        return "masters/charges";
+    }
+
+
+    @GetMapping("/owner/billing")
+    public String ownerBilling(Model model) {
+        model.addAttribute("stats", billingService.getBillingStats());
+        model.addAttribute("recentBills", billingService.getAllBills().stream().limit(5).collect(java.util.stream.Collectors.toList()));
+        return "admin/billing";
+    }
+
+    @GetMapping("/owner/charges")
+    public String ownerCharges() {
         return "masters/charges";
     }
 

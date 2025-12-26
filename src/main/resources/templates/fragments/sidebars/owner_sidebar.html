@@ -29,32 +29,53 @@
             <a th:href="@{/owner/dashboard}" class="sidebar-link"
                 th:classappend="${activeLink == 'owner-dash' ? 'active' : ''}">
                 <i class="fas fa-chart-line"></i>
-                <span>Executive Dash</span>
+                <span>Executive Dashboard</span>
             </a>
 
-            <a th:href="@{/admin/workers}" class="sidebar-link"
+            <a th:href="@{/owner/workers}" class="sidebar-link"
                 th:classappend="${activeLink == 'owner-workers' ? 'active' : ''}">
                 <i class="fas fa-users-cog"></i>
                 <span>Staff Management</span>
             </a>
 
-            <a th:href="@{/masters/departments}" class="sidebar-link"
+            <a th:href="@{/owner/departments}" class="sidebar-link"
                 th:classappend="${activeLink == 'owner-depts' ? 'active' : ''}">
                 <i class="fas fa-sitemap"></i>
                 <span>Clinical Hierarchy</span>
+            </a>
+
+            <a th:href="@{/owner/doctors}" class="sidebar-link"
+                th:classappend="${activeLink == 'owner-doctors' ? 'active' : ''}">
+                <i class="fas fa-user-md"></i>
+                <span>Physician Roster (Doctors)</span>
             </a>
 
             <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Clinical
                     Oversight</small></div>
 
             <a th:href="@{/doctor/dashboard}" class="sidebar-link">
-                <i class="fas fa-user-md"></i>
-                <span>Physician Portal</span>
+                <i class="fas fa-stethoscope"></i>
+                <span>Doctor Dashboard</span>
             </a>
 
             <a th:href="@{/lab/dashboard}" class="sidebar-link">
                 <i class="fas fa-flask"></i>
                 <span>Lab Operations</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">Financials</small></div>
+
+            <a th:href="@{/owner/billing}" class="sidebar-link"
+                th:classappend="${activeLink == 'billing-dash' ? 'active' : ''}">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span>Revenue Oversight</span>
+            </a>
+
+            <a th:href="@{/owner/charges}" class="sidebar-link"
+                th:classappend="${activeLink == 'charges' ? 'active' : ''}">
+                <i class="fas fa-list-check"></i>
+                <span>Charge Master</span>
             </a>
 
             <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"

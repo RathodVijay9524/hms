@@ -165,17 +165,19 @@
                 </div>
 
                 <div class="col-md-6 col-xl-3">
-                    <div class="metric-card">
-                        <div class="metric-icon p-2 bg-indigo-subtle text-indigo"
-                            style="background: rgba(99, 102, 241, 0.1); color: #6366f1;">
-                            <i class="fas fa-briefcase-medical"></i>
+                    <a th:href="@{/owner/doctors}" class="text-decoration-none h-100">
+                        <div class="metric-card h-100">
+                            <div class="metric-icon p-2 bg-indigo-subtle text-indigo"
+                                style="background: rgba(99, 102, 241, 0.1); color: #6366f1;">
+                                <i class="fas fa-briefcase-medical"></i>
+                            </div>
+                            <div class="metric-title">Physician Roster</div>
+                            <div class="metric-value">48</div>
+                            <div class="mt-2 small text-muted">
+                                Across 12 Departments
+                            </div>
                         </div>
-                        <div class="metric-title">Physician Roster</div>
-                        <div class="metric-value">48</div>
-                        <div class="mt-2 small text-muted">
-                            Across 12 Departments
-                        </div>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="col-md-6 col-xl-3">
@@ -219,7 +221,7 @@
                             </h5>
                         </div>
                         <div class="card-body p-0">
-                            <a th:href="@{/admin/workers}" class="hub-link">
+                            <a th:href="@{/owner/workers}" class="hub-link">
                                 <div class="hub-icon"><i class="fas fa-users-cog"></i></div>
                                 <div>
                                     <div class="fw-bold">Staff Directory</div>
@@ -227,7 +229,7 @@
                                 </div>
                                 <i class="fas fa-chevron-right ms-auto opacity-50"></i>
                             </a>
-                            <a th:href="@{/masters/departments}" class="hub-link">
+                            <a th:href="@{/owner/departments}" class="hub-link">
                                 <div class="hub-icon"><i class="fas fa-sitemap"></i></div>
                                 <div>
                                     <div class="fw-bold">Department Hierarchy</div>
@@ -235,7 +237,7 @@
                                 </div>
                                 <i class="fas fa-chevron-right ms-auto opacity-50"></i>
                             </a>
-                            <a th:href="@{/doctor/dashboard}" class="hub-link">
+                            <a th:href="@{/owner/doctors}" class="hub-link">
                                 <div class="hub-icon"><i class="fas fa-user-md"></i></div>
                                 <div>
                                     <div class="fw-bold">Doctor Management</div>
@@ -243,11 +245,11 @@
                                 </div>
                                 <i class="fas fa-chevron-right ms-auto opacity-50"></i>
                             </a>
-                            <a href="#" class="hub-link">
-                                <div class="hub-icon"><i class="fas fa-cog"></i></div>
+                            <a th:href="@{/owner/billing}" class="hub-link">
+                                <div class="hub-icon"><i class="fas fa-indian-rupee-sign"></i></div>
                                 <div>
-                                    <div class="fw-bold">Enterprise Settings</div>
-                                    <div class="small text-muted">Hospital branding and policy control</div>
+                                    <div class="fw-bold">Revenue Oversight</div>
+                                    <div class="small text-muted">Export billing audits and revenue logs</div>
                                 </div>
                                 <i class="fas fa-chevron-right ms-auto opacity-50"></i>
                             </a>
