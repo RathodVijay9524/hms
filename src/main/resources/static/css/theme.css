@@ -112,14 +112,48 @@
 
 .sidebar {
     background: var(--bg-secondary);
-    min-height: calc(100vh - 56px);
-    border-right: 1px solid var(--border-color);
-    padding: 1.5rem 1rem;
+    height: calc(100vh - 48px);
+    border-right: none;
+    padding: 1rem 0.75rem;
     position: fixed;
-    width: 250px;
-    top: 56px;
+    left: 0;
+    width: 210px;
+    top: 48px;
     transition: transform 0.3s ease-in-out;
     z-index: 1000;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-shadow: 10px 0 20px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Gap filler - extends sidebar background to cover any gap */
+.sidebar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -10px;
+    width: 10px;
+    height: 100%;
+    background: var(--bg-secondary);
+    z-index: -1;
+}
+
+/* Thin Scrollbar for Sidebar */
+.sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
 }
 
 .theme-toggle:hover {
@@ -254,13 +288,14 @@ body,
 .sidebar-link {
     display: flex;
     align-items: center;
-    padding: 0.8rem 1rem;
+    padding: 0.55rem 0.75rem;
     color: var(--text-secondary);
     text-decoration: none !important;
-    border-radius: 0.75rem;
-    margin-bottom: 0.4rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.2rem;
     transition: all 0.2s ease;
-    gap: 12px;
+    gap: 10px;
+    font-size: 0.85rem;
 }
 
 .sidebar-link:hover {
@@ -271,6 +306,54 @@ body,
 .sidebar-link.active {
     background: var(--primary-color);
     color: white !important;
+}
+
+.sidebar-link i {
+    width: 18px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* Global Main Content - Compact Layout */
+.main-content {
+    margin-left: 210px;
+    padding: 1rem 1.25rem;
+    margin-top: 48px;
+    min-height: calc(100vh - 48px);
+    background: var(--bg-primary);
+}
+
+/* Fill any potential gap between sidebar and content */
+body {
+    background: var(--bg-primary) !important;
+}
+
+/* Compact Typography for Content */
+.main-content h1,
+.main-content h2 {
+    font-size: 1.5rem;
+}
+
+.main-content h3 {
+    font-size: 1.25rem;
+}
+
+.main-content p,
+.main-content span,
+.main-content td {
+    font-size: 0.875rem;
+}
+
+/* Global Navbar - Compact */
+.navbar-custom {
+    height: 48px;
+    padding-top: 0;
+    padding-bottom: 0;
+    font-size: 0.875rem;
+}
+
+.navbar-brand {
+    font-size: 1rem;
 }
 
 /* Owner Executive Overrides (Gold) */
@@ -443,14 +526,6 @@ body,
     background: rgba(11, 10, 8, 0.15);
     color: var(--warning);
     border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
-/* Main Content Layout - Fix Sidebar Overlap */
-.main-content {
-    margin-left: 250px;
-    padding: 2rem;
-    margin-top: 56px;
-    min-height: calc(100vh - 56px);
 }
 
 /* Mobile responsiveness for main content */
