@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Invoice - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .invoice-builder-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            height: 100%;
+        }
+
+        .patient-lookup {
+            background: rgba(244, 63, 94, 0.05);
+            border: 1px dashed rgba(244, 63, 94, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .item-table th {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border-color);
+            padding: 1rem;
+        }
+
+        .item-table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .total-section {
+            background: var(--bg-primary);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .total-row:last-child {
+            margin-bottom: 0;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .builder-input {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: white;
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem;
+        }
+
+        .builder-input:focus {
+            outline: none;
+            border-color: #f43f5e;
+            box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/billing_sidebar :: billing_sidebar('create-invoice')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #f43f5e;">Create Invoice</h1>
+                    <p class="text-muted mb-0">Generate a new billing invoice for patient services</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary rounded-pill px-4">Draft</button>
+                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #f43f5e;">
+                        <i class="fas fa-check-double me-2"></i>Finalize & Pay
+                    </button>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Main Builder -->
+                <div class="col-lg-8">
+                    <div class="invoice-builder-card">
+                        <!-- Patient Lookup -->
+                        <div class="patient-lookup">
+                            <h6 class="fw-bold mb-3" style="font-family: 'Outfit'; color: #f43f5e;">Patient Information
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="small text-muted mb-1">Search Patient (Name or UHID)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-transparent border-end-0"
+                                            style="border-color: var(--border-color);"><i
+                                                class="fas fa-search text-muted"></i></span>
+                                        <input type="text" class="form-control bg-transparent border-start-0"
+                                            style="border-color: var(--border-color); color: white;"
+                                            placeholder="Start typing...">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="small text-muted mb-1">Billing Type</label>
+                                    <select class="form-select bg-transparent"
+                                        style="border-color: var(--border-color); color: white;">
+                                        <option>OPD Billing</option>
+                                        <option>IPD Billing</option>
+                                        <option>Pharmacy Only</option>
+                                        <option>Lab/Diagnostics</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Service Items -->
+                        <h6 class="fw-bold mb-3" style="font-family: 'Outfit';">Service Items</h6>
+                        <div class="table-responsive mb-4">
+                            <table class="table item-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 400px;">Service / Procedure</th>
+                                        <th>Rate</th>
+                                        <th>Qty</th>
+                                        <th class="text-end">Total</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <select class="form-select builder-input w-100">
+                                                <option>Consultation - Neuro Surgery (Specialist)</option>
+                                                <option>Blood Test - CBC</option>
+                                                <option>X-Ray Chest PA View</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="text" class="form-control builder-input" value="1,200.00"
+                                                readonly></td>
+                                        <td><input type="number" class="form-control builder-input" value="1"
+                                                style="width: 70px;"></td>
+                                        <td class="text-end fw-bold">₹ 1,200.00</td>
+                                        <td class="text-end"><button class="btn btn-link link-danger p-0"><i
+                                                    class="fas fa-trash-alt"></i></button></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5">
+                                            <button
+                                                class="btn btn-outline-secondary btn-sm rounded-pill w-100 py-2 border-dashed"
+                                                style="border: 1px dashed var(--border-color);">
+                                                <i class="fas fa-plus me-2"></i>Add Another Service
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div>
+                            <label class="small text-muted mb-2">Invoice Remarks / Notes</label>
+                            <textarea class="form-control bg-transparent"
+                                style="border-color: var(--border-color); color: white;" rows="2"
+                                placeholder="Visible on printed invoice..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Panel -->
+                <div class="col-lg-4">
+                    <div class="invoice-builder-card">
+                        <h5 class="fw-bold mb-4" style="font-family: 'Outfit';">Billing Summary</h5>
+
+                        <div class="total-section mb-4">
+                            <div class="total-row">
+                                <span class="text-muted">Sub-total</span>
+                                <span class="fw-bold">₹ 1,200.00</span>
+                            </div>
+                            <div class="total-row">
+                                <span class="text-muted">Tax (GST 12%)</span>
+                                <span class="fw-bold">₹ 144.00</span>
+                            </div>
+                            <div class="total-row">
+                                <span class="text-muted">Discount</span>
+                                <span class="text-success fw-bold">- ₹ 0.00</span>
+                            </div>
+                            <div class="total-row fs-5 mt-2">
+                                <span class="fw-bold">Grand Total</span>
+                                <span class="fw-bold" style="color: #f43f5e;">₹ 1,344.00</span>
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold mb-3" style="font-family: 'Outfit';">Payment Options</h6>
+                        <div class="btn-group w-100 mb-4 rounded-3 overflow-hidden" role="group">
+                            <input type="radio" class="btn-check" name="paymethod" id="cash" checked>
+                            <label class="btn btn-outline-secondary py-3" for="cash"><i
+                                    class="fas fa-money-bill-wave d-block mb-1"></i>Cash</label>
+
+                            <input type="radio" class="btn-check" name="paymethod" id="card">
+                            <label class="btn btn-outline-secondary py-3" for="card"><i
+                                    class="fas fa-credit-card d-block mb-1"></i>Card</label>
+
+                            <input type="radio" class="btn-check" name="paymethod" id="upi">
+                            <label class="btn btn-outline-secondary py-3" for="upi"><i
+                                    class="fas fa-qrcode d-block mb-1"></i>UPI</label>
+                        </div>
+
+                        <div class="p-3 rounded-3 mb-4"
+                            style="background: rgba(244, 63, 94, 0.05); border: 1px solid rgba(244, 63, 94, 0.2);">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-shield-halved text-danger me-2"></i>
+                                <h6 class="fw-bold mb-0 small">Secure Transaction</h6>
+                            </div>
+                            <p class="mb-0" style="font-size: 0.75rem; color: var(--text-muted);">
+                                Finalizing this invoice will generate a unique hash for the GST portal and update health
+                                insurance records if applicable.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

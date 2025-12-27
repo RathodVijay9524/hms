@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .book-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+        }
+
+        .booking-step-title {
+            font-family: 'Outfit';
+            font-weight: 600;
+            color: #a855f7;
+            margin-bottom: 2rem;
+            font-size: 1.25rem;
+        }
+
+        .slot-btn {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .slot-btn:hover:not(.disabled) {
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.05);
+        }
+
+        .slot-btn.active {
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.1);
+            color: #a855f7;
+            font-weight: 700;
+        }
+
+        .slot-btn.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background: var(--bg-secondary);
+        }
+
+        .form-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .select-search {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: white;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/reception_sidebar :: reception_sidebar('book')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #a855f7;">Book Appointment</h1>
+                    <p class="text-muted mb-0">Schedule a consultation slot for a patient with available doctors</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary rounded-pill px-4">Clear Form</button>
+                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #a855f7;">
+                        <i class="fas fa-check-circle me-2"></i>Confirm Booking
+                    </button>
+                </div>
+            </div>
+
+            <!-- Booking Form -->
+            <div class="book-card mx-auto" style="max-width: 900px;">
+                <form>
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <label class="form-label">Search Patient (Name/UHID)</label>
+                            <input type="text" class="select-search" placeholder="e.g. Wanda Maximoff">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Appointment Date</label>
+                            <input type="date" class="select-search" value="2025-12-27">
+                        </div>
+                    </div>
+
+                    <div class="booking-step-title">
+                        <i class="fas fa-user-md me-2"></i>Select Consultant
+                    </div>
+
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <label class="form-label">Department</label>
+                            <select class="select-search">
+                                <option>General Medicine</option>
+                                <option>Neurology</option>
+                                <option>Cardiology</option>
+                                <option>Dental</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Doctor</label>
+                            <select class="select-search">
+                                <option>Dr. Stephen Strange</option>
+                                <option>Dr. Jane Foster</option>
+                                <option>Dr. Otto Octavius</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="booking-step-title">
+                        <i class="fas fa-clock me-2"></i>Available Slots
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="slot-btn">09:00 AM</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="slot-btn">09:30 AM</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="slot-btn disabled">10:00 AM</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="slot-btn">10:30 AM</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="slot-btn active">11:00 AM</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="slot-btn">11:30 AM</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="slot-btn disabled">12:00 PM</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="slot-btn">12:30 PM</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 p-4 rounded-4"
+                        style="background: rgba(168, 85, 247, 0.05); border: 1px dashed rgba(168, 85, 247, 0.2);">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="fw-bold mb-1">Booking Preview</h6>
+                                <p class="small text-muted mb-0">Patient: Wanda Maximoff • Slot: 11:00 AM (Today)</p>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-purple-subtle text-purple" style="color: #a855f7;">Registration
+                                    Fee: ₹ 500</span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

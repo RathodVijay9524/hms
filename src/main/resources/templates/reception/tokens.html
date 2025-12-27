@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Queue - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .token-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .token-display {
+            font-family: 'Outfit';
+            font-weight: 700;
+            font-size: 3rem;
+            color: #a855f7;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .dept-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(168, 85, 247, 0.1);
+            color: #a855f7;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .queue-table th {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            padding: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .queue-table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .btn-issue {
+            background: #a855f7;
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 700;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn-issue:hover {
+            background: #9333ea;
+            box-shadow: 0 5px 15px rgba(168, 85, 247, 0.3);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/reception_sidebar :: reception_sidebar('tokens')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #a855f7;">Token Queue</h1>
+                    <p class="text-muted mb-0">Live OPD monitoring and token management for all departments</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary rounded-pill px-4">Refresh Board</button>
+                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #a855f7;"
+                        data-bs-toggle="modal" data-bs-target="#issueTokenModal">
+                        <i class="fas fa-plus me-2"></i>Issue New Token
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="token-card text-center">
+                        <div class="dept-icon mx-auto"><i class="fas fa-stethoscope"></i></div>
+                        <div class="small text-muted mb-1">General Medicine</div>
+                        <div class="token-display">12</div>
+                        <div class="small fw-bold text-success">4 Waiting</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="token-card text-center">
+                        <div class="dept-icon mx-auto"><i class="fas fa-child"></i></div>
+                        <div class="small text-muted mb-1">Paediatrics</div>
+                        <div class="token-display">08</div>
+                        <div class="small fw-bold text-warning">2 Waiting</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="token-card text-center">
+                        <div class="dept-icon mx-auto"><i class="fas fa-tooth"></i></div>
+                        <div class="small text-muted mb-1">Dental Clinic</div>
+                        <div class="token-display">05</div>
+                        <div class="small fw-bold text-success">1 Waiting</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="token-card text-center">
+                        <div class="dept-icon mx-auto"><i class="fas fa-heartbeat"></i></div>
+                        <div class="small text-muted mb-1">Cardiology</div>
+                        <div class="token-display">03</div>
+                        <div class="small fw-bold text-danger">7 Waiting</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Queue -->
+            <div class="token-card overflow-hidden">
+                <h5 class="fw-bold mb-4" style="font-family: 'Outfit';">Active Token List</h5>
+                <div class="table-responsive">
+                    <table class="table queue-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Token #</th>
+                                <th>Patient Details</th>
+                                <th>Department</th>
+                                <th>Doctor</th>
+                                <th>Wait Time</th>
+                                <th class="text-end">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="fw-bold text-white fs-5">#M-16</div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">Bruce Banner</div>
+                                    <div class="small text-muted">UHID-2024-0091</div>
+                                </td>
+                                <td>General Medicine</td>
+                                <td>Dr. Jane Foster</td>
+                                <td><span class="text-warning">18 min</span></td>
+                                <td class="text-end"><span
+                                        class="badge bg-warning-subtle text-warning rounded-pill px-3">Waiting</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="fw-bold text-white fs-5">#P-09</div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">Peter Parker</div>
+                                    <div class="small text-muted">UHID-2024-0812</div>
+                                </td>
+                                <td>Paediatrics</td>
+                                <td>Dr. Otto Octavius</td>
+                                <td><span class="text-success">5 min</span></td>
+                                <td class="text-end"><span
+                                        class="badge bg-primary-subtle text-primary rounded-pill px-3">Calling...</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Orders - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .order-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s ease;
+        }
+
+        .order-card:hover {
+            transform: scale(1.01);
+        }
+
+        .order-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-body {
+            padding: 1.25rem;
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.35rem 0.85rem;
+            border-radius: 2rem;
+            text-transform: uppercase;
+        }
+
+        .status-received {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .status-transit {
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+        }
+
+        .supplier-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .supplier-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-primary);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #38bdf8;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/pharmacy_sidebar :: pharmacy_sidebar('orders')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #38bdf8;">Purchase Orders</h1>
+                    <p class="text-muted mb-0">Track stock replenishments and supplier shipments</p>
+                </div>
+                <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #38bdf8;">
+                    <i class="fas fa-plus me-2"></i>New Purchase Order
+                </button>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="card bg-secondary-subtle border-0 rounded-4">
+                        <div class="card-body p-4">
+                            <h6 class="text-muted small text-uppercase fw-bold mb-3">Pending Orders</h6>
+                            <h2 class="fw-bold mb-0">05</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-secondary-subtle border-0 rounded-4">
+                        <div class="card-body p-4">
+                            <h6 class="text-muted small text-uppercase fw-bold mb-3">In Transit</h6>
+                            <h2 class="fw-bold mb-0">03</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-secondary-subtle border-0 rounded-4">
+                        <div class="card-body p-4">
+                            <h6 class="text-muted small text-uppercase fw-bold mb-3">Received (Month)</h6>
+                            <h2 class="fw-bold mb-0">28</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Feed -->
+            <div class="row">
+                <div class="col-12">
+                    <!-- Order 1 -->
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="supplier-info">
+                                <div class="supplier-icon"><i class="fas fa-industry"></i></div>
+                                <div>
+                                    <h6 class="fw-bold mb-0">AstraZeneca Pharma Ltd.</h6>
+                                    <span class="small text-muted">ID: #PO-2025-0982</span>
+                                </div>
+                            </div>
+                            <span class="status-badge status-transit">In Transit</span>
+                        </div>
+                        <div class="order-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-3">
+                                    <small class="text-muted d-block">Order Date</small>
+                                    <span class="fw-bold">24-Dec-2025</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <small class="text-muted d-block">Expected Delivery</small>
+                                    <span class="fw-bold">28-Dec-2025</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <small class="text-muted d-block">Order Value</small>
+                                    <span class="fw-bold">₹ 1,45,200.00</span>
+                                </div>
+                                <div class="col-md-3 text-end">
+                                    <button
+                                        class="btn btn-sm btn-outline-primary px-3 rounded-pill me-2">Details</button>
+                                    <button class="btn btn-sm btn-primary px-3 rounded-pill">Track</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order 2 -->
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="supplier-info">
+                                <div class="supplier-icon"><i class="fas fa-industry"></i></div>
+                                <div>
+                                    <h6 class="fw-bold mb-0">Sun Pharmaceuticals</h6>
+                                    <span class="small text-muted">ID: #PO-2025-1102</span>
+                                </div>
+                            </div>
+                            <span class="status-badge status-pending">Decision Pending</span>
+                        </div>
+                        <div class="order-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-3">
+                                    <small class="text-muted d-block">Order Date</small>
+                                    <span class="fw-bold">26-Dec-2025</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <small class="text-muted d-block">Expected Delivery</small>
+                                    <span class="text-muted small">Not Processed</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <small class="text-muted d-block">Order Value</small>
+                                    <span class="fw-bold">₹ 82,450.00</span>
+                                </div>
+                                <div class="col-md-3 text-end">
+                                    <button class="btn btn-sm btn-outline-primary px-3 rounded-pill me-2">Edit
+                                        PO</button>
+                                    <button class="btn btn-sm btn-primary px-3 rounded-pill">Approve</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order 3 -->
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="supplier-info">
+                                <div class="supplier-icon"><i class="fas fa-industry"></i></div>
+                                <div>
+                                    <h6 class="fw-bold mb-0">GlaxoSmithKline</h6>
+                                    <span class="small text-muted">ID: #PO-2025-0811</span>
+                                </div>
+                            </div>
+                            <span class="status-badge status-received">Order Received</span>
+                        </div>
+                        <div class="order-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-3">
+                                    <small class="text-muted d-block">Order Date</small>
+                                    <span class="fw-bold">20-Dec-2025</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <small class="text-muted d-block">Delivery Date</small>
+                                    <span class="fw-bold text-success">25-Dec-2025</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <small class="text-muted d-block">Order Value</small>
+                                    <span class="fw-bold">₹ 2,10,000.00</span>
+                                </div>
+                                <div class="col-md-3 text-end">
+                                    <button class="btn btn-sm btn-outline-success px-3 rounded-pill">View
+                                        Invoice</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

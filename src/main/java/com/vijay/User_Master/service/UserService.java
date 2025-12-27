@@ -20,6 +20,7 @@ public interface UserService extends iCrudService<UserRequest, UserResponse,Long
     void updateAccountStatus(Long userId, Boolean isActive);
     UserResponse getByIdForUser(Long aLong);
     PageableResponse<UserResponse> getAllActiveUsers(int pageNumber, int pageSize, String sortBy, String sortDir);
+    List<UserResponse> getAllUsers();
 
     PageableResponse<UserResponse> getAllDeletedUsers(int pageNumber, int pageSize, String sortBy, String sortDir);
     PageableResponse<UserResponse> getUsersWithFilters(

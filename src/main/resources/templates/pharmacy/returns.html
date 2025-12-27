@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Returns Management - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .return-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .return-card:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.15);
+        }
+
+        .return-type-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 2rem;
+            text-transform: uppercase;
+        }
+
+        .type-patient {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .type-supplier {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .returns-table th {
+            background: rgba(56, 189, 248, 0.03);
+            font-family: 'Outfit';
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 1.25rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .returns-table td {
+            padding: 1.25rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/pharmacy_sidebar :: pharmacy_sidebar('returns')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #38bdf8;">Returns Management</h1>
+                    <p class="text-muted mb-0">Track patient credits and supplier reverse logistics</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-light px-4 rounded-pill">
+                        <i class="fas fa-search me-2"></i>Invoice Lookup
+                    </button>
+                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #38bdf8;">
+                        <i class="fas fa-undo me-2"></i>Initiate Return
+                    </button>
+                </div>
+            </div>
+
+            <!-- Returns List -->
+            <div class="return-card overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table returns-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Return ID</th>
+                                <th>Medicine Details</th>
+                                <th>Reason</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">#RET-9921</div>
+                                    <div class="small text-muted">27-Dec-2025</div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">Metformin 850mg</div>
+                                    <div class="small text-muted">Batch: MT-1102 • 10 Units</div>
+                                </td>
+                                <td>Changed Prescription</td>
+                                <td><span class="return-type-badge type-patient">PATIENT</span></td>
+                                <td>₹ 455.00</td>
+                                <td><span class="badge bg-success-subtle text-success">Approved</span></td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill">View Summary</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">#RET-9812</div>
+                                    <div class="small text-muted">25-Dec-2025</div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">Amoxicillin 500mg</div>
+                                    <div class="small text-muted">Batch: AB-8812 • 50 Units</div>
+                                </td>
+                                <td>Near Expiry</td>
+                                <td><span class="return-type-badge type-supplier">SUPPLIER</span></td>
+                                <td>₹ 6,000.00</td>
+                                <td><span class="badge bg-warning-subtle text-warning">Pending Courier</span></td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill">Manifest</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Helper Note -->
+            <div class="mt-4 p-4 rounded-4"
+                style="background: rgba(56, 189, 248, 0.05); border: 1px dashed rgba(56, 189, 248, 0.2);">
+                <div class="d-flex align-items-center mb-2">
+                    <i class="fas fa-info-circle text-primary me-2"></i>
+                    <h6 class="fw-bold mb-0">Processing Policy</h6>
+                </div>
+                <p class="small text-muted mb-0">All patient returns require original invoice validation and must be
+                    within 7 days of purchase. Supplier returns for expiry should be initiated 60 days prior to the
+                    expiration date.</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

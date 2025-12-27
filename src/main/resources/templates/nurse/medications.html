@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medication Administration - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .mar-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .mar-patient-header {
+            background: rgba(236, 72, 153, 0.05);
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dose-slot {
+            width: 80px;
+            height: 80px;
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--bg-primary);
+        }
+
+        .dose-slot:hover {
+            border-color: #ec4899;
+            background: rgba(236, 72, 153, 0.05);
+        }
+
+        .dose-slot.done {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+        }
+
+        .dose-slot.due {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% {
+                border-color: rgba(239, 68, 68, 0.3);
+            }
+
+            50% {
+                border-color: rgba(239, 68, 68, 1);
+            }
+
+            100% {
+                border-color: rgba(239, 68, 68, 0.3);
+            }
+        }
+
+        .dose-time {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .dose-status {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .schedule-table td {
+            padding: 1.5rem 2rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .schedule-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .med-info {
+            max-width: 300px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/nurse_sidebar :: nurse_sidebar('nurse-meds')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #ec4899;">Medication Schedule (MAR)
+                    </h1>
+                    <p class="text-muted mb-0">Record and monitor medication administration for Ward-C</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary rounded-pill px-4">
+                        <i class="fas fa-barcode me-2"></i>Scan Barcode
+                    </button>
+                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #ec4899;">
+                        <i class="fas fa-history me-2"></i>Administration Log
+                    </button>
+                </div>
+            </div>
+
+            <!-- MAR for Patient 1 -->
+            <div class="mar-card">
+                <div class="mar-patient-header">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="badge bg-secondary py-2 px-3 rounded-pill">C-101</span>
+                        <h5 class="fw-bold mb-0" style="font-family: 'Outfit';">Robert Downey</h5>
+                        <span class="text-muted small">UHID-2024-0012 • 45y / Male</span>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-danger rounded-pill px-3">2 Meds Due</span>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table schedule-table mb-0">
+                        <tbody>
+                            <tr>
+                                <td class="med-info">
+                                    <div class="fw-bold fs-6">Amoxicillin 500mg</div>
+                                    <div class="small text-muted mb-2">Capsule • Oral • After Meal</div>
+                                    <span class="badge bg-secondary-subtle text-muted small">QID (4 times/day)</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-3">
+                                        <div class="dose-slot done">
+                                            <div class="dose-time">08:00</div>
+                                            <i class="fas fa-check-circle"></i>
+                                            <div class="dose-status">Done</div>
+                                        </div>
+                                        <div class="dose-slot done">
+                                            <div class="dose-time">13:00</div>
+                                            <i class="fas fa-check-circle"></i>
+                                            <div class="dose-status">Done</div>
+                                        </div>
+                                        <div class="dose-slot due">
+                                            <div class="dose-time">18:00</div>
+                                            <i class="fas fa-clock"></i>
+                                            <div class="dose-status">Due Now</div>
+                                        </div>
+                                        <div class="dose-slot">
+                                            <div class="dose-time">22:00</div>
+                                            <i class="fas fa-moon"></i>
+                                            <div class="dose-status">Upcoming</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-end">
+                                    <button class="btn btn-pink text-white rounded-pill px-4"
+                                        style="background: #ec4899;">Administer</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="med-info">
+                                    <div class="fw-bold fs-6">Atorvastatin 20mg</div>
+                                    <div class="small text-muted mb-2">Tablet • Oral</div>
+                                    <span class="badge bg-secondary-subtle text-muted small">HS (At Bedtime)</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-3">
+                                        <div class="dose-slot">
+                                            <div class="dose-time">22:00</div>
+                                            <i class="fas fa-moon"></i>
+                                            <div class="dose-status">Upcoming</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-end">
+                                    <button class="btn btn-outline-secondary rounded-pill px-4" disabled>Not
+                                        Due</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- MAR for Patient 2 -->
+            <div class="mar-card">
+                <div class="mar-patient-header">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="badge bg-secondary py-2 px-3 rounded-pill">C-105</span>
+                        <h5 class="fw-bold mb-0" style="font-family: 'Outfit';">Wanda Maximoff</h5>
+                        <span class="text-muted small">UHID-2024-0045 • 31y / Female</span>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-success rounded-pill px-3">All Meds Administered</span>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table schedule-table mb-0">
+                        <tbody>
+                            <tr>
+                                <td class="med-info">
+                                    <div class="fw-bold fs-6">Paracetamol 650mg</div>
+                                    <div class="small text-muted mb-2">Tablet • Oral</div>
+                                    <span class="badge bg-secondary-subtle text-muted small">TID (3 times/day)</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-3">
+                                        <div class="dose-slot done">
+                                            <div class="dose-time">08:00</div>
+                                            <i class="fas fa-check-circle"></i>
+                                            <div class="dose-status">Done</div>
+                                        </div>
+                                        <div class="dose-slot done">
+                                            <div class="dose-time">14:00</div>
+                                            <i class="fas fa-check-circle"></i>
+                                            <div class="dose-status">Done</div>
+                                        </div>
+                                        <div class="dose-slot done">
+                                            <div class="dose-time">20:00</div>
+                                            <i class="fas fa-check-circle"></i>
+                                            <div class="dose-status">Done</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-end">
+                                    <span class="text-success small">Completed for Day</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

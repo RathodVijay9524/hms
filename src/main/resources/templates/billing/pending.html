@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Bills - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .pending-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .pending-card:hover {
+            border-color: rgba(244, 63, 94, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(244, 63, 94, 0.15);
+        }
+
+        .alert-pill {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 2rem;
+            text-transform: uppercase;
+        }
+
+        .alert-high {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .alert-medium {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .pending-table th {
+            background: rgba(244, 63, 94, 0.03);
+            font-family: 'Outfit';
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 1.25rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .pending-table td {
+            padding: 1.25rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .due-amount {
+            font-family: 'Outfit';
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #f43f5e;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/billing_sidebar :: billing_sidebar('pending')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #f43f5e;">Pending Bills</h1>
+                    <p class="text-muted mb-0">Identify and process uncaptured revenue from active services</p>
+                </div>
+                <div>
+                    <span class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2">₹ 3.2L Total Unbilled</span>
+                </div>
+            </div>
+
+            <!-- Risk Analysis -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="pending-card p-4 h-100">
+                        <h6 class="fw-bold mb-3 d-flex align-items-center">
+                            <i class="fas fa-user-xmark text-danger me-2"></i> Discharge Pending Clearance
+                        </h6>
+                        <div class="d-flex justify-content-between align-items-end">
+                            <h2 class="fw-bold mb-0 text-danger">08</h2>
+                            <span class="small text-muted">Patients waiting for final billing</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="pending-card p-4 h-100">
+                        <h6 class="fw-bold mb-3 d-flex align-items-center">
+                            <i class="fas fa-vial-circle-check text-warning me-2"></i> Un-invoiced Procedures
+                        </h6>
+                        <div class="d-flex justify-content-between align-items-end">
+                            <h2 class="fw-bold mb-0 text-warning">24</h2>
+                            <span class="small text-muted">Completed services not yet billed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending List -->
+            <div class="pending-card overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table pending-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Patient Details</th>
+                                <th>Service Type</th>
+                                <th>Last Service Date</th>
+                                <th>Est. Amount</th>
+                                <th>Urgency</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">Bucky Barnes</div>
+                                    <div class="small text-muted">UHID-2024-0921 • Bed B-202</div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">Major Surgery</div>
+                                    <div class="small text-muted">Post-Op Recovery</div>
+                                </td>
+                                <td>
+                                    <div>27-Dec-2025</div>
+                                    <div class="small text-muted">Discharge Advised</div>
+                                </td>
+                                <td>
+                                    <div class="due-amount">₹ 85,400.00</div>
+                                </td>
+                                <td><span class="alert-pill alert-high">CRITICAL</span></td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3">Generate
+                                        Bill</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">Natasha Romanoff</div>
+                                    <div class="small text-muted">UHID-2024-0112</div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">Specialist Consultation</div>
+                                    <div class="small text-muted">Cardiology</div>
+                                </td>
+                                <td>
+                                    <div>27-Dec-2025</div>
+                                    <div class="small text-muted">Finished 1h ago</div>
+                                </td>
+                                <td>
+                                    <div class="due-amount">₹ 1,500.00</div>
+                                </td>
+                                <td><span class="alert-pill alert-medium">MEDIUM</span></td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3">Generate
+                                        Bill</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

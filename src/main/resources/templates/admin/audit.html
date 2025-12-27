@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Audit Logs - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .audit-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            overflow: hidden;
+        }
+
+        .filter-pane {
+            background: rgba(16, 185, 129, 0.03);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem;
+        }
+
+        .log-entry {
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.25rem;
+            display: grid;
+            grid-template-columns: 150px 1fr 150px 100px;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .log-entry:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .action-chip {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 0.5rem;
+            text-transform: uppercase;
+            width: fit-content;
+        }
+
+        .chip-login {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .chip-update {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+
+        .chip-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .chip-create {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .timestamp {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/admin_sidebar :: admin_sidebar('audit')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #10b981;">Audit Logs</h1>
+                    <p class="text-muted mb-0">Complete traceability of system actions and data changes</p>
+                </div>
+                <button class="btn btn-outline-secondary rounded-pill px-4">
+                    <i class="fas fa-file-export me-2"></i>Export Forensic Report
+                </button>
+            </div>
+
+            <div class="audit-card shadow-sm">
+                <!-- Filters -->
+                <div class="filter-pane">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <input type="date"
+                                class="form-control bg-dark border-secondary text-white rounded-pill px-3">
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select bg-dark border-secondary text-white rounded-pill px-3">
+                                <option>All Actions</option>
+                                <option>Create</option>
+                                <option>Update</option>
+                                <option>Delete</option>
+                                <option>Security</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text"
+                                class="form-control bg-dark border-secondary text-white rounded-pill px-3"
+                                placeholder="Search by user or entity...">
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-indigo w-100 rounded-pill"
+                                style="background: #10b981; color: #000; border: none;">Filter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Log List -->
+                <div class="bg-transparent">
+                    <div class="log-entry text-muted small fw-bold text-uppercase border-bottom py-3 px-4">
+                        <div>Timestamp</div>
+                        <div>Description</div>
+                        <div>User</div>
+                        <div class="text-center">Action</div>
+                    </div>
+
+                    <div class="log-entry">
+                        <div class="timestamp">2025-12-27 18:05:12</div>
+                        <div class="text-white">Modified System Settings: Portal Branding</div>
+                        <div class="text-white">admin_super</div>
+                        <div class="d-flex justify-content-center"><span class="action-chip chip-update">Update</span>
+                        </div>
+                    </div>
+
+                    <div class="log-entry">
+                        <div class="timestamp">2025-12-27 17:42:01</div>
+                        <div class="text-white">New Hospital Node Registered: Metro Health</div>
+                        <div class="text-white">admin_super</div>
+                        <div class="d-flex justify-content-center"><span class="action-chip chip-create">Create</span>
+                        </div>
+                    </div>
+
+                    <div class="log-entry">
+                        <div class="timestamp">2025-12-27 16:15:33</div>
+                        <div class="text-white">User Account Locked: nurse_priya (Failed Logins)</div>
+                        <div class="text-white">SYSTEM</div>
+                        <div class="d-flex justify-content-center"><span class="action-chip chip-delete"
+                                style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">Auth</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

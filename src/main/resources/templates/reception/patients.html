@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Directory - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .patient-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .patient-card:hover {
+            border-color: rgba(168, 85, 247, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(168, 85, 247, 0.15);
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 600px;
+        }
+
+        .search-input {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 2rem;
+            padding: 0.75rem 1.5rem 0.75rem 3.5rem;
+            color: white;
+            width: 100%;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .patient-table th {
+            background: rgba(168, 85, 247, 0.03);
+            font-family: 'Outfit';
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 1.25rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .patient-table td {
+            padding: 1.25rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .uhid-badge {
+            font-family: 'Outfit';
+            font-weight: 700;
+            color: #a855f7;
+            background: rgba(168, 85, 247, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+
+        .action-btn:hover {
+            background: #a855f7;
+            color: white;
+            border-color: #a855f7;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/reception_sidebar :: reception_sidebar('patients')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #a855f7;">Patient Directory</h1>
+                    <p class="text-muted mb-0">Search and manage existing patient records across the hospital</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary rounded-pill px-4">Export CSV</button>
+                    <a th:href="@{/reception/register}" class="btn text-white fw-bold px-4 rounded-pill"
+                        style="background: #a855f7;">
+                        <i class="fas fa-plus me-2"></i>New Patient
+                    </a>
+                </div>
+            </div>
+
+            <!-- Search Area -->
+            <div class="patient-card p-3 mb-4">
+                <div class="d-flex flex-wrap gap-3 align-items-center">
+                    <div class="search-container flex-grow-1">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search by name, UHID, or mobile number...">
+                    </div>
+                    <select class="form-select rounded-pill bg-primary border-0 text-white py-2 px-3"
+                        style="width: auto;">
+                        <option>All Types</option>
+                        <option>OPD Patients</option>
+                        <option>IPD Patients</option>
+                        <option>Emergency</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Patient List -->
+            <div class="patient-card overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table patient-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>UHID</th>
+                                <th>Patient Name</th>
+                                <th>Contact Info</th>
+                                <th>Demographics</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="uhid-badge">UHID-2024-0012</span></td>
+                                <td>
+                                    <div class="fw-bold">Wanda Maximoff</div>
+                                    <div class="small text-muted">Created: 15-Dec-2025</div>
+                                </td>
+                                <td>
+                                    <div>+91 98765 43210</div>
+                                    <div class="small text-muted">wanda@avengers.com</div>
+                                </td>
+                                <td>
+                                    <div>Female, 28y</div>
+                                    <div class="small text-muted">Blood: O+</div>
+                                </td>
+                                <td><span class="badge bg-success-subtle text-success rounded-pill px-3">Active</span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="#" class="action-btn" title="Edit Profile"><i
+                                                class="fas fa-edit"></i></a>
+                                        <a href="#" class="action-btn" title="Book Appointment"><i
+                                                class="fas fa-calendar-plus"></i></a>
+                                        <a href="#" class="action-btn" title="View History"><i
+                                                class="fas fa-history"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="uhid-badge">UHID-2024-0015</span></td>
+                                <td>
+                                    <div class="fw-bold">Stephen Strange</div>
+                                    <div class="small text-muted">Created: 20-Dec-2025</div>
+                                </td>
+                                <td>
+                                    <div>+91 91234 56789</div>
+                                    <div class="small text-muted">dr.strange@sanctum.com</div>
+                                </td>
+                                <td>
+                                    <div>Male, 42y</div>
+                                    <div class="small text-muted">Blood: A-</div>
+                                </td>
+                                <td><span class="badge bg-info-subtle text-info rounded-pill px-3">In-Surgery</span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="#" class="action-btn" title="Edit Profile"><i
+                                                class="fas fa-edit"></i></a>
+                                        <a href="#" class="action-btn" title="Book Appointment"><i
+                                                class="fas fa-calendar-plus"></i></a>
+                                        <a href="#" class="action-btn" title="View History"><i
+                                                class="fas fa-history"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

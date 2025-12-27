@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>In-Patient Management (IPD) - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .ipd-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .ipd-card:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        .ward-badge {
+            background: rgba(99, 102, 241, 0.1);
+            color: #6366f1;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            font-family: 'Outfit';
+        }
+
+        .status-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            text-transform: uppercase;
+        }
+
+        .status-stable {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+
+        .status-critical {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .status-observation {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+
+        .patient-table th {
+            background: rgba(99, 102, 241, 0.03);
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+            padding: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .patient-table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/doctor_sidebar :: doctor_sidebar('doc-ipd')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #6366f1;">In-Patient Management</h1>
+                    <p class="text-muted mb-0">Rounds and monitoring for patients admitted under your care</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary rounded-pill px-4">Shift Handover</button>
+                    <button class="btn btn-indigo text-white fw-bold px-4 rounded-pill" style="background: #6366f1;">
+                        <i class="fas fa-file-medical me-2"></i>Daily Rounds Note
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="ipd-card p-3 text-center">
+                        <small class="text-muted d-block uppercase">My Admissions</small>
+                        <h3 class="fw-bold mb-0">12</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="ipd-card p-3 text-center">
+                        <small class="text-muted d-block uppercase">Critical Cases</small>
+                        <h3 class="fw-bold mb-0 text-danger">02</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="ipd-card p-3 text-center">
+                        <small class="text-muted d-block uppercase">Pending Discharges</small>
+                        <h3 class="fw-bold mb-0 text-success">03</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="ipd-card p-3 text-center">
+                        <small class="text-muted d-block uppercase">Waitlist</small>
+                        <h3 class="fw-bold mb-0">05</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patient List -->
+            <div class="ipd-card overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table patient-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Ward / Bed</th>
+                                <th>Patient Details</th>
+                                <th>Admission Date</th>
+                                <th>Primary Diagnosis</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="ward-badge">ICU-04</span></td>
+                                <td>
+                                    <div class="fw-bold">Bruce Banner</div>
+                                    <div class="small text-muted">H101-091 • Male • 45y</div>
+                                </td>
+                                <td>24-Dec-2025</td>
+                                <td>Gamma Exposure • Hypertension</td>
+                                <td><span class="status-badge status-critical">Critical</span></td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-outline-indigo px-3 rounded-pill"
+                                        style="border-color: #6366f1; color: #6366f1;">View File</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="ward-badge">G-202</span></td>
+                                <td>
+                                    <div class="fw-bold">Peter Parker</div>
+                                    <div class="small text-muted">H101-812 • Male • 19y</div>
+                                </td>
+                                <td>26-Dec-2025</td>
+                                <td>Allergic Reaction • Observation</td>
+                                <td><span class="status-badge status-observation">Observation</span></td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-outline-indigo px-3 rounded-pill"
+                                        style="border-color: #6366f1; color: #6366f1;">View File</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

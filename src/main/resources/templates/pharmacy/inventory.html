@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Management - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .stock-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .stock-card:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.15);
+        }
+
+        .status-pill {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 2rem;
+            text-transform: uppercase;
+        }
+
+        .status-low {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .status-good {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .search-bar {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 2rem;
+            padding: 0.6rem 1.25rem;
+            padding-left: 3rem;
+            color: var(--text-primary);
+            width: 100%;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .inventory-table th {
+            background: rgba(56, 189, 248, 0.05);
+            font-family: 'Outfit';
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 1.25rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .inventory-table td {
+            padding: 1.25rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .category-chip {
+            background: var(--bg-primary);
+            padding: 0.35rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .category-chip.active {
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            border-color: #38bdf8;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/pharmacy_sidebar :: pharmacy_sidebar('inventory')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #38bdf8;">Stock Management</h1>
+                    <p class="text-muted mb-0">Monitor and manage medical inventory</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-light px-4 rounded-pill">
+                        <i class="fas fa-file-export me-2"></i>Export
+                    </button>
+                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #38bdf8;">
+                        <i class="fas fa-plus me-2"></i>Add Medicine
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filters & Search -->
+            <div class="stock-card p-4 mb-4">
+                <div class="row g-3 align-items-center">
+                    <div class="col-lg-4">
+                        <div class="position-relative">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" class="search-bar" placeholder="Search by name, SKU or generic...">
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+                            <span class="category-chip active">All Stock</span>
+                            <span class="category-chip">Antibiotics</span>
+                            <span class="category-chip">Cardiac</span>
+                            <span class="category-chip">Painkillers</span>
+                            <span class="category-chip">Vitamins</span>
+                            <span class="category-chip">Injections</span>
+                            <div class="dropdown ms-2">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-pill px-3"
+                                    data-bs-toggle="dropdown">Sort By</button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Lowest Stock</a></li>
+                                    <li><a class="dropdown-item" href="#">Name A-Z</a></li>
+                                    <li><a class="dropdown-item" href="#">Expiry Date</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Table -->
+            <div class="stock-card overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table inventory-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Medicine Name</th>
+                                <th>SKU / Batch</th>
+                                <th>Category</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">Amoxicillin 500mg</div>
+                                    <div class="small text-muted">AstraZeneca</div>
+                                </td>
+                                <td>
+                                    <code>MED-AMX-500</code>
+                                    <div class="small text-muted">B# AB-8812</div>
+                                </td>
+                                <td><span class="badge bg-indigo-subtle text-indigo-700">Antibiotic</span></td>
+                                <td>
+                                    <div class="fw-bold">18 units</div>
+                                    <div class="small text-danger">Min: 50</div>
+                                </td>
+                                <td>₹ 120.00</td>
+                                <td><span class="status-pill status-low">Low Stock</span></td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill me-1"><i
+                                            class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-warning rounded-pill"><i
+                                            class="fas fa-truck-loading"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">Metformin 850mg</div>
+                                    <div class="small text-muted">GlaxoSmithKline</div>
+                                </td>
+                                <td>
+                                    <code>MED-MTF-850</code>
+                                    <div class="small text-muted">B# MT-1102</div>
+                                </td>
+                                <td><span class="badge bg-indigo-subtle text-indigo-700">Diabetes</span></td>
+                                <td>
+                                    <div class="fw-bold">45 units</div>
+                                    <div class="small text-warning">Min: 60</div>
+                                </td>
+                                <td>₹ 45.50</td>
+                                <td><span class="status-pill status-warning">Warning</span></td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill me-1"><i
+                                            class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-warning rounded-pill"><i
+                                            class="fas fa-truck-loading"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">Paracetamol 500mg</div>
+                                    <div class="small text-muted">Abbott</div>
+                                </td>
+                                <td>
+                                    <code>MED-PCM-500</code>
+                                    <div class="small text-muted">B# PC-0012</div>
+                                </td>
+                                <td><span class="badge bg-indigo-subtle text-indigo-700">Painkiller</span></td>
+                                <td>
+                                    <div class="fw-bold">230 units</div>
+                                    <div class="small text-muted">Min: 100</div>
+                                </td>
+                                <td>₹ 12.00</td>
+                                <td><span class="status-pill status-good">Good Stock</span></td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill me-1"><i
+                                            class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-warning rounded-pill"><i
+                                            class="fas fa-truck-loading"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

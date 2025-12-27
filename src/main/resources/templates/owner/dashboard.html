@@ -10,6 +10,7 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link th:href="@{/css/theme.css}" rel="stylesheet">
     <script>
         (function () {
@@ -148,148 +149,259 @@
                 </div>
             </div>
 
-            <!-- Management Metrics -->
-            <div class="row g-4 mb-4">
-                <div class="col-md-6 col-xl-3">
-                    <div class="metric-card">
-                        <div class="metric-icon p-2 bg-warning-subtle text-warning"
-                            style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
-                            <i class="fas fa-user-tie"></i>
+            <!-- Executive Metrics Row -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-6 col-lg-4 col-xl-2">
+                    <div class="metric-card h-100">
+                        <div class="metric-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                            <i class="fas fa-user-check"></i>
                         </div>
-                        <div class="metric-title">Active Management</div>
-                        <div class="metric-value" th:text="${activeStaff ?: '12'}">12</div>
-                        <div class="mt-2 small text-success">
-                            <i class="fas fa-shield-alt me-1"></i>System Administered
-                        </div>
+                        <div class="metric-title">Staff On Duty</div>
+                        <div class="metric-value" th:text="${activeStaff}">156</div>
                     </div>
                 </div>
 
-                <div class="col-md-6 col-xl-3">
-                    <a th:href="@{/owner/doctors}" class="text-decoration-none h-100">
-                        <div class="metric-card h-100">
-                            <div class="metric-icon p-2 bg-indigo-subtle text-indigo"
-                                style="background: rgba(99, 102, 241, 0.1); color: #6366f1;">
-                                <i class="fas fa-briefcase-medical"></i>
-                            </div>
-                            <div class="metric-title">Physician Roster</div>
-                            <div class="metric-value">48</div>
-                            <div class="mt-2 small text-muted">
-                                Across 12 Departments
-                            </div>
+                <div class="col-md-6 col-lg-4 col-xl-2">
+                    <div class="metric-card h-100">
+                        <div class="metric-icon" style="background: rgba(99, 102, 241, 0.1); color: #6366f1;">
+                            <i class="fas fa-calendar-check"></i>
                         </div>
-                    </a>
-                </div>
-
-                <div class="col-md-6 col-xl-3">
-                    <div class="metric-card">
-                        <div class="metric-icon p-2 bg-success-subtle text-success"
-                            style="background: rgba(34, 197, 94, 0.1); color: #22c55e;">
-                            <i class="fas fa-hospital"></i>
-                        </div>
-                        <div class="metric-title">Utilization Rate</div>
-                        <div class="metric-value">86%</div>
-                        <div class="mt-2 small text-success">
-                            <i class="fas fa-chart-line me-1"></i>+4.2% This Month
-                        </div>
+                        <div class="metric-title">Today's Visits</div>
+                        <div class="metric-value" th:text="${todayAppointments}">42</div>
                     </div>
                 </div>
 
-                <div class="col-md-6 col-xl-3">
-                    <div class="metric-card">
-                        <div class="metric-icon p-2 bg-danger-subtle text-danger"
-                            style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                <div class="col-md-6 col-lg-4 col-xl-2">
+                    <div class="metric-card h-100">
+                        <div class="metric-icon" style="background: rgba(34, 197, 94, 0.1); color: #22c55e;">
+                            <i class="fas fa-bed"></i>
+                        </div>
+                        <div class="metric-title">Bed Occupancy</div>
+                        <div class="metric-value"><span th:text="${occupancyRate}">86</span>%</div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4 col-xl-2">
+                    <div class="metric-card h-100">
+                        <div class="metric-icon" style="background: rgba(244, 63, 94, 0.1); color: #f43f5e;">
                             <i class="fas fa-indian-rupee-sign"></i>
                         </div>
-                        <div class="metric-title">Operational Rev</div>
-                        <div class="metric-value"
-                            th:text="'₹' + ${#numbers.formatDecimal(todayRevenue ?: 25000, 1, 'COMMA', 0, 'POINT')}">
-                            ₹25,000</div>
-                        <div class="mt-2 small text-muted">
-                            Day Collections
+                        <div class="metric-title">Revenue (Today)</div>
+                        <div class="metric-value">₹<span
+                                th:text="${#numbers.formatDecimal(todayRevenue, 1, 'COMMA', 0, 'POINT')}">1,25,800</span>
                         </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4 col-xl-2">
+                    <div class="metric-card h-100">
+                        <div class="metric-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                            <i class="fas fa-smile"></i>
+                        </div>
+                        <div class="metric-title">Satisfaction</div>
+                        <div class="metric-value"><span th:text="${satisfaction}">94</span>%</div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4 col-xl-2">
+                    <div class="metric-card h-100">
+                        <div class="metric-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="metric-title">Avg Stay (ALOS)</div>
+                        <div class="metric-value" th:text="${avgStay}">4.2 Days</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Main Management Hub -->
-            <div class="row g-4">
-                <!-- Master Data Controls -->
-                <div class="col-lg-4">
-                    <div class="action-hub-card h-100">
-                        <div class="card-header bg-transparent border-bottom border-light p-4">
-                            <h5 class="mb-0 fw-bold"><i class="fas fa-tools me-2 text-warning"></i>Core Administration
+            <!-- Analytics & Performance Row -->
+            <div class="row g-4 mb-4">
+                <!-- Revenue Trend Chart -->
+                <div class="col-lg-8">
+                    <div class="metric-card h-100 p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="mb-0 fw-bold"><i class="fas fa-chart-line me-2 text-warning"></i>Revenue Velocity
                             </h5>
+                            <select class="form-select form-select-sm bg-dark border-0 text-muted" style="width: auto;">
+                                <option>Last 6 Months</option>
+                                <option>This Year</option>
+                            </select>
                         </div>
-                        <div class="card-body p-0">
-                            <a th:href="@{/owner/workers}" class="hub-link">
-                                <div class="hub-icon"><i class="fas fa-users-cog"></i></div>
-                                <div>
-                                    <div class="fw-bold">Staff Directory</div>
-                                    <div class="small text-muted">Manage all hospital personnel and roles</div>
-                                </div>
-                                <i class="fas fa-chevron-right ms-auto opacity-50"></i>
-                            </a>
-                            <a th:href="@{/owner/departments}" class="hub-link">
-                                <div class="hub-icon"><i class="fas fa-sitemap"></i></div>
-                                <div>
-                                    <div class="fw-bold">Department Hierarchy</div>
-                                    <div class="small text-muted">Configure hospital clinical wings</div>
-                                </div>
-                                <i class="fas fa-chevron-right ms-auto opacity-50"></i>
-                            </a>
-                            <a th:href="@{/owner/doctors}" class="hub-link">
-                                <div class="hub-icon"><i class="fas fa-user-md"></i></div>
-                                <div>
-                                    <div class="fw-bold">Doctor Management</div>
-                                    <div class="small text-muted">Review clinical duty and profiles</div>
-                                </div>
-                                <i class="fas fa-chevron-right ms-auto opacity-50"></i>
-                            </a>
-                            <a th:href="@{/owner/billing}" class="hub-link">
-                                <div class="hub-icon"><i class="fas fa-indian-rupee-sign"></i></div>
-                                <div>
-                                    <div class="fw-bold">Revenue Oversight</div>
-                                    <div class="small text-muted">Export billing audits and revenue logs</div>
-                                </div>
-                                <i class="fas fa-chevron-right ms-auto opacity-50"></i>
-                            </a>
+                        <div class="chart-wrapper" style="position: relative; height: 280px; width: 100%;">
+                            <canvas id="revenueChart"></canvas>
                         </div>
                     </div>
                 </div>
 
-                <!-- Live Operations Feed -->
-                <div class="col-lg-8">
-                    <div class="card border-0 shadow-sm h-100" style="background: var(--bg-secondary);">
-                        <div
-                            class="card-header bg-transparent border-bottom border-light p-4 d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0 fw-bold"><i class="fas fa-pulse me-2 text-rose-500"
-                                    style="color: #f43f5e;"></i>Operational Pulse</h5>
-                            <span class="badge bg-indigo text-white px-3 fw-normal" style="background: #6366f1;">Live
-                                View</span>
-                        </div>
-                        <div class="card-body">
-                            <div class="text-center py-5">
-                                <div class="mb-4">
-                                    <div class="spinner-grow text-warning" role="status"
-                                        style="width: 3rem; height: 3rem;">
-                                        <span class="visually-hidden">Loading...</span>
+                <!-- Department Leaderboard -->
+                <div class="col-lg-4">
+                    <div class="metric-card h-100 p-4">
+                        <h5 class="mb-4 fw-bold"><i class="fas fa-award me-2 text-indigo-500"
+                                style="color: #6366f1;"></i>Top Departments</h5>
+                        <div class="dept-list">
+                            <div th:each="dept : ${deptPerformance}"
+                                class="d-flex align-items-center mb-3 p-2 rounded-3"
+                                style="background: rgba(255,255,255,0.02);">
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold" th:text="${dept.name}">Cardiology</div>
+                                    <div class="small text-muted" th:text="${dept.volume} + ' Patients'">142 Patients
                                     </div>
                                 </div>
-                                <h5>Building Operations Feed...</h5>
-                                <p class="text-muted mx-auto" style="max-width: 400px;">
-                                    We are connecting your enterprise modules to provide a real-time feed of admissions,
-                                    discharges, and clinical events.
-                                </p>
+                                <div class="text-end">
+                                    <div th:class="${dept.growth >= 0 ? 'text-success' : 'text-danger'}"
+                                        class="small fw-bold">
+                                        <i class="fas"
+                                            th:classappend="${dept.growth >= 0 ? 'fa-caret-up' : 'fa-caret-down'}"></i>
+                                        <span
+                                            th:text="${dept.growth >= 0 ? '+' : ''} + ${dept.growth} + '%'">+12%</span>
+                                    </div>
+                                </div>
                             </div>
+                        </div>
+                        <button class="btn btn-outline-secondary btn-sm w-100 mt-2 rounded-pill">View Detailed
+                            Analytics</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Core Administration -->
+            <div class="col-lg-4">
+                <div class="action-hub-card h-100">
+                    <div class="card-header bg-transparent border-bottom border-light p-4">
+                        <h5 class="mb-0 fw-bold"><i class="fas fa-tools me-2 text-warning"></i>Operations Control
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <a th:href="@{/owner/workers}" class="hub-link">
+                            <div class="hub-icon"><i class="fas fa-users-cog"></i></div>
+                            <div>
+                                <div class="fw-bold">Human Resources</div>
+                                <div class="small text-muted">Roster and staff management</div>
+                            </div>
+                            <i class="fas fa-chevron-right ms-auto opacity-50"></i>
+                        </a>
+                        <a th:href="@{/owner/departments}" class="hub-link">
+                            <div class="hub-icon"><i class="fas fa-sitemap"></i></div>
+                            <div>
+                                <div class="fw-bold">System Hierarchy</div>
+                                <div class="small text-muted">Infrastructure and clinical wings</div>
+                            </div>
+                            <i class="fas fa-chevron-right ms-auto opacity-50"></i>
+                        </a>
+                        <a th:href="@{/owner/doctors}" class="hub-link">
+                            <div class="hub-icon"><i class="fas fa-user-md"></i></div>
+                            <div>
+                                <div class="fw-bold">Clinical Workforce</div>
+                                <div class="small text-muted">Physician credentials and logs</div>
+                            </div>
+                            <i class="fas fa-chevron-right ms-auto opacity-50"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Operational Pulse -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm h-100"
+                    style="background: var(--bg-secondary); border-radius: 1.25rem;">
+                    <div
+                        class="card-header bg-transparent border-bottom border-light p-4 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold"><i class="fas fa-bolt me-2 text-warning"></i>Operational Pulse</h5>
+                        <span class="badge bg-danger text-white rounded-pill px-3" style="font-weight: 500;">LIVE
+                            FEED</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover mb-0 align-middle"
+                                style="--bs-table-bg: transparent;">
+                                <tbody th:if="${not #lists.isEmpty(recentEvents)}">
+                                    <tr th:each="event : ${recentEvents}" class="border-bottom border-light">
+                                        <td class="ps-4 py-3" style="width: 100px;">
+                                            <span class="text-muted small" th:text="${event.time}">09:41 AM</span>
+                                        </td>
+                                        <td style="width: 150px;">
+                                            <span
+                                                th:class="'badge rounded-pill bg-' + ${event.severity} + '-subtle text-' + ${event.severity}"
+                                                th:style="'background: rgba(var(--bs-' + ${event.severity} + '-rgb), 0.1);'"
+                                                th:text="${event.type}">Admission</span>
+                                        </td>
+                                        <td class="text-white" th:text="${event.description}">New high-value
+                                            admission in Ward C</td>
+                                        <td class="text-end pe-4">
+                                            <button class="btn btn-link btn-sm text-muted p-0"><i
+                                                    class="fas fa-ellipsis-v"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody th:if="${#lists.isEmpty(recentEvents)}">
+                                    <tr>
+                                        <td colspan="4" class="text-center py-5 text-muted">
+                                            <i class="fas fa-stream d-block mb-3 opacity-25"
+                                                style="font-size: 2rem;"></i>
+                                            Waiting for system events...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script th:inline="javascript">
+        // Revenue Analytics Implementation
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        const revenueLabels = /*[[${revenueLabels}]]*/[];
+        const revenueData = /*[[${revenueData}]]*/[];
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: revenueLabels,
+                datasets: [{
+                    label: 'Monthly Revenue',
+                    data: revenueData,
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#f59e0b',
+                    pointBorderColor: 'rgba(255,255,255,0.2)',
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: 'rgba(255,255,255,0.5)' }
+                    },
+                    y: {
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: {
+                            color: 'rgba(255,255,255,0.5)',
+                            callback: function (value) {
+                                return '₹' + (value / 1000) + 'k';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

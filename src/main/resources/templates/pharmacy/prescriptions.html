@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescriptions Management - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .pharmacy-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .pharmacy-card:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.15);
+        }
+
+        .priority-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.35rem 0.75rem;
+            border-radius: 2rem;
+            text-transform: uppercase;
+        }
+
+        .priority-urgent {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .priority-normal {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-container input {
+            padding-left: 3rem;
+            border-radius: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .search-container input:focus {
+            background: var(--bg-secondary);
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1);
+        }
+
+        .prescription-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.2s ease;
+            cursor: pointer;
+        }
+
+        .prescription-item:last-child {
+            border-bottom: none;
+        }
+
+        .prescription-item:hover {
+            background: rgba(56, 189, 248, 0.05);
+        }
+
+        .medicine-tag {
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            padding: 0.2rem 0.6rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/pharmacy_sidebar :: pharmacy_sidebar('prescriptions')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #38bdf8;">Prescription Orders</h1>
+                    <p class="text-muted mb-0">Fulfill medical orders from Clinical Care</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary rounded-pill px-4">
+                        <i class="fas fa-filter me-2"></i>Filter
+                    </button>
+                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #38bdf8;">
+                        <i class="fas fa-history me-2"></i>Completed
+                    </button>
+                </div>
+            </div>
+
+            <!-- Management Tools -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="search-container">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="form-control" placeholder="Search by Patient Name, UHID or Doctor...">
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="btn-group rounded-pill overflow-hidden shadow-sm"
+                        style="border: 1px solid var(--border-color);">
+                        <button class="btn btn-primary px-4 bg-transparent border-0 text-primary fw-bold"
+                            style="background: rgba(56, 189, 248, 0.1) !important;">Active</button>
+                        <button class="btn btn-secondary px-4 bg-transparent border-0 text-muted">Stat</button>
+                        <button class="btn btn-secondary px-4 bg-transparent border-0 text-muted">Outpatient</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prescription List -->
+            <div class="pharmacy-card overflow-hidden">
+                <!-- Item 1 -->
+                <div class="prescription-item">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width: 50px; height: 50px; background: rgba(239, 68, 68, 0.1);">
+                                    <i class="fas fa-file-medical text-danger fs-5"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold fs-5">John Smith</div>
+                                    <div class="small text-muted">UHID-2024-0891 • Male, 45y</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="small text-muted mb-1">Prescribed By</div>
+                            <div class="fw-bold">Dr. Sarah Williams</div>
+                            <div class="small text-muted">Cardiology Dept.</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="small text-muted mb-1">Medications</div>
+                            <div class="d-flex flex-wrap gap-1">
+                                <span class="medicine-tag">Amlodipine</span>
+                                <span class="medicine-tag">Atorvastatin</span>
+                                <span class="text-muted small">+2 more</span>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <span class="priority-badge priority-urgent d-inline-block mb-3">URGENT</span>
+                            <br>
+                            <button class="btn btn-sm btn-primary px-4 rounded-pill">Process Rx</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="prescription-item">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width: 50px; height: 50px; background: rgba(56, 189, 248, 0.1);">
+                                    <i class="fas fa-file-medical text-primary fs-5"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold fs-5">Elena Rodriguez</div>
+                                    <div class="small text-muted">UHID-2024-1102 • Female, 29y</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="small text-muted mb-1">Prescribed By</div>
+                            <div class="fw-bold">Dr. Michael Chen</div>
+                            <div class="small text-muted">General Medicine</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="small text-muted mb-1">Medications</div>
+                            <div class="d-flex flex-wrap gap-1">
+                                <span class="medicine-tag">Paracetamol</span>
+                                <span class="medicine-tag">Amoxicillin</span>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <span class="priority-badge priority-normal d-inline-block mb-3">NORMAL</span>
+                            <br>
+                            <button class="btn btn-sm btn-primary px-4 rounded-pill">Process Rx</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="prescription-item">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width: 50px; height: 50px; background: rgba(56, 189, 248, 0.1);">
+                                    <i class="fas fa-file-medical text-primary fs-5"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold fs-5">David Miller</div>
+                                    <div class="small text-muted">UHID-2024-0945 • Male, 62y</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="small text-muted mb-1">Prescribed By</div>
+                            <div class="fw-bold">Dr. Robert Brown</div>
+                            <div class="small text-muted">Orthopedics</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="small text-muted mb-1">Medications</div>
+                            <div class="d-flex flex-wrap gap-1">
+                                <span class="medicine-tag">Ibuprofen</span>
+                                <span class="medicine-tag">Calcium D3</span>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <span class="priority-badge priority-normal d-inline-block mb-3">NORMAL</span>
+                            <br>
+                            <button class="btn btn-sm btn-primary px-4 rounded-pill">Process Rx</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

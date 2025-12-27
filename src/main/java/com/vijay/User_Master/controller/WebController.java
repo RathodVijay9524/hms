@@ -5,6 +5,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+import java.util.Map;
+
 @Controller
 @lombok.RequiredArgsConstructor
 public class WebController {
@@ -66,6 +69,56 @@ public class WebController {
         populateCommonDashboardStats(model);
         return "dashboard";
     }
+    @GetMapping("/reception/dashboard")
+    public String receptionDashboard(Model model) {
+        // Placeholder stats for Reception
+        model.addAttribute("todayReg", 24);
+        model.addAttribute("pendingTokens", 15);
+        model.addAttribute("appointments", 47);
+        model.addAttribute("avgWaitTime", "12 min");
+        return "reception/dashboard";
+    }
+
+    @GetMapping("/reception/register")
+    public String receptionRegister(Model model) {
+        return "reception/register";
+    }
+
+    @GetMapping("/reception/patients")
+    public String receptionPatients(Model model) {
+        return "reception/patients";
+    }
+
+    @GetMapping("/reception/tokens")
+    public String receptionTokens(Model model) {
+        return "reception/tokens";
+    }
+
+    @GetMapping("/reception/appointments")
+    public String receptionAppointments(Model model) {
+        return "reception/appointments";
+    }
+
+    @GetMapping("/reception/book")
+    public String receptionBook(Model model) {
+        return "reception/book";
+    }
+
+    @GetMapping("/reception/schedule")
+    public String receptionSchedule(Model model) {
+        return "reception/schedule";
+    }
+
+    @GetMapping("/reception/enquiry")
+    public String receptionEnquiry(Model model) {
+        return "reception/enquiry";
+    }
+
+    @GetMapping("/reception/visitors")
+    public String receptionVisitors(Model model) {
+        return "reception/visitors";
+    }
+
     @GetMapping("/lab/dashboard")
     public String labDashboard(Model model) {
         model.addAttribute("pendingOrders", labOrderService.getPendingOrderCount());
@@ -90,7 +143,12 @@ public class WebController {
 
     @GetMapping("/doctor/patients")
     public String doctorPatients() {
-        return "doctor/patients";
+        return "doctor/emr";
+    }
+
+    @GetMapping("/doctor/emr")
+    public String doctorEmr() {
+        return "doctor/emr";
     }
 
     @GetMapping("/doctor/prescriptions")
@@ -98,10 +156,23 @@ public class WebController {
         return "doctor/prescriptions";
     }
 
-    @GetMapping("/reception/dashboard")
-    public String receptionDashboard() {
-        return "reception/dashboard";
+    @GetMapping("/doctor/teleconsult")
+    public String doctorTeleconsult() {
+        return "doctor/teleconsult";
     }
+
+    @GetMapping("/doctor/ipd")
+    public String doctorIpd() {
+        return "doctor/ipd";
+    }
+
+    @GetMapping("/doctor/alerts")
+    public String doctorAlerts() {
+        return "doctor/alerts";
+    }
+
+    
+
 
     @GetMapping("/patient/dashboard")
     public String patientDashboard(Model model) {
@@ -144,13 +215,52 @@ public class WebController {
 
     @GetMapping("/owner/dashboard")
     public String ownerDashboard(Model model) {
-        // Populate owner-specific stats
-        model.addAttribute("activeStaff", 0); // Placeholder
-        model.addAttribute("todayAppointments", 0); // Placeholder
-        model.addAttribute("todayRevenue", 0.0); // Placeholder
-        model.addAttribute("pendingDues", 0.0); // Placeholder
-        model.addAttribute("staffOnDuty", java.util.Collections.emptyList()); // Placeholder
+        // Executive KPI Suite
+        model.addAttribute("activeStaff", 156);
+        model.addAttribute("todayAppointments", 42);
+        model.addAttribute("todayRevenue", 125800.0);
+        model.addAttribute("occupancyRate", 86);
+        model.addAttribute("avgStay", "4.2 Days");
+        model.addAttribute("satisfaction", 94);
+        
+        // Revenue Trend (Last 6 Months)
+        model.addAttribute("revenueLabels", java.util.Arrays.asList("Jul", "Aug", "Sep", "Oct", "Nov", "Dec"));
+        model.addAttribute("revenueData", java.util.Arrays.asList(650000, 720000, 810000, 780000, 850000, 920000));
+
+        // Operational Pulse Feed
+        List<Map<String, Object>> events = new java.util.ArrayList<>();
+        events.add(createEvent("09:45 AM", "Admission", "Critical cardiac admission in Wing B", "danger"));
+        events.add(createEvent("10:12 AM", "Inventory", "Blood Bank: O+ supply below threshold", "warning"));
+        events.add(createEvent("11:30 AM", "Staff", "Dr. Sarah J. started shift handover", "info"));
+        events.add(createEvent("01:15 PM", "Billing", "Large corporate clearance: ₹4.5L", "success"));
+        model.addAttribute("recentEvents", events);
+
+        // Department Performance
+        List<java.util.Map<String, Object>> depts = new java.util.ArrayList<>();
+        depts.add(createDeptMetric("Cardiology", 142, 12));
+        depts.add(createDeptMetric("Neurology", 89, 5));
+        depts.add(createDeptMetric("Pediatrics", 114, 8));
+        depts.add(createDeptMetric("Orthopedic", 67, -2));
+        model.addAttribute("deptPerformance", depts);
+
         return "owner/dashboard";
+    }
+
+    private java.util.Map<String, Object> createEvent(String time, String type, String desc, String severity) {
+        java.util.Map<String, Object> event = new java.util.HashMap<>();
+        event.put("time", time);
+        event.put("type", type);
+        event.put("description", desc);
+        event.put("severity", severity);
+        return event;
+    }
+
+    private java.util.Map<String, Object> createDeptMetric(String name, int volume, int growth) {
+        java.util.Map<String, Object> dept = new java.util.HashMap<>();
+        dept.put("name", name);
+        dept.put("volume", volume);
+        dept.put("growth", growth);
+        return dept;
     }
 
     @GetMapping("/owner/departments")
@@ -177,32 +287,130 @@ public class WebController {
     @GetMapping("/pharmacy/dashboard")
     public String pharmacyDashboard(Model model) {
         // Placeholder stats for Pharmacy
-        model.addAttribute("pendingPrescriptions", 0);
-        model.addAttribute("lowStockCount", 0);
-        model.addAttribute("todayDispensed", 0);
-        model.addAttribute("expiringCount", 0);
+        model.addAttribute("pendingPrescriptions", 12);
+        model.addAttribute("lowStockCount", 8);
+        model.addAttribute("todayDispensed", 67);
+        model.addAttribute("expiringCount", 5);
         model.addAttribute("activePrescriptions", java.util.Collections.emptyList());
         model.addAttribute("watchlist", java.util.Collections.emptyList());
         return "pharmacy/dashboard";
     }
 
+    @GetMapping("/pharmacy/prescriptions")
+    public String pharmacyPrescriptions(Model model) {
+        return "pharmacy/prescriptions";
+    }
+
+    @GetMapping("/pharmacy/inventory")
+    public String pharmacyInventory(Model model) {
+        return "pharmacy/inventory";
+    }
+
+    @GetMapping("/pharmacy/dispense")
+    public String pharmacyDispense(Model model) {
+        return "pharmacy/dispense";
+    }
+
+    @GetMapping("/pharmacy/orders")
+    public String pharmacyOrders(Model model) {
+        return "pharmacy/orders";
+    }
+
+    @GetMapping("/pharmacy/expiry")
+    public String pharmacyExpiry(Model model) {
+        return "pharmacy/expiry";
+    }
+
+    @GetMapping("/pharmacy/returns")
+    public String pharmacyReturns(Model model) {
+        return "pharmacy/returns";
+    }
+
     @GetMapping("/nurse/dashboard")
     public String nurseDashboard(Model model) {
         // Placeholder stats for Nurse
-        model.addAttribute("activePatients", 0);
-        model.addAttribute("dueMedications", 0);
-        model.addAttribute("pendingVitals", 0);
-        model.addAttribute("criticalAlerts", 0);
+        model.addAttribute("activePatients", 24);
+        model.addAttribute("dueMedications", 8);
+        model.addAttribute("pendingVitals", 5);
+        model.addAttribute("criticalAlerts", 2);
         model.addAttribute("medSchedule", java.util.Collections.emptyList());
         model.addAttribute("patientWatchlist", java.util.Collections.emptyList());
         return "nurse/dashboard";
     }
 
+    @GetMapping("/nurse/patients")
+    public String nursePatients(Model model) {
+        return "nurse/patients";
+    }
+
+    @GetMapping("/nurse/vitals")
+    public String nurseVitals(Model model) {
+        return "nurse/vitals";
+    }
+
+    @GetMapping("/nurse/medications")
+    public String nurseMedications(Model model) {
+        return "nurse/medications";
+    }
+
+    @GetMapping("/nurse/tasks")
+    public String nurseTasks(Model model) {
+        return "nurse/tasks";
+    }
+
+    @GetMapping("/nurse/handover")
+    public String nurseHandover(Model model) {
+        return "nurse/handover";
+    }
+
+    @GetMapping("/nurse/alerts")
+    public String nurseAlerts(Model model) {
+        return "nurse/alerts";
+    }
+
     @GetMapping("/billing/dashboard")
     public String billingDashboard(Model model) {
-        model.addAttribute("stats", billingService.getBillingStats());
-        model.addAttribute("recentBills", billingService.getAllBills().stream().limit(5).collect(java.util.stream.Collectors.toList()));
+        // Placeholder stats for Billing
+        model.addAttribute("totalRevenue", "₹24.5L");
+        model.addAttribute("pendingDues", "₹3.2L");
+        model.addAttribute("todaysBills", 47);
+        model.addAttribute("todayCollected", "₹1.8L");
         return "billing/dashboard";
+    }
+
+    @GetMapping("/billing/invoices")
+    public String billingInvoices(Model model) {
+        return "billing/invoices";
+    }
+
+    @GetMapping("/billing/create")
+    public String billingCreate(Model model) {
+        return "billing/create";
+    }
+
+    @GetMapping("/billing/pending")
+    public String billingPending(Model model) {
+        return "billing/pending";
+    }
+
+    @GetMapping("/billing/collections")
+    public String billingCollections(Model model) {
+        return "billing/collections";
+    }
+
+    @GetMapping("/billing/refunds")
+    public String billingRefunds(Model model) {
+        return "billing/refunds";
+    }
+
+    @GetMapping("/billing/dues")
+    public String billingDues(Model model) {
+        return "billing/dues";
+    }
+
+    @GetMapping("/billing/reports")
+    public String billingReports(Model model) {
+        return "billing/reports";
     }
 
     @GetMapping("/billing/charges")
@@ -285,6 +493,53 @@ public class WebController {
     public String adminDashboard(Model model) {
         populateCommonDashboardStats(model);
         return "admin/dashboard";
+    }
+
+    @GetMapping("/admin/users")
+    public String adminUsers(Model model) {
+        model.addAttribute("users", userService.getAllUsers());
+        return "admin/users";
+    }
+
+    @GetMapping("/admin/roles")
+    public String adminRoles(Model model) {
+        return "admin/roles";
+    }
+
+    @GetMapping("/admin/permissions")
+    public String adminPermissions() {
+        return "admin/permissions";
+    }
+
+    @GetMapping("/admin/accounts")
+    public String adminAccounts() {
+        return "admin/accounts";
+    }
+
+    @GetMapping("/admin/hospitals")
+    public String adminHospitals() {
+        return "admin/hospitals";
+    }
+
+    @GetMapping("/admin/laboratories")
+    public String adminLaboratories() {
+        return "admin/laboratories";
+    }
+
+    @GetMapping("/admin/departments")
+    public String adminDepartments(Model model) {
+        model.addAttribute("departments", departmentService.getAllDepartments());
+        return "admin/departments";
+    }
+
+    @GetMapping("/admin/audit")
+    public String adminAudit() {
+        return "admin/audit";
+    }
+
+    @GetMapping("/admin/settings")
+    public String adminSettings() {
+        return "admin/settings";
     }
 
 

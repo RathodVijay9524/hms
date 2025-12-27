@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enquiry Desk - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .enquiry-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .enquiry-card:hover {
+            border-color: rgba(168, 85, 247, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(168, 85, 247, 0.15);
+        }
+
+        .search-hero {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(147, 51, 234, 0.05) 100%);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 2rem;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .search-box {
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-input {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 3rem;
+            padding: 1.25rem 2rem 1.25rem 4rem;
+            color: white;
+            font-size: 1.1rem;
+            width: 100%;
+            box-shadow: 0 10px 25px -10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: #a855f7;
+            box-shadow: 0 10px 30px -10px rgba(168, 85, 247, 0.2);
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.25rem;
+            color: #a855f7;
+        }
+
+        .category-pill {
+            padding: 0.5rem 1.25rem;
+            border-radius: 2rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .category-pill:hover,
+        .category-pill.active {
+            background: #a855f7;
+            color: white;
+            border-color: #a855f7;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            cursor: pointer;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            font-family: 'Outfit';
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-primary);
+        }
+
+        .faq-answer {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.75rem;
+            display: none;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+
+        .faq-question i {
+            transition: transform 0.3s;
+            color: #a855f7;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/reception_sidebar :: reception_sidebar('enquiry')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #a855f7;">Enquiry Desk</h1>
+                    <p class="text-muted mb-0">Quick access to hospital services, pricing, and general information</p>
+                </div>
+            </div>
+
+            <!-- Hero Search -->
+            <div class="search-hero">
+                <h2 class="fw-bold mb-4" style="font-family: 'Outfit';">How can we help today?</h2>
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input"
+                        placeholder="Search for tests, doctors, or hospital policies...">
+                </div>
+                <div class="d-flex justify-content-center gap-2 mt-4 flex-wrap">
+                    <div class="category-pill active">All Topics</div>
+                    <div class="category-pill">Doctor Schedule</div>
+                    <div class="category-pill">Test Pricing</div>
+                    <div class="category-pill">Insurance Panel</div>
+                    <div class="category-pill">Visiting Hours</div>
+                    <div class="category-pill">Pharmacy Stocks</div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="enquiry-card">
+                        <h4 class="fw-bold mb-4" style="font-family: 'Outfit';">Frequently Asked Questions</h4>
+
+                        <div class="faq-item active">
+                            <div class="faq-question">
+                                <span>What are the visiting hours for ICU patients?</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Visiting hours for ICU are strictly monitored: Morning (11:00 AM - 12:00 PM) and Evening
+                                (5:00 PM - 6:00 PM). Only one visitor per patient is allowed at a time with a valid
+                                visitor pass.
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Do you accept cashless insurance for TATA AIG?</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                Yes, we have a dedicated TPA desk and are empaneled with TATA AIG for cashless
+                                treatments. Please visit the Insurance Desk in the main lobby for pre-authorization.
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Is a COVID-19 report mandatory for surgery?</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                As per current government guidelines, a negative RT-PCR report within 48 hours of
+                                admission is mandatory for all elective surgeries.
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <span>Hospitals OPD timing on Sundays?</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                OPD services are closed on Sundays. However, Emergency and 24x7 Pharmacy services are
+                                always available.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="enquiry-card mb-4">
+                        <h5 class="fw-bold mb-3" style="font-family: 'Outfit';">Emergency Contacts</h5>
+                        <div class="mb-3">
+                            <div class="small text-muted text-uppercase fw-bold">Ambulance</div>
+                            <div class="fs-5 fw-bold text-danger">+91 1800-444-9111</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="small text-muted text-uppercase fw-bold">Blood Bank</div>
+                            <div class="fs-5 fw-bold">+91 22-4567-8901</div>
+                        </div>
+                    </div>
+
+                    <div class="enquiry-card">
+                        <h5 class="fw-bold mb-3" style="font-family: 'Outfit';">Quick Links</h5>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2"><a href="#" class="text-decoration-none text-muted"><i
+                                        class="fas fa-file-pdf me-2"></i>Lab Pricing List 2024</a></li>
+                            <li class="mb-2"><a href="#" class="text-decoration-none text-muted"><i
+                                        class="fas fa-file-pdf me-2"></i>Bed Matrix / Charges</a></li>
+                            <li><a href="#" class="text-decoration-none text-muted"><i
+                                        class="fas fa-external-link-alt me-2"></i>Insurance Portal Login</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

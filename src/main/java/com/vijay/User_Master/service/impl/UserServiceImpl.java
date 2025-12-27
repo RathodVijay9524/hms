@@ -82,6 +82,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(user -> mapper.map(user, UserResponse.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public PageableResponse<UserResponse> getAllDeletedUsers(int pageNumber, int pageSize, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase("desc") ?
                 Sort.by(sortBy).descending() :

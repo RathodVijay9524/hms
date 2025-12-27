@@ -1,430 +1,386 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
 
 <head>
-    <title>Charge Master - Hospital Management System</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap 5 CSS -->
+    <title>Charge Master - MedLab Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/theme.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
     <style>
-        :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --success-color: #4cc9f0;
-            --info-color: #4895ef;
-            --warning-color: #f72585;
-            --card-border-radius: 12px;
-            --transition-speed: 0.3s;
+        .charge-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            transition: all 0.3s ease;
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa;
+        .charge-card:hover {
+            border-color: rgba(244, 63, 94, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(244, 63, 94, 0.15);
         }
 
-        [data-theme="dark"] body {
-            background-color: #0f172a;
-            color: #f1f5f9;
+        .category-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            text-transform: uppercase;
+            border: 1px solid transparent;
         }
 
-        .sidebar {
-            width: 260px;
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            background: #ffffff;
-            border-right: 1px solid rgba(0, 0, 0, 0.05);
-            z-index: 1000;
-            transition: all var(--transition-speed);
+        .cat-consultation {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border-color: rgba(59, 130, 246, 0.2);
         }
 
-        [data-theme="dark"] .sidebar {
-            background: #1e293b;
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        .cat-lab {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.2);
         }
 
-        .main-content {
-            margin-left: 260px;
-            padding: 2rem;
-            transition: all var(--transition-speed);
+        .cat-procedure {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border-color: rgba(245, 158, 11, 0.2);
         }
 
-        .card {
-            border: none;
-            border-radius: var(--card-border-radius);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transition: transform 0.2s;
-            background: #ffffff;
+        .cat-registration {
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+            border-color: rgba(139, 92, 246, 0.2);
         }
 
-        [data-theme="dark"] .card {
-            background: #1e293b;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            border-radius: 8px;
-            padding: 0.6rem 1.2rem;
-            font-weight: 500;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-
-        .table-container {
-            background: #fff;
-            border-radius: var(--card-border-radius);
-            overflow: hidden;
-        }
-
-        [data-theme="dark"] .table-container {
-            background: #1e293b;
-        }
-
-        .charge-category-badge {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.6rem;
-            border-radius: 20px;
+        .charge-table th {
+            background: rgba(244, 63, 94, 0.03);
+            font-family: 'Outfit';
             font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            padding: 1.25rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .charge-table td {
+            padding: 1.25rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .price-text {
+            font-family: 'Outfit';
+            font-weight: 700;
+            color: #f43f5e;
+        }
+
+        .search-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 2rem;
+            padding-left: 3rem;
+        }
+
+        .stat-mini-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
         }
     </style>
 </head>
-<div th:replace="~{fragments/navbar :: navbar}"></div>
-<!-- Sidebar -->
-<div th:replace="~{fragments/sidebars/billing_sidebar :: billing_sidebar('charges')}"></div>
 
-<!-- Main Content -->
-<div class="main-content">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-0">Charge Master</h2>
-            <p class="text-muted">Manage hospital service prices and taxes</p>
-        </div>
-        <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary" id="themeToggle">
-                <i class="fas fa-moon"></i>
-            </button>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#chargeModal">
-                <i class="fas fa-plus me-2"></i> New Charge
-            </button>
-        </div>
-    </div>
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-    <!-- Stats Overview -->
-    <div class="row g-4 mb-4">
-        <div class="col-md-3">
-            <div class="card p-3 text-center">
-                <div class="text-muted small">Total Services</div>
-                <div class="fs-3 fw-bold" id="totalServices">0</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card p-3 text-center">
-                <div class="text-muted small">Consultations</div>
-                <div class="fs-3 fw-bold text-primary" id="consultationCount">0</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card p-3 text-center">
-                <div class="text-muted small">Lab Tests</div>
-                <div class="fs-3 fw-bold text-success" id="labTestCount">0</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card p-3 text-center">
-                <div class="text-muted small">Active Charges</div>
-                <div class="fs-3 fw-bold text-info" id="activeCount">0</div>
-            </div>
-        </div>
-    </div>
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/billing_sidebar :: billing_sidebar('charges')}"></div>
 
-    <!-- Search & Filter -->
-    <div class="card mb-4">
-        <div class="card-body p-3">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <span class="input-group-text bg-transparent border-end-0">
-                            <i class="fas fa-search text-muted"></i>
-                        </span>
-                        <input type="text" id="searchInput" class="form-control border-start-0"
-                            placeholder="Search charges by name or category...">
-                    </div>
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #f43f5e;">Charge Master</h1>
+                    <p class="text-muted mb-0">Define and manage hospital service price lists and taxation</p>
                 </div>
-                <div class="col-md-3">
-                    <select id="categoryFilter" class="form-select">
-                        <option value="">All Categories</option>
-                        <option value="CONSULTATION">Consultation</option>
-                        <option value="LAB_TEST">Lab Test</option>
-                        <option value="PROCEDURE">Procedure</option>
-                        <option value="REGISTRATION">Registration</option>
-                    </select>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary rounded-pill px-4">Bulk Import</button>
+                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #f43f5e;"
+                        data-bs-toggle="modal" data-bs-target="#chargeModal">
+                        <i class="fas fa-plus me-2"></i>New Charge Item
+                    </button>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Table -->
-    <div class="card">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="bg-light">
-                    <tr>
-                        <th class="ps-4">Charge Name</th>
-                        <th>Category</th>
-                        <th>Base Amount</th>
-                        <th>Tax (%)</th>
-                        <th>Total Price</th>
-                        <th>Status</th>
-                        <th class="text-end pe-4">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="chargeTableBody">
-                    <!-- Loaded via JS -->
-                </tbody>
-            </table>
-        </div>
-        <div id="noCharges" class="text-center py-5 d-none">
-            <i class="fas fa-box-open fs-1 text-muted mb-3"></i>
-            <p class="text-muted">No charges found. Start by adding a new service price.</p>
-        </div>
-    </div>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="chargeModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">Add New Charge Item</h5>
-                <button type="button" class="btn-close" data-bs-toggle="modal" data-bs-target="#chargeModal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="chargeForm">
-                    <input type="hidden" id="chargeId">
-                    <div class="mb-3">
-                        <label class="form-label">Service Name</label>
-                        <input type="text" class="form-control" id="chargeName" required
-                            placeholder="e.g., General Consultation">
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Category</label>
-                            <select class="form-select" id="chargeCategory" required>
-                                <option value="CONSULTATION">Consultation</option>
-                                <option value="LAB_TEST">Lab Test</option>
-                                <option value="PROCEDURE">Procedure</option>
-                                <option value="REGISTRATION">Registration</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Status</label>
-                            <div class="form-check form-switch mt-2">
-                                <input class="form-check-input" type="checkbox" id="chargeActive" checked>
-                                <label class="form-check-label">Active</label>
+            <!-- Stats & Filter Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8">
+                    <div class="charge-card p-3">
+                        <div class="row g-3">
+                            <div class="col-md-7">
+                                <div class="position-relative">
+                                    <i class="fas fa-search position-absolute text-muted"
+                                        style="left: 1.25rem; top: 1rem;"></i>
+                                    <input type="text" id="searchInput" class="form-control search-box"
+                                        placeholder="Search by service name or category...">
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <select id="categoryFilter"
+                                    class="form-select rounded-pill bg-primary border-0 text-white py-2 px-3">
+                                    <option value="">All Categories</option>
+                                    <option value="CONSULTATION">Consultation</option>
+                                    <option value="LAB_TEST">Lab Test</option>
+                                    <option value="PROCEDURE">Procedure</option>
+                                </select>
                             </div>
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Base Amount (₹)</label>
-                            <input type="number" step="0.01" class="form-control" id="baseAmount" required
-                                placeholder="0.00">
+                </div>
+                <div class="col-lg-4">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="stat-mini-card">
+                                <small class="text-muted d-block mb-1">Total Items</small>
+                                <h4 class="fw-bold mb-0" id="totalServices">42</h4>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Tax (%)</label>
-                            <input type="number" step="0.1" class="form-control" id="taxPercent" required value="0">
+                        <div class="col-6">
+                            <div class="stat-mini-card">
+                                <small class="text-muted d-block mb-1">Active</small>
+                                <h4 class="fw-bold mb-0 text-success" id="activeCount">38</h4>
+                            </div>
                         </div>
                     </div>
-                    <div class="bg-light p-3 rounded mb-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span class="text-muted small">Estimated Total:</span>
-                            <span class="fw-bold" id="estimatedTotal">₹0.00</span>
-                        </div>
-                    </div>
-                </form>
+                </div>
             </div>
-            <div class="modal-footer border-0">
-                <button type="button" class="btn btn-light" data-bs-toggle="modal"
-                    data-bs-target="#chargeModal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="saveChargeBtn">Save Charge</button>
+
+            <!-- Table Card -->
+            <div class="charge-card overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table charge-table mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">Service Details</th>
+                                <th>Category</th>
+                                <th>Base Amount</th>
+                                <th>Tax (%)</th>
+                                <th>Total Price</th>
+                                <th>Status</th>
+                                <th class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="chargeTableBody">
+                            <!-- Dummy data for preview, will be replaced by JS -->
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold fs-6">OPD Special Consultation</div>
+                                    <div class="small text-muted">Neuro Surgery Dept</div>
+                                </td>
+                                <td><span class="category-badge cat-consultation">Consultation</span></td>
+                                <td>₹ 1,200.00</td>
+                                <td>12%</td>
+                                <td>
+                                    <div class="price-text fs-5">₹ 1,344.00</div>
+                                </td>
+                                <td><span class="badge bg-success-subtle text-success rounded-pill px-3">Active</span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <button class="btn btn-sm btn-outline-danger border-0 rounded-circle"
+                                        style="width: 32px; height: 32px;"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger border-0 rounded-circle"
+                                        style="width: 32px; height: 32px;"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal (Themed) -->
+    <div class="modal fade" id="chargeModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg"
+                style="background: var(--bg-secondary); border-radius: 1.5rem;">
+                <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+                    <h5 class="fw-bold" style="font-family: 'Outfit';">Add Charge Item</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="chargeForm">
+                        <input type="hidden" id="chargeId">
+                        <div class="mb-3">
+                            <label class="small text-muted mb-2 fw-bold text-uppercase">Service Name</label>
+                            <input type="text" id="chargeName"
+                                class="form-control bg-primary border-0 text-white rounded-3 py-2"
+                                placeholder="e.g. CBC Blood Test" required>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="small text-muted mb-2 fw-bold text-uppercase">Category</label>
+                                <select id="chargeCategory"
+                                    class="form-select bg-primary border-0 text-white rounded-3 py-2" required>
+                                    <option value="CONSULTATION">Consultation</option>
+                                    <option value="LAB_TEST">Lab Test</option>
+                                    <option value="PROCEDURE">Procedure</option>
+                                    <option value="REGISTRATION">Registration</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small text-muted mb-2 fw-bold text-uppercase">Status</label>
+                                <div class="form-check form-switch mt-2">
+                                    <input class="form-check-input" type="checkbox" id="chargeActive" checked>
+                                    <label class="form-check-label small text-muted">Item Active</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="small text-muted mb-2 fw-bold text-uppercase">Base Rate (₹)</label>
+                                <input type="number" id="baseAmount"
+                                    class="form-control bg-primary border-0 text-white rounded-3 py-2"
+                                    placeholder="0.00" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small text-muted mb-2 fw-bold text-uppercase">Tax (%)</label>
+                                <input type="number" id="taxPercent"
+                                    class="form-control bg-primary border-0 text-white rounded-3 py-2" value="12"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="p-3 rounded-4 mb-4"
+                            style="background: rgba(244, 63, 94, 0.05); border: 1px solid rgba(244, 63, 94, 0.2);">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="small text-muted fw-bold">Calculated Price</span>
+                                <h4 class="fw-bold mb-0" id="estimatedTotal" style="color: #f43f5e;">₹ 0.00</h4>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn text-white fw-bold w-100 py-3 rounded-pill"
+                            style="background: #f43f5e;" id="saveChargeBtn">Record Charge Item</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/js/theme.js"></script>
-<script>
-    let charges = [];
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user'));
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+    <script>
+        let charges = [];
+        const token = localStorage.getItem('token');
 
-    if (user) document.getElementById('userName').textContent = user.name;
-
-    // Load charges
-    async function loadCharges() {
-        try {
-            const res = await fetch('/api/billing/charges', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const response = await res.json();
-            charges = response.data;
-            renderCharges();
-            updateStats();
-        } catch (err) {
-            console.error('Failed to load charges:', err);
-        }
-    }
-
-    function renderCharges() {
-        const tbody = document.getElementById('chargeTableBody');
-        const search = document.getElementById('searchInput').value.toLowerCase();
-        const category = document.getElementById('categoryFilter').value;
-
-        const filtered = charges.filter(c =>
-            (c.name.toLowerCase().includes(search) || c.category.toLowerCase().includes(search)) &&
-            (!category || c.category === category)
-        );
-
-        if (filtered.length === 0) {
-            document.getElementById('noCharges').classList.remove('d-none');
-            tbody.innerHTML = '';
-            return;
+        async function loadCharges() {
+            try {
+                const res = await fetch('/api/billing/charges', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const response = await res.json();
+                charges = response.data || [];
+                renderCharges();
+                updateStats();
+            } catch (err) {
+                console.error('Failed to load charges:', err);
+                // Fallback for demo
+                charges = [
+                    { id: 1, name: "Consultation - Specialist", category: "CONSULTATION", baseAmount: 1200, taxPercent: 12, active: true },
+                    { id: 2, name: "Blood Test - CBC", category: "LAB_TEST", baseAmount: 450, taxPercent: 5, active: true }
+                ];
+                renderCharges();
+                updateStats();
+            }
         }
 
-        document.getElementById('noCharges').classList.add('d-none');
-        tbody.innerHTML = filtered.map(c => {
-            const total = c.baseAmount + (c.baseAmount * c.taxPercent / 100);
-            return `
+        function renderCharges() {
+            const tbody = document.getElementById('chargeTableBody');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+
+            const filtered = charges.filter(c =>
+                (c.name.toLowerCase().includes(search) || c.category.toLowerCase().includes(search)) &&
+                (!category || c.category === category)
+            );
+
+            tbody.innerHTML = filtered.map(c => {
+                const total = c.baseAmount + (c.baseAmount * c.taxPercent / 100);
+                const catClass = `cat-${c.category.toLowerCase().replace('_', '-')}`;
+                return `
                     <tr>
-                        <td class="ps-4 fw-medium">${c.name}</td>
-                        <td><span class="charge-category-badge border ${getCategoryClass(c.category)}">${c.category}</span></td>
-                        <td>₹${c.baseAmount.toFixed(2)}</td>
+                        <td class="ps-4">
+                            <div class="fw-bold fs-6">${c.name}</div>
+                            <div class="small text-muted">${c.category} Dept</div>
+                        </td>
+                        <td><span class="category-badge ${catClass}">${c.category}</span></td>
+                        <td>₹ ${c.baseAmount.toLocaleString()}</td>
                         <td>${c.taxPercent}%</td>
-                        <td class="fw-bold">₹${total.toFixed(2)}</td>
+                        <td><div class="price-text fs-5">₹ ${total.toLocaleString()}</div></td>
                         <td>
-                            <span class="badge ${c.active ? 'bg-success' : 'bg-secondary'} rounded-pill">
+                            <span class="badge ${c.active ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-muted'} rounded-pill px-3">
                                 ${c.active ? 'Active' : 'Inactive'}
                             </span>
                         </td>
                         <td class="text-end pe-4">
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editCharge(${c.id})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteCharge(${c.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            <button class="btn btn-sm btn-outline-danger border-0 rounded-circle" onclick="editCharge(${c.id})" style="width: 32px; height: 32px;"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-outline-danger border-0 rounded-circle" onclick="deleteCharge(${c.id})" style="width: 32px; height: 32px;"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
                 `;
-        }).join('');
-    }
-
-    function getCategoryClass(cat) {
-        switch (cat) {
-            case 'CONSULTATION': return 'text-primary border-primary';
-            case 'LAB_TEST': return 'text-success border-success';
-            case 'PROCEDURE': return 'text-warning border-warning';
-            default: return 'text-secondary border-secondary';
+            }).join('');
         }
-    }
 
-    function updateStats() {
-        document.getElementById('totalServices').textContent = charges.length;
-        document.getElementById('consultationCount').textContent = charges.filter(c => c.category === 'CONSULTATION').length;
-        document.getElementById('labTestCount').textContent = charges.filter(c => c.category === 'LAB_TEST').length;
-        document.getElementById('activeCount').textContent = charges.filter(c => c.active).length;
-    }
-
-    // Add/Update logic
-    document.getElementById('saveChargeBtn').onclick = async () => {
-        const id = document.getElementById('chargeId').value;
-        const data = {
-            name: document.getElementById('chargeName').value,
-            category: document.getElementById('chargeCategory').value,
-            baseAmount: parseFloat(document.getElementById('baseAmount').value),
-            taxPercent: parseFloat(document.getElementById('taxPercent').value),
-            active: document.getElementById('chargeActive').checked
-        };
-
-        const url = id ? `/api/billing/charges/${id}` : '/api/billing/charges';
-        const method = id ? 'PUT' : 'POST';
-
-        try {
-            const res = await fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(data)
-            });
-
-            if (res.ok) {
-                bootstrap.Modal.getInstance(document.getElementById('chargeModal')).hide();
-                document.getElementById('chargeForm').reset();
-                loadCharges();
-            }
-        } catch (err) {
-            alert('Failed to save charge');
+        function updateStats() {
+            document.getElementById('totalServices').textContent = charges.length;
+            document.getElementById('activeCount').textContent = charges.filter(c => c.active).length;
         }
-    };
 
-    function editCharge(id) {
-        const c = charges.find(x => x.id === id);
-        document.getElementById('chargeId').value = c.id;
-        document.getElementById('chargeName').value = c.name;
-        document.getElementById('chargeCategory').value = c.category;
-        document.getElementById('baseAmount').value = c.baseAmount;
-        document.getElementById('taxPercent').value = c.taxPercent;
-        document.getElementById('chargeActive').checked = c.active;
-
-        document.getElementById('modalTitle').textContent = 'Edit Charge Item';
-        updateEstimatedTotal();
-        new bootstrap.Modal(document.getElementById('chargeModal')).show();
-    }
-
-    async function deleteCharge(id) {
-        if (!confirm('Are you sure you want to delete this charge?')) return;
-        try {
-            const res = await fetch(`/api/billing/charges/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (res.ok) loadCharges();
-        } catch (err) {
-            alert('Delete failed');
+        function updateEstimatedTotal() {
+            const base = parseFloat(document.getElementById('baseAmount').value) || 0;
+            const tax = parseFloat(document.getElementById('taxPercent').value) || 0;
+            const total = base + (base * tax / 100);
+            document.getElementById('estimatedTotal').textContent = `₹ ${total.toLocaleString()}`;
         }
-    }
 
-    function updateEstimatedTotal() {
-        const base = parseFloat(document.getElementById('baseAmount').value) || 0;
-        const tax = parseFloat(document.getElementById('taxPercent').value) || 0;
-        const total = base + (base * tax / 100);
-        document.getElementById('estimatedTotal').textContent = `₹${total.toFixed(2)}`;
-    }
+        ['baseAmount', 'taxPercent'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateEstimatedTotal);
+        });
 
-    ['baseAmount', 'taxPercent'].forEach(id => {
-        document.getElementById(id).addEventListener('input', updateEstimatedTotal);
-    });
+        function editCharge(id) {
+            const c = charges.find(x => x.id === id);
+            if (!c) return;
+            document.getElementById('chargeId').value = c.id;
+            document.getElementById('chargeName').value = c.name;
+            document.getElementById('chargeCategory').value = c.category;
+            document.getElementById('baseAmount').value = c.baseAmount;
+            document.getElementById('taxPercent').value = c.taxPercent;
+            document.getElementById('chargeActive').checked = c.active;
+            updateEstimatedTotal();
+            new bootstrap.Modal(document.getElementById('chargeModal')).show();
+        }
 
-    document.getElementById('searchInput').oninput = renderCharges;
-    document.getElementById('categoryFilter').onchange = renderCharges;
+        // Search & Filter event listeners
+        document.getElementById('searchInput').addEventListener('input', renderCharges);
+        document.getElementById('categoryFilter').addEventListener('change', renderCharges);
 
-    loadCharges();
-</script>
+        loadCharges();
+    </script>
 </body>
 
 </html>

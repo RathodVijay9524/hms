@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dispense Medications - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .dispense-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            height: 100%;
+        }
+
+        .patient-header {
+            background: rgba(56, 189, 248, 0.05);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px dashed rgba(56, 189, 248, 0.3);
+        }
+
+        .medicine-table th {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border-color);
+            padding: 1rem;
+        }
+
+        .medicine-table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .instruction-box {
+            background: var(--bg-primary);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            font-size: 0.85rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .quantity-badge {
+            background: rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+        }
+
+        .step-indicator {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+        }
+
+        .step-indicator.active {
+            background: #38bdf8;
+            border-color: #38bdf8;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/pharmacy_sidebar :: pharmacy_sidebar('dispense')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #38bdf8;">Medication Dispensing</h1>
+                    <p class="text-muted mb-0">Review and verify medication fulfillment</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-danger px-4 rounded-pill">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #38bdf8;">
+                        <i class="fas fa-check-double me-2"></i>Finalize & Print
+                    </button>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Main Dispensing Panel -->
+                <div class="col-lg-8">
+                    <div class="dispense-card">
+                        <!-- Patient Mini-Profile -->
+                        <div class="patient-header">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white fw-bold fs-4"
+                                        style="width: 60px; height: 60px;">JS</div>
+                                </div>
+                                <div class="col">
+                                    <h4 class="fw-bold mb-1">John Smith</h4>
+                                    <div class="text-muted small">
+                                        <span class="me-3"><strong>UHID:</strong> 2024-0891</span>
+                                        <span class="me-3"><strong>Age/Sex:</strong> 45y / Male</span>
+                                        <span><strong>Mobile:</strong> +91 98765 43210</span>
+                                    </div>
+                                </div>
+                                <div class="col-auto text-end">
+                                    <div class="small text-muted mb-1">Prescription Date</div>
+                                    <div class="fw-bold">27-Dec-2025</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Prescribed Medicines -->
+                        <h5 class="fw-bold mb-3" style="font-family: 'Outfit';">Prescribed Medicines</h5>
+                        <div class="table-responsive">
+                            <table class="table medicine-table">
+                                <thead>
+                                    <tr>
+                                        <th>Medicine Details</th>
+                                        <th>Dosage / Freq</th>
+                                        <th>Duration</th>
+                                        <th>Qty</th>
+                                        <th>Stock Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="fw-bold">Amoxicillin 500mg</div>
+                                            <div class="small text-muted">Capsule</div>
+                                        </td>
+                                        <td>
+                                            <div>1-0-1</div>
+                                            <div class="small text-muted text-uppercase" style="font-size: 0.65rem;">
+                                                After Meal</div>
+                                        </td>
+                                        <td>5 Days</td>
+                                        <td><span class="quantity-badge">10</span></td>
+                                        <td><span class="badge bg-success-subtle text-success">Available</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="fw-bold">Paracetamol 650mg</div>
+                                            <div class="small text-muted">Tablet</div>
+                                        </td>
+                                        <td>
+                                            <div>1-1-1</div>
+                                            <div class="small text-muted text-uppercase" style="font-size: 0.65rem;">
+                                                When needed</div>
+                                        </td>
+                                        <td>3 Days</td>
+                                        <td><span class="quantity-badge">9</span></td>
+                                        <td><span class="badge bg-success-subtle text-success">Available</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mt-4">
+                            <h6 class="fw-bold mb-2">Pharmacist Notes</h6>
+                            <textarea class="form-control" rows="2"
+                                style="background: var(--bg-primary); border: 1px solid var(--border-color); color: white;"
+                                placeholder="Add any specific instructions for the patient..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guidance & Verification -->
+                <div class="col-lg-4">
+                    <div class="dispense-card">
+                        <h5 class="fw-bold mb-4" style="font-family: 'Outfit';">Verification Guide</h5>
+
+                        <div class="d-flex align-items-start mb-4">
+                            <div class="step-indicator active">1</div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Verify Identity</h6>
+                                <p class="small text-muted mb-0">Match UHID and Patient Name with Govt ID if necessary.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-start mb-4">
+                            <div class="step-indicator active">2</div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Check Eligibility</h6>
+                                <p class="small text-muted mb-0">Ensure the prescription is active and signed by MS.</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-start mb-4">
+                            <div class="step-indicator">3</div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Batch Matching</h6>
+                                <p class="small text-muted mb-0">Select medicine batch numbers for inventory tracking.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-start">
+                            <div class="step-indicator">4</div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Safety Briefing</h6>
+                                <p class="small text-muted mb-0">Explain dosage and side-effects to the patient.</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 p-3 rounded-3"
+                            style="background: rgba(56, 189, 248, 0.1); border: 1px solid #38bdf8;">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-info-circle text-primary me-2"></i>
+                                <h6 class="fw-bold mb-0" style="color: #38bdf8;">System Link</h6>
+                            </div>
+                            <p class="small text-muted mb-0">This transaction will automatically deduct items from
+                                Warehouse B-12 and notify Billing Station.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

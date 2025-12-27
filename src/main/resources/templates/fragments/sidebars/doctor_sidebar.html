@@ -34,41 +34,57 @@
 
             <a th:href="@{/doctor/appointments}" class="sidebar-link"
                 th:classappend="${activeLink == 'doc-app' ? 'active' : ''}">
-                <i class="fas fa-calendar-alt"></i>
-                <span>My Schedule</span>
+                <i class="fas fa-calendar-check"></i>
+                <span>OPD Schedule</span>
             </a>
 
-            <a th:href="@{/doctor/schedules}" class="sidebar-link"
-                th:classappend="${activeLink == 'doc-schedules' ? 'active' : ''}">
-                <i class="fas fa-clock"></i>
-                <span>Manage Availability</span>
+            <a th:href="@{/doctor/teleconsult}" class="sidebar-link"
+                th:classappend="${activeLink == 'doc-tele' ? 'active' : ''}">
+                <i class="fas fa-video"></i>
+                <span>Virtual Consults</span>
             </a>
 
             <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
                     style="font-size: 0.7rem; letter-spacing: 0.05em;">Patient Care</small></div>
 
-            <a th:href="@{/doctor/patients}" class="sidebar-link"
-                th:classappend="${activeLink == 'doc-patients' ? 'active' : ''}">
-                <i class="fas fa-hospital-user"></i>
-                <span>Assigned Patients</span>
+            <a th:href="@{/doctor/ipd}" class="sidebar-link"
+                th:classappend="${activeLink == 'doc-ipd' ? 'active' : ''}">
+                <i class="fas fa-bed"></i>
+                <span>In-Patient (IPD)</span>
+            </a>
+
+            <a th:href="@{/doctor/emr}" class="sidebar-link"
+                th:classappend="${activeLink == 'doc-emr' ? 'active' : ''}">
+                <i class="fas fa-file-medical"></i>
+                <span>EMR Records</span>
             </a>
 
             <a th:href="@{/doctor/prescriptions}" class="sidebar-link"
-                th:classappend="${activeLink == 'doc-presc' ? 'active' : ''}">
-                <i class="fas fa-prescription-bottle-medical"></i>
-                <span>Prescriptions</span>
+                th:classappend="${activeLink == 'doc-rx' ? 'active' : ''}">
+                <i class="fas fa-prescription"></i>
+                <span>Rx / Orders</span>
             </a>
 
-            <a th:href="@{/doctor/doctors}" class="sidebar-link"
-                th:classappend="${activeLink == 'doc-doctors' ? 'active' : ''}">
-                <i class="fas fa-user-md"></i>
-                <span>Our Doctors</span>
+            <a th:href="@{/doctor/alerts}" class="sidebar-link"
+                th:classappend="${activeLink == 'doc-alerts' ? 'active' : ''}">
+                <i class="fas fa-bell"></i>
+                <span>Critical Alerts</span>
+                <span class="badge rounded-pill bg-danger ms-auto" style="font-size: 0.6rem;">2</span>
             </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.7rem; letter-spacing: 0.05em;">Investigations</small></div>
 
             <a th:href="@{/lab/orders}" class="sidebar-link"
                 th:classappend="${activeLink == 'doc-labs' ? 'active' : ''}">
                 <i class="fas fa-flask-vial"></i>
-                <span>Lab Orders</span>
+                <span>Diagnostic Hub</span>
+            </a>
+
+            <a th:href="@{/doctor/schedules}" class="sidebar-link"
+                th:classappend="${activeLink == 'doc-schedules' ? 'active' : ''}">
+                <i class="fas fa-clock"></i>
+                <span>My Availability</span>
             </a>
 
             <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"

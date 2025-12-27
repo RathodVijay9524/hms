@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Settings - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .settings-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .settings-nav {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            padding: 1rem;
+            position: sticky;
+            top: 20px;
+        }
+
+        .nav-pill-custom {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.85rem 1.25rem;
+            border-radius: 0.75rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.2s;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-pill-custom:hover {
+            background: rgba(16, 185, 129, 0.05);
+            color: #10b981;
+        }
+
+        .nav-pill-custom.active {
+            background: #10b981;
+            color: #000;
+            font-weight: 700;
+        }
+
+        .setting-group {
+            margin-bottom: 2.5rem;
+        }
+
+        .setting-label {
+            font-family: 'Outfit';
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/admin_sidebar :: admin_sidebar('settings')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #10b981;">System Settings</h1>
+                    <p class="text-muted mb-0">Configure global application parameters and security policies</p>
+                </div>
+                <button class="btn text-dark fw-bold px-4 rounded-pill" style="background: #10b981;">Save All
+                    Changes</button>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-3">
+                    <div class="settings-nav shadow-sm">
+                        <a href="#" class="nav-pill-custom active">
+                            <i class="fas fa-hospital"></i> <span>Organization</span>
+                        </a>
+                        <a href="#" class="nav-pill-custom">
+                            <i class="fas fa-shield-alt"></i> <span>Security</span>
+                        </a>
+                        <a href="#" class="nav-pill-custom">
+                            <i class="fas fa-envelope"></i> <span>Notifications</span>
+                        </a>
+                        <a href="#" class="nav-pill-custom">
+                            <i class="fas fa-database"></i> <span>Backup & Sync</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-9">
+                    <div class="settings-card shadow-sm">
+                        <div class="setting-group">
+                            <h5 class="fw-bold mb-4" style="color: #10b981;">Organizational Identity</h5>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="setting-label small">Hospital Name</label>
+                                    <input type="text"
+                                        class="form-control bg-dark border-secondary text-white rounded-pill px-3"
+                                        value="MedLab Pro Hospital Net">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="setting-label small">System Email</label>
+                                    <input type="email"
+                                        class="form-control bg-dark border-secondary text-white rounded-pill px-3"
+                                        value="noreply@medlabpro.com">
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="setting-label small">Primary Branding Color</label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <input type="color" class="form-control form-control-color border-0"
+                                            value="#10b981">
+                                        <span class="text-muted small">Emerald Green (#10b981) - System Default</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="opacity-10 my-4">
+
+                        <div class="setting-group mb-0">
+                            <h5 class="fw-bold mb-4" style="color: #10b981;">Security & Access</h5>
+                            <div class="row g-4">
+                                <div class="col-md-12">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="fw-bold text-white small">Multi-Factor Authentication (MFA)
+                                            </div>
+                                            <div class="text-muted small">Enforce MFA for all administrative accounts
+                                            </div>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" checked>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="fw-bold text-white small">Session Timeout</div>
+                                            <div class="text-muted small">Automatically logout after 30 minutes of
+                                                inactivity</div>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" checked>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

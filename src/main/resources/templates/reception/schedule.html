@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Schedule - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .schedule-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 180px repeat(7, 1fr);
+            gap: 1px;
+            background: var(--border-color);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .grid-header,
+        .grid-cell {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .grid-header {
+            font-family: 'Outfit';
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: #a855f7;
+            background: rgba(168, 85, 247, 0.03);
+        }
+
+        .doctor-name-cell {
+            text-align: left;
+            font-weight: 600;
+            background: var(--bg-primary);
+        }
+
+        .shift-tag {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.4rem;
+            display: block;
+            margin-bottom: 0.25rem;
+            text-align: center;
+        }
+
+        .shift-mor {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+
+        .shift-eve {
+            background: rgba(168, 85, 247, 0.15);
+            color: #a855f7;
+        }
+
+        .shift-off {
+            background: var(--bg-primary);
+            color: var(--text-muted);
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/reception_sidebar :: reception_sidebar('schedule')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #a855f7;">Doctor Duty Schedule</h1>
+                    <p class="text-muted mb-0">Overview of consultant availability and shift rotation for the week</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary rounded-pill px-4">Previous Week</button>
+                    <button class="btn btn-outline-secondary rounded-pill px-4">Next Week</button>
+                </div>
+            </div>
+
+            <!-- Schedule Grid -->
+            <div class="schedule-card overflow-hidden">
+                <div class="table-responsive">
+                    <div class="calendar-grid">
+                        <!-- Headers -->
+                        <div class="grid-header">Consultant</div>
+                        <div class="grid-header">Mon (28 Dec)</div>
+                        <div class="grid-header">Tue (29 Dec)</div>
+                        <div class="grid-header">Wed (30 Dec)</div>
+                        <div class="grid-header">Thu (31 Dec)</div>
+                        <div class="grid-header">Fri (01 Jan)</div>
+                        <div class="grid-header">Sat (02 Jan)</div>
+                        <div class="grid-header">Sun (03 Jan)</div>
+
+                        <!-- Row 1 -->
+                        <div class="grid-cell doctor-name-cell">
+                            <div>Dr. Stephen Strange</div>
+                            <small class="text-muted">Neurology</small>
+                        </div>
+                        <div class="grid-cell"><span class="shift-tag shift-mor">09 AM - 02 PM</span></div>
+                        <div class="grid-cell"><span class="shift-tag shift-mor">09 AM - 02 PM</span></div>
+                        <div class="grid-cell"><span class="shift-tag shift-eve">04 PM - 09 PM</span></div>
+                        <div class="grid-cell"><span class="shift-tag shift-mor">09 AM - 02 PM</span></div>
+                        <div class="grid-cell"><span class="shift-tag shift-mor">09 AM - 02 PM</span></div>
+                        <div class="grid-cell"><span class="shift-tag shift-off">OFF DUTY</span></div>
+                        <div class="grid-cell"><span class="shift-tag shift-off">OFF DUTY</span></div>
+
+                        <!-- Row 2 -->
+                        <div class="grid-cell doctor-name-cell">
+                            <div>Dr. Jane Foster</div>
+                            <small class="text-muted">Cardiology</small>
+                        </div>
+                        <div class="grid-cell"><span class="shift-tag shift-eve">04 PM - 09 PM</span></div>
+                        <div class="grid-cell"><span class="shift-tag shift-eve">04 PM - 09 PM</span></div>
+                        <div class="grid-cell"><span class="shift-tag shift-off">OFF DUTY</span></div>
+                        <div class="grid-cell"><span class="shift-tag shift-eve">04 PM - 09 PM</span></div>
+                        <div class="grid-cell"><span class="shift-tag shift-eve">04 PM - 09 PM</span></div>
+                        <div class="grid-cell"><span class="shift-tag shift-mor">09 AM - 02 PM</span></div>
+                        <div class="grid-cell"><span class="shift-tag shift-mor">09 AM - 02 PM</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

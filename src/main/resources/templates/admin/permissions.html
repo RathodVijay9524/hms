@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Permissions - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .perm-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .perm-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .perm-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(16, 185, 129, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .perm-item:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .form-check-input:checked {
+            background-color: #10b981;
+            border-color: #10b981;
+        }
+
+        .perm-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .perm-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/admin_sidebar :: admin_sidebar('permissions')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #10b981;">Permissions Control</h1>
+                    <p class="text-muted mb-0">Manage granular access to specific system features and data</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary rounded-pill px-4">Reset Defaults</button>
+                    <button class="btn text-dark fw-bold px-4 rounded-pill" style="background: #10b981;">Save
+                        Changes</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <!-- User Management Permissions -->
+                    <div class="perm-card shadow-sm">
+                        <div class="perm-header">
+                            <h5 class="fw-bold mb-0">User & Security</h5>
+                            <span class="badge bg-indigo-subtle text-indigo rounded-pill px-3">Active</span>
+                        </div>
+                        <div class="perm-item">
+                            <div class="perm-info">
+                                <div class="perm-icon"><i class="fas fa-user-plus"></i></div>
+                                <div>
+                                    <div class="fw-bold text-white small">Create Users</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">Allows creation of new user
+                                        accounts</div>
+                                </div>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </div>
+                        <div class="perm-item">
+                            <div class="perm-info">
+                                <div class="perm-icon"><i class="fas fa-user-tag"></i></div>
+                                <div>
+                                    <div class="fw-bold text-white small">Assign Roles</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">Modify system-wide RBAC
+                                        assignments</div>
+                                </div>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" checked>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <!-- Data & Privacy Permissions -->
+                    <div class="perm-card shadow-sm">
+                        <div class="perm-header">
+                            <h5 class="fw-bold mb-0">Data & Privacy</h5>
+                            <span class="badge bg-danger-subtle text-danger rounded-pill px-3">Restricted</span>
+                        </div>
+                        <div class="perm-item">
+                            <div class="perm-info">
+                                <div class="perm-icon" style="color: #ef4444; background: rgba(239, 68, 68, 0.1);"><i
+                                        class="fas fa-eye-slash"></i></div>
+                                <div>
+                                    <div class="fw-bold text-white small">View Patient Identifiers</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">Full access to UHIDs and PII
+                                        logs</div>
+                                </div>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox">
+                            </div>
+                        </div>
+                        <div class="perm-item">
+                            <div class="perm-info">
+                                <div class="perm-icon" style="color: #ef4444; background: rgba(239, 68, 68, 0.1);"><i
+                                        class="fas fa-file-export"></i></div>
+                                <div>
+                                    <div class="fw-bold text-white small">Export Audit Logs</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">Download system forensic reports
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>
