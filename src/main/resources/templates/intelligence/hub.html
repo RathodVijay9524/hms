@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligence Hub - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        :root {
+            --ai-glow: rgba(99, 102, 241, 0.4);
+            --ai-purple: #8b5cf6;
+            --ai-indigo: #6366f1;
+        }
+
+        .ai-pulse-card {
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-pulse-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--ai-indigo), transparent);
+            animation: neural-pulse 3s infinite linear;
+        }
+
+        @keyframes neural-pulse {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .neural-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--ai-indigo);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+        }
+
+        .intelligence-bg {
+            background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+        }
+
+        .ai-status-tag {
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            font-weight: 700;
+        }
+
+        .insight-value {
+            font-family: 'Outfit';
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+
+<body class="bg-inventory-dark intelligence-bg">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/sidebars/intelligence_sidebar :: intelligence_sidebar('intel-hub')}"></div>
+
+    <main class="main-content min-vh-100">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <div>
+                    <div class="d-flex align-items-center mb-1">
+                        <span class="ai-status-tag me-3"><i class="fas fa-circle-check me-1"></i> Neural Network
+                            Active</span>
+                        <span class="text-muted smaller fw-bold ls-1">SYSTEM UPTIME: 99.98%</span>
+                    </div>
+                    <h1 class="fw-bold mb-0" style="font-family: 'Outfit'; color: #818cf8;">Neural Intelligence Hub</h1>
+                    <p class="text-muted mb-0">AI-Powered Hospital Operational & Clinical Excellence</p>
+                </div>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-outline-indigo rounded-pill px-4 border-opacity-25"
+                        style="color: #818cf8; border-color: #818cf8;">
+                        <i class="fas fa-gear me-2"></i>Parameters
+                    </button>
+                    <button class="btn btn-premium-indigo rounded-pill px-4"
+                        style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);">
+                        <i class="fas fa-bolt me-2"></i>Force Retrain
+                    </button>
+                </div>
+            </div>
+
+            <!-- Core Neural Metrics -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-3">
+                    <div class="glass-card p-4 h-100 ai-pulse-card shadow-lg">
+                        <div class="neural-icon mb-4">
+                            <i class="fas fa-stethoscope"></i>
+                        </div>
+                        <div class="text-muted smaller fw-bold text-uppercase mb-2 ls-1">Clinical Confidence</div>
+                        <div class="insight-value mb-2">92%</div>
+                        <div class="progress bg-white bg-opacity-5" style="height: 4px;">
+                            <div class="progress-bar bg-indigo-500" style="width: 92%"></div>
+                        </div>
+                        <div class="smaller text-success mt-3 fw-bold"><i class="fas fa-trend-up me-1"></i> +2.4% vs
+                            last week</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="glass-card p-4 h-100 ai-pulse-card shadow-lg">
+                        <div class="neural-icon mb-4" style="color: #ec4899; background: rgba(236, 72, 153, 0.1);">
+                            <i class="fas fa-bed"></i>
+                        </div>
+                        <div class="text-muted smaller fw-bold text-uppercase mb-2 ls-1">Predictive Occupancy</div>
+                        <div class="insight-value mb-2">88%</div>
+                        <div class="progress bg-white bg-opacity-5" style="height: 4px;">
+                            <div class="progress-bar bg-pink-500" style="width: 88%"></div>
+                        </div>
+                        <div class="smaller text-info mt-3 fw-bold">Peak expected in 36h</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="glass-card p-4 h-100 ai-pulse-card shadow-lg">
+                        <div class="neural-icon mb-4" style="color: #10b981; background: rgba(16, 185, 129, 0.1);">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <div class="text-muted smaller fw-bold text-uppercase mb-2 ls-1">Audit Shield Rate</div>
+                        <div class="insight-value mb-2">97%</div>
+                        <div class="progress bg-white bg-opacity-5" style="height: 4px;">
+                            <div class="progress-bar bg-emerald-500" style="width: 97%"></div>
+                        </div>
+                        <div class="smaller text-muted mt-3">28 anomalies prevented Today</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="glass-card p-4 h-100 ai-pulse-card shadow-lg">
+                        <div class="neural-icon mb-4" style="color: #f59e0b; background: rgba(245, 158, 11, 0.1);">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <div class="text-muted smaller fw-bold text-uppercase mb-2 ls-1">Restock Accuracy</div>
+                        <div class="insight-value mb-2">95%</div>
+                        <div class="progress bg-white bg-opacity-5" style="height: 4px;">
+                            <div class="progress-bar bg-amber-500" style="width: 95%"></div>
+                        </div>
+                        <div class="smaller text-warning mt-3 fw-bold">Prophetic logic engaged</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module Grid -->
+            <div class="row g-4 mb-5">
+                <div class="col-lg-8">
+                    <div class="glass-card p-5 shadow-lg h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="fw-bold text-white mb-0" style="font-family: 'Outfit';">Predictive Health
+                                Monitoring</h4>
+                            <span class="text-muted smaller fw-bold">LIVE STREAM <i
+                                    class="fas fa-broadcast-tower ms-1 text-danger animate-pulse"></i></span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-premium">
+                                <thead>
+                                    <tr class="text-muted smaller text-uppercase ls-1">
+                                        <th>Patient Profile</th>
+                                        <th>AI Risk Category</th>
+                                        <th>Neural Insight</th>
+                                        <th class="text-end">AI Confidence</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-0">
+                                        <td>
+                                            <div class="fw-bold text-white">Aditi Sharma (P-1042)</div>
+                                            <div class="smaller text-muted">Ward A • Bed 12</div>
+                                        </td>
+                                        <td>
+                                            <span
+                                                class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-20 px-3 py-2 rounded-pill">HIGH
+                                                RISK</span>
+                                        </td>
+                                        <td class="small text-muted">Early Sepsis indicators detected in HR trend</td>
+                                        <td class="text-end fw-bold text-white">94.2%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="fw-bold text-white">Rahul Verma (P-1055)</div>
+                                            <div class="smaller text-muted">ICU • Bed 04</div>
+                                        </td>
+                                        <td>
+                                            <span
+                                                class="badge bg-warning bg-opacity-10 text-orange-400 border border-warning border-opacity-20 px-3 py-2 rounded-pill">CRITICAL
+                                                STABLE</span>
+                                        </td>
+                                        <td class="small text-muted">Respiratory stability trend projecting 15%
+                                            improvement</td>
+                                        <td class="text-end fw-bold text-white">88.7%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="glass-card p-5 shadow-lg h-100">
+                        <h4 class="fw-bold text-white mb-4" style="font-family: 'Outfit';">AI Task Synthesizer</h4>
+                        <div class="task-ai-list">
+                            <div class="glass-card p-4 mb-3 bg-opacity-5"
+                                style="border: 1px solid rgba(139, 92, 246, 0.1);">
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fas fa-file-medical text-indigo-400 me-2"></i>
+                                    <span class="smaller fw-bold text-white text-uppercase">GenAI Draft Ready</span>
+                                </div>
+                                <div class="small text-muted mb-3">Discharge summary for Patient P-1201 is 90%
+                                    synthesized.</div>
+                                <button
+                                    class="btn btn-sm btn-outline-indigo w-100 rounded-pill py-2 smaller fw-bold mt-2">REVIEW
+                                    SUMMARY</button>
+                            </div>
+                            <div class="glass-card p-4 mb-3 bg-opacity-5"
+                                style="border: 1px solid rgba(245, 158, 11, 0.1);">
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fas fa-boxes-packing text-warning me-2"></i>
+                                    <span class="smaller fw-bold text-white text-uppercase">Procurement Alert</span>
+                                </div>
+                                <div class="small text-muted mb-3">Neural forecasting suggests 20% spike in Dialysis Kit
+                                    need.</div>
+                                <button
+                                    class="btn btn-sm btn-outline-warning w-100 rounded-pill py-2 smaller fw-bold mt-2">GENERATE
+                                    SMART PO</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

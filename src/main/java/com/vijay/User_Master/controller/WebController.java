@@ -181,6 +181,27 @@ public class WebController {
         return "analytics/reports";
     }
 
+    // --- Healthcare AI Intelligence Layer 🔥 ---
+    @GetMapping("/intelligence/hub")
+    public String intelligenceHub(Model model) {
+        return "intelligence/hub";
+    }
+
+    @GetMapping("/intelligence/predictive")
+    public String intelligencePredictive(Model model) {
+        return "intelligence/predictive";
+    }
+
+    @GetMapping("/intelligence/operations")
+    public String intelligenceOperations(Model model) {
+        return "intelligence/operations";
+    }
+
+    @GetMapping("/intelligence/genai")
+    public String intelligenceGenAI(Model model) {
+        return "intelligence/genai";
+    }
+
     @GetMapping("/lab/dashboard")
     public String labDashboard(Model model) {
         model.addAttribute("pendingOrders", labOrderService.getPendingOrderCount());

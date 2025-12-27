@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative Administration - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .ai-scratchpad {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed rgba(139, 92, 246, 0.3);
+            border-radius: 1.5rem;
+            min-height: 500px;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .ai-scratchpad::after {
+            content: 'AI SYNTHESIS ZONE';
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: rgba(139, 92, 246, 0.5);
+            letter-spacing: 0.2em;
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 18px;
+            background: var(--ai-indigo);
+            margin-left: 4px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .history-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .history-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+
+<body class="bg-inventory-dark">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/sidebars/intelligence_sidebar :: intelligence_sidebar('intel-gen')}"></div>
+
+    <main class="main-content min-vh-100">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #a78bfa;">Generative Administration
+                    </h1>
+                    <p class="text-muted mb-0">Automated Clinical Documentation & Intelligent Billing Audits</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-premium-indigo rounded-pill px-4"
+                        style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none;">
+                        <i class="fas fa-sparkles me-2"></i>New Synthesis
+                    </button>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Selection Sidebar -->
+                <div class="col-lg-3">
+                    <div class="glass-card p-4 shadow-lg h-100">
+                        <h6 class="text-muted smaller fw-bold text-uppercase ls-1 mb-4">Pending Synthesis</h6>
+                        <div class="history-card border-start border-4 border-indigo-500">
+                            <div class="fw-bold text-white small">Discharge Summary</div>
+                            <div class="smaller text-muted">P-1042 • Aditi Sharma</div>
+                        </div>
+                        <div class="history-card border-start border-4 border-blue-500">
+                            <div class="fw-bold text-white small">Referral Brief</div>
+                            <div class="smaller text-muted">P-1205 • Rahul Verma</div>
+                        </div>
+                        <div class="history-card border-start border-4 border-emerald-500">
+                            <div class="fw-bold text-white small">Insurance Claim Audit</div>
+                            <div class="smaller text-muted">Bill #88412 • Approved</div>
+                        </div>
+
+                        <h6 class="text-muted smaller fw-bold text-uppercase ls-1 mt-5 mb-4">Recent Drafs</h6>
+                        <div class="smaller text-muted italic">No recent history in last 24h.</div>
+                    </div>
+                </div>
+
+                <!-- Main AI Workspace -->
+                <div class="col-lg-9">
+                    <div class="glass-card p-5 shadow-lg h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-5">
+                            <div>
+                                <h4 class="fw-bold text-white mb-1" style="font-family: 'Outfit';">Discharge Synthesis
+                                    Preview</h4>
+                                <div class="smaller text-muted">Based on 48h Clinical Observation & Lab Results</div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button
+                                    class="btn btn-outline-light rounded-pill px-3 py-1 smaller border-opacity-25">Discard</button>
+                                <button
+                                    class="btn btn-indigo-500 rounded-pill px-3 py-1 smaller text-white fw-bold">Approve
+                                    & Sign</button>
+                            </div>
+                        </div>
+
+                        <div class="ai-scratchpad shadow-inner">
+                            <div class="text-white lh-lg" style="font-family: 'Inter'; font-size: 1rem;">
+                                <p><strong>PATIENT CLINICAL SUMMARY:</strong></p>
+                                <p>The patient, Aditi Sharma (ID: P-1042), was admitted following significant
+                                    fluctuations in vital signs indicating possible early-onset sepsis. Over the course
+                                    of the last 48 hours, the Neural Monitoring system flagged three critical heart rate
+                                    excursions which were promptly addressed.</p>
+                                <p><strong>TREATMENT RESPONSE:</strong></p>
+                                <p>Responded effectively to the intravenous antibiotic course. White blood cell count
+                                    has normalized from 18,500 to 9,200. Core temperature has remained stable at 98.6°F
+                                    for the past 24 hours.</p>
+                                <p><strong>RECOMMENDATIONS:</strong></p>
+                                <p>Patient is fit for discharge. Continue oral antibiotics for 5 days. Monitor for any
+                                    recurring pyrexia. Follow-up consultation scheduled for next Friday.<span
+                                        class="typing-cursor"></span></p>
+                            </div>
+
+                            <div
+                                class="mt-5 p-4 rounded-4 bg-indigo-500 bg-opacity-5 border border-indigo-500 border-opacity-20">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-brain text-indigo-400 me-2"></i>
+                                    <span class="smaller fw-bold text-indigo-400 ls-1">AI AUDIT INSIGHT</span>
+                                </div>
+                                <div class="smaller text-muted">Neural audit of the draft shows 98% clinical
+                                    documentation compliance. No billing contradictions detected.</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 d-flex align-items-center justify-content-center gap-4 text-muted smaller">
+                            <span><i class="fas fa-keyboard me-1"></i> Press '/' for AI Commands</span>
+                            <span><i class="fas fa-wand-magic-sparkles me-1"></i> AI Hallucination Check: PASSED</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

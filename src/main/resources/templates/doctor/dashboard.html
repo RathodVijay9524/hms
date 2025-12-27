@@ -11,6 +11,65 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <style>
+        .ai-glow-card {
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            background: linear-gradient(145deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05));
+            border-radius: 1.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-glow-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+            animation: pulse-glow 4s infinite;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.1);
+            }
+        }
+
+        .neural-pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #8b5cf6;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+            box-shadow: 0 0 10px #8b5cf6;
+            animation: neural-dot-blink 1.5s infinite;
+        }
+
+        @keyframes neural-dot-blink {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.4;
+                transform: scale(0.8);
+            }
+        }
+    </style>
     <script>
         (function () {
             const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
@@ -110,14 +169,72 @@
                                 <h6 class="card-title mb-0 text-muted fw-bold">My Patients</h6>
                             </div>
                             <h2 class="mb-0 fw-bold">48</h2>
-                            <div class="mt-2 small text-muted">Active Cases</div>
+                            <div class="mt-2 d-flex align-items-center">
+                                <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill smaller px-2 me-2">3
+                                    High Risk</span>
+                                <span class="smaller text-muted">Active Cases</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Main Content Area -->
-            <div class="row g-4">
+            <div class="row g-4 mb-4">
+                <!-- AI Neural Insight Panel -->
+                <div class="col-lg-4">
+                    <div class="ai-glow-card p-4 shadow-lg h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="d-flex align-items-center">
+                                <div class="neural-pulse-dot"></div>
+                                <h6 class="mb-0 fw-bold text-white ls-1">NEURAL INSIGHT</h6>
+                            </div>
+                            <span class="smaller text-muted fw-bold">LIVE ANALYSIS</span>
+                        </div>
+
+                        <div class="task-ai-list">
+                            <div class="glass-card p-3 mb-3 bg-opacity-5"
+                                style="border: 1px solid rgba(239, 68, 68, 0.2);">
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fas fa-triangle-exclamation text-danger me-2"></i>
+                                    <span class="smaller fw-bold text-white text-uppercase">Potential Sepsis</span>
+                                </div>
+                                <div class="smaller text-muted mb-2">Patient <strong>Aditi Sharma</strong> (Bed 12)
+                                    showing MEWS trend shift from 4 to 8 in last 2h.</div>
+                                <a th:href="@{/intelligence/predictive}"
+                                    class="btn btn-sm btn-danger w-100 rounded-pill py-1 smaller fw-bold">ACTION
+                                    REQUIRED</a>
+                            </div>
+
+                            <div class="glass-card p-3 mb-3 bg-opacity-5"
+                                style="border: 1px solid rgba(99, 102, 241, 0.2);">
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fas fa-file-medical text-indigo-400 me-2"></i>
+                                    <span class="smaller fw-bold text-white text-uppercase">Synthesis Ready</span>
+                                </div>
+                                <div class="smaller text-muted mb-2">GenAI has drafted a discharge summary for
+                                    <strong>Rahul Verma</strong>. Ready for review.</div>
+                                <a th:href="@{/intelligence/genai}"
+                                    class="btn btn-sm btn-outline-indigo w-100 rounded-pill py-1 smaller fw-bold">REVIEW
+                                    DRAFT</a>
+                            </div>
+
+                            <div class="glass-card p-3 bg-opacity-5" style="border: 1px solid rgba(16, 185, 129, 0.2);">
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fas fa-chart-line text-success me-2"></i>
+                                    <span class="smaller fw-bold text-white text-uppercase">Smart Schedule</span>
+                                </div>
+                                <div class="smaller text-muted mb-2">Neural prediction suggests 15% increase in evening
+                                    OPD flow. Recommend early start for rounds.</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-top border-white border-opacity-10">
+                            <p class="smaller text-muted italic mb-0">System analyzing 142 data points/sec for your
+                                patient pool.</p>
+                        </div>
+                    </div>
+                </div>
                 <!-- Appointment Queue -->
                 <div class="col-lg-8">
                     <div class="card border-0 shadow-sm" style="background: var(--bg-secondary);">
@@ -140,7 +257,7 @@
                                             <th class="pe-4 text-end">Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="appointmentQueue">
                                         <!-- Static Preview -->
                                         <tr>
                                             <td class="ps-4 fw-bold">09:30 AM</td>

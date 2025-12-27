@@ -260,9 +260,24 @@
                 <div class="role-icon bg-sky-500/10 text-sky-500">
                     <i class="fas fa-chart-network"></i>
                 </div>
-                <h3 class="card-title">Strategic Intelligence</h3>
+                <h3 class="card-title">Executive Analytics</h3>
                 <p class="text-sm opacity-60">Executive data command center for hospital-wide performance analytics.</p>
                 <div class="mt-6 flex items-center text-sky-500 font-semibold text-sm">
+                    Enter Portal <i class="fas fa-arrow-right ml-2"></i>
+                </div>
+            </div>
+
+            <!-- AI Intelligence Layer Role -->
+            <div th:if="${#authorization.expression('hasRole(''AI_STRATEGIST'') or hasRole(''ADMIN'')')}"
+                onclick="window.location.href='/intelligence/hub'" class="role-card p-8 rounded-2xl"
+                style="background: linear-gradient(145deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05)); border: 1px solid rgba(139, 92, 246, 0.1);">
+                <div class="role-icon bg-indigo-500/10 text-indigo-500">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3 class="card-title">Neural Intelligence</h3>
+                <p class="text-sm opacity-60">AI-driven predictive diagnostics, resource forecasting, and generative
+                    administration.</p>
+                <div class="mt-6 flex items-center text-indigo-500 font-semibold text-sm">
                     Enter Portal <i class="fas fa-arrow-right ml-2"></i>
                 </div>
             </div>
