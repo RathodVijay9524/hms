@@ -48,16 +48,14 @@
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #6366f1;">
-                        <i class="fas fa-user-md-chat me-2"></i>Internal Consults
+                    <h1 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">
+                        <i class="fas fa-comment-medical me-2"></i>Internal Consults
                     </h1>
-                    <p class="text-muted mb-0">Collaborative referrals and clinical opinion requests</p>
+                    <p class="text-muted mb-0 small">Collaborative referrals and clinical opinion requests</p>
                 </div>
-                <div class="d-flex gap-2">
-                    <div class="btn-group rounded-pill overflow-hidden border border-light">
-                        <button class="btn btn-indigo px-4">Incoming</button>
-                        <button class="btn btn-dark px-4">Outgoing</button>
-                    </div>
+                <div class="incoming-outgoing-toggle d-flex">
+                    <button class="btn active">Incoming</button>
+                    <button class="btn text-theme">Outgoing</button>
                 </div>
             </div>
 
@@ -68,20 +66,21 @@
                         <div class="d-flex align-items-center mb-4">
                             <div class="sender-avatar me-3">DS</div>
                             <div class="flex-grow-1">
-                                <div class="fw-bold text-white">Dr. Daniel Smith (Gen. Medicine)</div>
+                                <div class="fw-bold text-theme">Dr. Daniel Smith (Gen. Medicine)</div>
                                 <div class="small text-muted">Sent 2h ago • Clinical Opinion</div>
                             </div>
-                            <span class="badge bg-danger-subtle text-danger rounded-pill px-3">URGENT</span>
+                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3">URGENT</span>
                         </div>
-                        <div class="p-3 mb-4 rounded-3 text-white" style="background: rgba(255,255,255,0.03);">
-                            <div class="small text-muted mb-1 text-uppercase fw-bold ls-1">Patient: John Doe (H101-001)
-                            </div>
-                            "Requesting neurological consult for persistent migraines and intermittent episodes of
-                            confusion. EMR records for last MRI attached."
+                        <div class="p-3 mb-4 rounded-3 border border-indigo-500 border-opacity-10"
+                            style="background: rgba(99, 102, 241, 0.03);">
+                            <div class="small text-indigo-500 mb-2 text-uppercase fw-bold"
+                                style="font-size: 0.65rem; letter-spacing: 0.05em;">Patient: John Doe (H101-001)</div>
+                            <p class="text-theme mb-0 lh-base">"Requesting neurological consult for persistent migraines
+                                and intermittent episodes of confusion. EMR records for last MRI attached."</p>
                         </div>
                         <div class="d-flex gap-2 justify-content-end">
-                            <button class="btn btn-outline-light rounded-pill px-4">Review EMR</button>
-                            <button class="btn btn-indigo rounded-pill px-4">Accept & Consult</button>
+                            <button class="btn btn-sm btn-outline-secondary rounded-pill px-4">Review EMR</button>
+                            <button class="btn btn-sm btn-indigo rounded-pill px-4">Accept & Consult</button>
                         </div>
                     </div>
 
@@ -89,42 +88,44 @@
                         <div class="d-flex align-items-center mb-4">
                             <div class="sender-avatar me-3">AL</div>
                             <div class="flex-grow-1">
-                                <div class="fw-bold text-white">Dr. Anna Lee (Cardiology)</div>
+                                <div class="fw-bold text-theme">Dr. Anna Lee (Cardiology)</div>
                                 <div class="small text-muted">Sent yesterday • Referral</div>
                             </div>
-                            <span class="badge bg-indigo-subtle text-indigo rounded-pill px-3">ROUTINE</span>
+                            <span class="badge bg-indigo bg-opacity-10 text-indigo-500 rounded-pill px-3">ROUTINE</span>
                         </div>
-                        <div class="p-3 mb-4 rounded-3 text-white" style="background: rgba(255,255,255,0.03);">
-                            <div class="small text-muted mb-1 text-uppercase fw-bold ls-1">Patient: Mike Ross (H101-812)
-                            </div>
-                            "Post-operative follow-up for joint stability assessment. Please provide orthopedic
-                            clearance for physical therapy."
+                        <div class="p-3 mb-4 rounded-3 border border-indigo-500 border-opacity-10"
+                            style="background: rgba(99, 102, 241, 0.03);">
+                            <div class="small text-indigo-500 mb-2 text-uppercase fw-bold"
+                                style="font-size: 0.65rem; letter-spacing: 0.05em;">Patient: Mike Ross (H101-812)</div>
+                            <p class="text-theme mb-0 lh-base">"Post-operative follow-up for joint stability assessment.
+                                Please provide orthopedic clearance for physical therapy."</p>
                         </div>
                         <div class="d-flex gap-2 justify-content-end">
-                            <button class="btn btn-outline-light rounded-pill px-4">Review EMR</button>
-                            <button class="btn btn-indigo rounded-pill px-4">Accept & Consult</button>
+                            <button class="btn btn-sm btn-outline-secondary rounded-pill px-4">Review EMR</button>
+                            <button class="btn btn-sm btn-indigo rounded-pill px-4">Accept & Consult</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-lg-4">
-                    <div class="consult-card p-4">
+                    <div class="glass-card p-4">
                         <h6 class="fw-bold mb-4 text-uppercase small ls-1 text-muted">Consult Summary</h6>
-                        <div class="d-flex justify-content-between mb-3 text-white">
+                        <div class="d-flex justify-content-between mb-3 text-theme">
                             <span>Pending Inbound</span>
                             <span class="fw-bold">08</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-3 text-white">
+                        <div class="d-flex justify-content-between mb-3 text-theme">
                             <span>Accepted Today</span>
-                            <span class="fw-bold" style="color: #6366f1;">04</span>
+                            <span class="fw-bold text-indigo-500">04</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-0 text-white">
+                        <div class="d-flex justify-content-between mb-0 text-theme">
                             <span>Avg Resp Time</span>
                             <span class="fw-bold">1.2h</span>
                         </div>
-                        <hr class="border-light opacity-10">
-                        <button class="btn btn-outline-indigo w-100 rounded-pill mb-2">Request New Consult</button>
-                        <button class="btn btn-outline-secondary w-100 rounded-pill">View All History</button>
+                        <hr class="border-theme opacity-10">
+                        <button class="btn btn-sm btn-outline-indigo w-100 rounded-pill mb-2">Request New
+                            Consult</button>
+                        <button class="btn btn-sm btn-outline-secondary w-100 rounded-pill">View All History</button>
                     </div>
                 </div>
             </div>
