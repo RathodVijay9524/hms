@@ -19,18 +19,64 @@
         })();
     </script>
     <style>
-        .ana-grid-card {
+        /* Analytics Portal Sky Theme */
+        .analytics-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .analytics-header::after {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .metric-card {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 1.5rem;
-            padding: 1.75rem;
-            transition: all 0.3s ease;
+            padding: 1.5rem;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
             height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        .ana-grid-card:hover {
-            border-color: #38bdf8;
-            transform: translateY(-3px);
+        .metric-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px -15px rgba(56, 189, 248, 0.25);
+            border-color: rgba(56, 189, 248, 0.4);
+            background: linear-gradient(145deg, var(--bg-secondary), rgba(56, 189, 248, 0.05));
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #38bdf8 0%, #0ea5e9 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .metric-card:hover::before {
+            opacity: 1;
         }
 
         .kpi-value {
@@ -38,6 +84,10 @@
             font-size: 2.25rem;
             font-weight: 700;
             color: white;
+        }
+
+        [data-theme="light"] .analytics-header {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         }
     </style>
 </head>
@@ -48,18 +98,17 @@
 
     <main class="main-content">
         <div class="container-fluid">
-            <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #38bdf8;">
-                        Executive Command Center
-                    </h1>
-                    <p class="text-muted mb-0">Strategic Intelligence & Real-time Hospital KPIs</p>
+            <!-- Innovative Header -->
+            <div class="analytics-header d-flex justify-content-between align-items-center mb-4">
+                <div class="position-relative" style="z-index: 1;">
+                    <h2 class="fw-bold mb-1" style="font-family: 'Outfit';">Executive Command Center</h2>
+                    <p class="mb-0 opacity-75 small text-white">Strategic Intelligence & Real-time Hospital KPIs</p>
                 </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-info rounded-pill px-4"><i class="fas fa-satellite me-2"></i>Live
-                        Stream</button>
-                    <button class="btn btn-info rounded-pill px-4 text-dark fw-bold"
+                <div class="d-none d-md-flex gap-3" style="z-index: 1;">
+                    <button class="btn btn-sm btn-outline-light px-3 rounded-pill">
+                        <i class="fas fa-satellite me-2"></i>Live Stream
+                    </button>
+                    <button class="btn btn-sm text-dark fw-bold px-4 rounded-pill"
                         style="background: #38bdf8; border: none;">
                         <i class="fas fa-print me-2"></i>Quarterly Summary
                     </button>
@@ -69,32 +118,31 @@
             <!-- Major KPIs -->
             <div class="row g-4 mb-4">
                 <div class="col-lg-3">
-                    <div class="ana-grid-card text-center">
+                    <div class="metric-card text-center">
                         <div class="text-muted small fw-bold text-uppercase mb-2">Hospital Health Index</div>
                         <div class="kpi-value">94<small class="fs-4 text-muted">%</small></div>
-                        <div class="text-success small fw-bold"><i class="fas fa-caret-up me-1"></i>2.1% Exceptional
-                        </div>
+                        <div class="text-success small fw-bold"><i class="fas fa-caret-up me-1"></i>2.1% High</div>
                     </div>
                 </div>
                 <div class="col-lg-3">
-                    <div class="ana-grid-card text-center">
-                        <div class="text-muted small fw-bold text-uppercase mb-2">Patient Satisfaction</div>
+                    <div class="metric-card text-center">
+                        <div class="text-muted small fw-bold text-uppercase mb-2">Patient Satisf.</div>
                         <div class="kpi-value">4.8<small class="fs-4 text-muted">/5</small></div>
                         <div class="text-success small fw-bold"><i class="fas fa-caret-up me-1"></i>0.2 Improved</div>
                     </div>
                 </div>
                 <div class="col-lg-3">
-                    <div class="ana-grid-card text-center">
-                        <div class="text-muted small fw-bold text-uppercase mb-2">Total Monthly Revenue</div>
+                    <div class="metric-card text-center">
+                        <div class="text-muted small fw-bold text-uppercase mb-2">Monthly Revenue</div>
                         <div class="kpi-value">₹1.42<small class="fs-4 text-muted">Cr</small></div>
-                        <div class="text-success small fw-bold"><i class="fas fa-caret-up me-1"></i>₹12L vs Prev</div>
+                        <div class="text-success small fw-bold"><i class="fas fa-caret-up me-1"></i>₹12L Up</div>
                     </div>
                 </div>
                 <div class="col-lg-3">
-                    <div class="ana-grid-card text-center">
+                    <div class="metric-card text-center">
                         <div class="text-muted small fw-bold text-uppercase mb-2">Bed Occupancy</div>
                         <div class="kpi-value">82<small class="fs-4 text-muted">%</small></div>
-                        <div class="text-warning small fw-bold"><i class="fas fa-minus me-1"></i>Optimal Zone</div>
+                        <div class="text-warning small fw-bold"><i class="fas fa-check-circle me-1"></i>Optimal</div>
                     </div>
                 </div>
             </div>
@@ -102,7 +150,7 @@
             <!-- Visualization Row -->
             <div class="row g-4 mb-4">
                 <div class="col-lg-8">
-                    <div class="ana-grid-card">
+                    <div class="metric-card p-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <h5 class="fw-bold mb-0">Volume vs Revenue Performance</h5>
                             <div class="btn-group btn-group-sm">
@@ -116,7 +164,7 @@
                     </div>
                 </div>
                 <div class="col-lg-4">
-                    <div class="ana-grid-card">
+                    <div class="metric-card p-4">
                         <h5 class="fw-bold mb-4">Domain Efficiency</h5>
                         <div style="height: 400px;">
                             <canvas id="radarChart"></canvas>
