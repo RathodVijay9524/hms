@@ -42,21 +42,22 @@
     </style>
 </head>
 
-<body class="bg-inventory-dark">
+<body class="bg-inventory-dark intelligence-bg">
     <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div th:replace="~{fragments/sidebars/intelligence_sidebar :: intelligence_sidebar('intel-ops')}"></div>
 
     <main class="main-content min-vh-100">
         <div class="container-fluid">
             <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="intel-header d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h2 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #8b5cf6;">Operational Forecasting</h2>
-                    <p class="text-muted mb-0 small">Predicting Admission Volumes & Optimizing Resource Allocation</p>
+                    <h2 class="fw-bold mb-1" style="font-family: 'Outfit';">Operational Forecasting</h2>
+                    <p class="opacity-75 mb-0 small">Predicting Admission Volumes & Optimizing Resource Allocation</p>
                 </div>
                 <div class="btn-group rounded-pill overflow-hidden p-1 bg-white bg-opacity-5">
-                    <button class="btn btn-xs btn-outline-indigo px-3 border-0 active rounded-pill">7 Day View</button>
-                    <button class="btn btn-xs btn-link text-muted px-3 text-decoration-none">30 Day Forecast</button>
+                    <button class="btn btn-xs btn-outline-light px-3 border-0 active rounded-pill">7 Day View</button>
+                    <button class="btn btn-xs btn-link text-white text-opacity-50 px-3 text-decoration-none smaller">30
+                        Day Forecast</button>
                 </div>
             </div>
 
@@ -65,7 +66,7 @@
                 <div class="col-lg-8">
                     <div class="glass-card p-5 h-100 shadow-lg">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="fw-bold text-white mb-0" style="font-family: 'Outfit';">Admission Volume
+                            <h4 class="fw-bold text-theme mb-0" style="font-family: 'Outfit';">Admission Volume
                                 Projections</h4>
                             <div class="smaller text-muted fw-bold">MODEL ACCURACY: 94.8%</div>
                         </div>
@@ -78,12 +79,12 @@
                 <!-- Bed Occupancy Snapshot -->
                 <div class="col-lg-4">
                     <div class="glass-card p-5 h-100 shadow-lg">
-                        <h4 class="fw-bold text-white mb-4" style="font-family: 'Outfit';">Resource Outlook</h4>
+                        <h4 class="fw-bold text-theme mb-4" style="font-family: 'Outfit';">Resource Outlook</h4>
 
-                        <div class="forecast-grid-item mb-3">
+                        <div class="forecast-grid-item bg-tertiary-theme mb-3">
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted smaller fw-bold text-uppercase ls-1">Projected Occupancy</span>
-                                <span class="text-white fw-bold">82%</span>
+                                <span class="text-theme fw-bold">82%</span>
                             </div>
                             <div class="progress bg-white bg-opacity-5" style="height: 6px;">
                                 <div class="progress-bar bg-indigo-500" style="width: 82%"></div>
@@ -91,7 +92,7 @@
                             <div class="smaller text-success mt-2">Within safe thresholds</div>
                         </div>
 
-                        <div class="forecast-grid-item mb-3">
+                        <div class="forecast-grid-item bg-tertiary-theme mb-3">
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted smaller fw-bold text-uppercase ls-1">Critical Bed Need (Next
                                     24h)</span>
@@ -103,7 +104,7 @@
                             <div class="smaller text-danger mt-2">Potential bottleneck in Ward B</div>
                         </div>
 
-                        <div class="forecast-grid-item">
+                        <div class="forecast-grid-item bg-tertiary-theme">
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted smaller fw-bold text-uppercase ls-1">Shift Optimization</span>
                                 <span class="text-indigo-400 fw-bold">Suggested</span>
@@ -119,47 +120,47 @@
             <div class="row g-4 mb-5">
                 <div class="col-md-12">
                     <div class="glass-card p-5 shadow-lg">
-                        <h4 class="fw-bold text-white mb-4" style="font-family: 'Outfit';">Neural Bottleneck Detection
+                        <h4 class="fw-bold text-theme mb-4" style="font-family: 'Outfit';">Neural Bottleneck Detection
                         </h4>
                         <div class="row g-4">
                             <div class="col-md-3">
-                                <div class="p-4 rounded-4 bg-dark bg-opacity-25 border border-white border-opacity-5">
+                                <div class="p-4 rounded-4 bg-tertiary-theme border border-white border-opacity-5">
                                     <div class="d-flex align-items-center mb-3">
                                         <span class="demand-indicator bg-danger"></span>
-                                        <span class="fw-bold text-white smaller text-uppercase fs-6">Emergency
+                                        <span class="fw-bold text-theme smaller text-uppercase">Emergency
                                             (ER)</span>
                                     </div>
-                                    <div class="display-6 fw-bold text-white mb-2">CRITICAL</div>
+                                    <div class="display-6 fw-bold text-theme mb-2">CRITICAL</div>
                                     <div class="smaller text-muted">Neural prediction: 120% capacity in 4h</div>
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <div class="p-4 rounded-4 bg-dark bg-opacity-25 border border-white border-opacity-5">
+                                <div class="p-4 rounded-4 bg-tertiary-theme border border-white border-opacity-5">
                                     <div class="d-flex align-items-center mb-3">
                                         <span class="demand-indicator bg-success"></span>
-                                        <span class="fw-bold text-white smaller text-uppercase">Cardiology</span>
+                                        <span class="fw-bold text-theme smaller text-uppercase">Cardiology</span>
                                     </div>
-                                    <div class="display-6 fw-bold text-white mb-2">STABLE</div>
+                                    <div class="display-6 fw-bold text-theme mb-2">STABLE</div>
                                     <div class="smaller text-muted">Outpatient flow at 15% below trend</div>
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <div class="p-4 rounded-4 bg-dark bg-opacity-25 border border-white border-opacity-5">
+                                <div class="p-4 rounded-4 bg-tertiary-theme border border-white border-opacity-5">
                                     <div class="d-flex align-items-center mb-3">
                                         <span class="demand-indicator bg-warning"></span>
-                                        <span class="fw-bold text-white smaller text-uppercase">Radiology</span>
+                                        <span class="fw-bold text-theme smaller text-uppercase">Radiology</span>
                                     </div>
-                                    <div class="display-6 fw-bold text-white mb-2">BUSY</div>
+                                    <div class="display-6 fw-bold text-theme mb-2">BUSY</div>
                                     <div class="smaller text-muted">MRI backlog projecting to increase +1.5h</div>
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <div class="p-4 rounded-4 bg-dark bg-opacity-25 border border-white border-opacity-5">
+                                <div class="p-4 rounded-4 bg-tertiary-theme border border-white border-opacity-5">
                                     <div class="d-flex align-items-center mb-3">
                                         <span class="demand-indicator bg-success"></span>
-                                        <span class="fw-bold text-white smaller text-uppercase">Pharmacy</span>
+                                        <span class="fw-bold text-theme smaller text-uppercase">Pharmacy</span>
                                     </div>
-                                    <div class="display-6 fw-bold text-white mb-2">OPTIMAL</div>
+                                    <div class="display-6 fw-bold text-theme mb-2">OPTIMAL</div>
                                     <div class="smaller text-muted">Dispensing TAT at historical lows</div>
                                 </div>
                             </div>
@@ -201,8 +202,8 @@
                         legend: { position: 'bottom', labels: { color: 'rgba(255,255,255,0.6)', padding: 20 } }
                     },
                     scales: {
-                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.4)' } },
-                        x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.4)' } }
+                        y: { grid: { color: 'rgba(148, 163, 184, 0.1)' }, ticks: { color: '#94a3b8' } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
                     }
                 }
             });

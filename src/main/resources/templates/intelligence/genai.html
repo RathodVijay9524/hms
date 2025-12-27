@@ -75,22 +75,20 @@
     </style>
 </head>
 
-<body class="bg-inventory-dark">
+<body class="bg-inventory-dark intelligence-bg">
     <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div th:replace="~{fragments/sidebars/intelligence_sidebar :: intelligence_sidebar('intel-gen')}"></div>
 
     <main class="main-content min-vh-100">
         <div class="container-fluid">
             <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="intel-header d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h2 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #a78bfa;">Generative Administration
-                    </h2>
-                    <p class="text-muted mb-0 small">Automated Clinical Documentation & Intelligent Billing Audits</p>
+                    <h2 class="fw-bold mb-1" style="font-family: 'Outfit';">Generative Administration</h2>
+                    <p class="opacity-75 mb-0 small">Automated Clinical Documentation & Intelligent Billing Audits</p>
                 </div>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-sm btn-premium-indigo rounded-pill px-3"
-                        style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none;">
+                    <button class="btn btn-sm btn-outline-light rounded-pill px-4">
                         <i class="fas fa-sparkles me-2"></i>New Synthesis
                     </button>
                 </div>
@@ -101,16 +99,16 @@
                 <div class="col-lg-3">
                     <div class="glass-card p-4 shadow-lg h-100">
                         <h6 class="text-muted smaller fw-bold text-uppercase ls-1 mb-4">Pending Synthesis</h6>
-                        <div class="history-card border-start border-4 border-indigo-500">
-                            <div class="fw-bold text-white small">Discharge Summary</div>
+                        <div class="history-card border-start border-4 border-indigo-500 bg-tertiary-theme">
+                            <div class="fw-bold text-theme small">Discharge Summary</div>
                             <div class="smaller text-muted">P-1042 • Aditi Sharma</div>
                         </div>
-                        <div class="history-card border-start border-4 border-blue-500">
-                            <div class="fw-bold text-white small">Referral Brief</div>
+                        <div class="history-card border-start border-4 border-blue-500 bg-tertiary-theme">
+                            <div class="fw-bold text-theme small">Referral Brief</div>
                             <div class="smaller text-muted">P-1205 • Rahul Verma</div>
                         </div>
-                        <div class="history-card border-start border-4 border-emerald-500">
-                            <div class="fw-bold text-white small">Insurance Claim Audit</div>
+                        <div class="history-card border-start border-4 border-emerald-500 bg-tertiary-theme">
+                            <div class="fw-bold text-theme small">Insurance Claim Audit</div>
                             <div class="smaller text-muted">Bill #88412 • Approved</div>
                         </div>
 
@@ -124,7 +122,7 @@
                     <div class="glass-card p-5 shadow-lg h-100">
                         <div class="d-flex justify-content-between align-items-start mb-5">
                             <div>
-                                <h4 class="fw-bold text-white mb-1" style="font-family: 'Outfit';">Discharge Synthesis
+                                <h4 class="fw-bold text-theme mb-1" style="font-family: 'Outfit';">Discharge Synthesis
                                     Preview</h4>
                                 <div class="smaller text-muted">Based on 48h Clinical Observation & Lab Results</div>
                             </div>
@@ -137,8 +135,8 @@
                             </div>
                         </div>
 
-                        <div class="ai-scratchpad shadow-inner">
-                            <div class="text-white lh-lg" style="font-family: 'Inter'; font-size: 1rem;">
+                        <div class="ai-scratchpad shadow-inner bg-tertiary-theme">
+                            <div class="text-theme lh-lg" style="font-family: 'Inter'; font-size: 1rem;">
                                 <p><strong>PATIENT CLINICAL SUMMARY:</strong></p>
                                 <p>The patient, Aditi Sharma (ID: P-1042), was admitted following significant
                                     fluctuations in vital signs indicating possible early-onset sepsis. Over the course

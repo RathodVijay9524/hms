@@ -19,27 +19,6 @@
     </script>
     <style>
         /* Nursing Station Pink Theme */
-        .nurse-header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #f8fafc;
-            border-radius: 1.5rem;
-            padding: 2.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nurse-header::after {
-            content: '';
-            position: absolute;
-            top: -20%;
-            right: -10%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(236, 72, 153, 0.15) 0%, transparent 70%);
-            border-radius: 50%;
-        }
 
         .metric-card {
             background: var(--bg-secondary);
@@ -209,10 +188,6 @@
             font-family: 'Outfit';
             font-weight: 700;
         }
-
-        [data-theme="light"] .nurse-header {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        }
     </style>
 </head>
 
@@ -229,14 +204,14 @@
             <div class="nurse-header d-flex justify-content-between align-items-center mb-4">
                 <div class="position-relative" style="z-index: 1;">
                     <h2 class="fw-bold mb-1" style="font-family: 'Outfit';">Nursing Station</h2>
-                    <p class="mb-0 opacity-75 small">Patient vitals, medication administration, and ward task
+                    <p class="mb-0 opacity-75 small text-white">Patient vitals, medication administration, and ward task
                         management.</p>
                 </div>
                 <div class="d-none d-md-flex gap-3" style="z-index: 1;">
-                    <button class="btn btn-sm btn-outline-light px-3 rounded-pill">
+                    <button class="btn btn-sm btn-outline-light px-3 rounded-pill border-opacity-25">
                         <i class="fas fa-file-medical me-2"></i>Shift Report
                     </button>
-                    <button class="btn btn-sm text-dark fw-bold px-4 rounded-pill" style="background: #ec4899;">
+                    <button class="btn btn-sm btn-light text-pink-600 fw-bold px-4 rounded-pill">
                         <i class="fas fa-heartbeat me-2"></i>Record Vitals
                     </button>
                 </div>
@@ -252,7 +227,8 @@
                             </div>
                             <div>
                                 <div class="small text-muted text-uppercase fw-bold">Ward Patients</div>
-                                <div class="h3 fw-bold mb-0">24</div>
+                                <div class="h3 fw-bold mb-0 text-theme">
+                                    24</div>
                             </div>
                         </div>
                     </div>
@@ -301,7 +277,7 @@
             <!-- Quick Actions -->
             <div class="row g-4 mb-4">
                 <div class="col-12">
-                    <h6 class="text-muted smaller fw-bold text-uppercase ls-1 mb-3">Quick Actions</h6>
+                    <h6 class="text-theme-muted smaller fw-bold text-uppercase ls-1 mb-3">Quick Actions</h6>
                 </div>
                 <div class="col-6 col-md-3">
                     <div class="quick-action">
@@ -333,8 +309,8 @@
                 <!-- Patient Watchlist -->
                 <div class="col-lg-7">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="section-title mb-0">Patient Watchlist</h5>
-                        <a href="#" class="btn btn-sm btn-link text-decoration-none" style="color: #ec4899;">View All <i
+                        <h5 class="section-title mb-0 text-theme">Patient Watchlist</h5>
+                        <a href="#" class="btn btn-sm btn-link text-decoration-none text-pink-500">View All <i
                                 class="fas fa-arrow-right ms-1"></i></a>
                     </div>
 
@@ -399,9 +375,8 @@
                 <!-- Medication Schedule -->
                 <div class="col-lg-5">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="section-title mb-0">Medication Schedule</h5>
-                        <span class="badge rounded-pill"
-                            style="background: rgba(236, 72, 153, 0.15); color: #ec4899;">Next 2 Hours</span>
+                        <h5 class="section-title mb-0 text-theme">Medication Schedule</h5>
+                        <span class="badge rounded-pill bg-pink-500 bg-opacity-10 text-pink-500">Next 2 Hours</span>
                     </div>
 
                     <div class="task-card">

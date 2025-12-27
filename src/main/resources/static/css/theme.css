@@ -728,18 +728,21 @@ body {
 
 /* --- Premium Inventory Portal UI Styles --- */
 
-.bg-inventory-dark {
+[data-theme="dark"] .bg-inventory-dark {
     background-color: #0b1220 !important;
     /* Deep Navy from reference image */
 }
 
+[data-theme="light"] .bg-inventory-dark {
+    background-color: var(--bg-primary) !important;
+}
+
 /* Glassmorphism Card System */
 .glass-card {
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--bg-secondary);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    /* Extremely subtle border */
+    border: 1px solid var(--border-color);
     border-radius: 1.5rem;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -761,7 +764,7 @@ body {
 }
 
 .table-premium thead th {
-    background: rgba(255, 255, 255, 0.02) !important;
+    background: var(--bg-tertiary) !important;
     border: none;
     font-size: 0.70rem;
     font-weight: 700;
@@ -772,31 +775,31 @@ body {
 }
 
 .table-premium tbody tr {
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--bg-secondary);
     transition: all 0.3s ease;
     border-radius: 1rem;
 }
 
 .table-premium tbody tr:hover {
-    background: rgba(255, 255, 255, 0.05) !important;
+    background: var(--bg-hover) !important;
     transform: scale(1.005);
 }
 
 .table-premium tbody td {
     padding: 1.25rem 1rem;
     border: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
 }
 
 .table-premium tbody td:first-child {
-    border-left: 1px solid rgba(255, 255, 255, 0.05);
+    border-left: 1px solid var(--border-light);
     border-top-left-radius: 1rem;
     border-bottom-left-radius: 1rem;
 }
 
 .table-premium tbody td:last-child {
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    border-right: 1px solid var(--border-light);
     border-top-right-radius: 1rem;
     border-bottom-right-radius: 1rem;
 }
@@ -849,6 +852,212 @@ body {
     background-color: #f59e0b !important;
 }
 
+/* --- Responsive Hub Headers --- */
+
+.inventory-header,
+.intel-header,
+.analytics-header {
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    color: #f8fafc;
+}
+
+[data-theme="dark"] .inventory-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+[data-theme="light"] .inventory-header {
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+}
+
+[data-theme="dark"] .intel-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+[data-theme="light"] .intel-header {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+}
+
+[data-theme="dark"] .analytics-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+[data-theme="light"] .analytics-header {
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+}
+
+.inventory-header::after,
+.intel-header::after,
+.analytics-header::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+/* Billing Portal Specifics */
+.billing-header {
+    background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+    color: white;
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px -10px rgba(244, 63, 94, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .billing-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+.billing-header::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+
+
+/* Pharmacy Portal Specifics */
+.pharmacy-header {
+    background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+    color: white;
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .pharmacy-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+.pharmacy-header::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+
+/* Nurse Portal Specifics */
+.nurse-header {
+    background: linear-gradient(135deg, #ec4899 0%, #d946ef 100%);
+    color: white;
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px -10px rgba(236, 72, 153, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .nurse-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+.nurse-header::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+
+/* Inventory Portal Specifics */
+.inventory-header {
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+    color: white;
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px -10px rgba(13, 148, 136, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .inventory-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+.inventory-header::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+/* Theme Utilities */
+
+
+
+.text-theme {
+    color: var(--text-primary) !important;
+}
+
+.text-theme-muted {
+    color: var(--text-muted) !important;
+}
+
+.bg-secondary-theme {
+    background-color: var(--bg-secondary) !important;
+}
+
+.bg-tertiary-theme {
+    background-color: var(--bg-tertiary) !important;
+}
+
+.border-color-theme {
+    border-color: var(--border-color) !important;
+}
+
+/* Form Elements Theme Support */
+[data-theme="light"] .form-select,
+[data-theme="light"] .form-control {
+    background-color: #ffffff;
+    border-color: #e2e8f0;
+    color: #0f172a;
+}
+
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .form-control {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+}
+
 .text-orange-400 {
     color: #fbbf24 !important;
 }
@@ -867,6 +1076,14 @@ body {
 
 .text-pink-400 {
     color: #f472b6 !important;
+}
+
+.text-pink-500 {
+    color: #ec4899 !important;
+}
+
+.text-pink-600 {
+    color: #db2777 !important;
 }
 
 .bg-red-500 {
@@ -895,6 +1112,27 @@ body {
 
 .ls-1 {
     letter-spacing: 0.05em;
+}
+
+
+.btn-pink-theme {
+    background: #ec4899;
+    color: white;
+}
+
+.btn-pink-theme:hover {
+    background: #db2777;
+    color: white;
+}
+
+.btn-outline-pink {
+    color: #ec4899;
+    border-color: rgba(236, 72, 153, 0.4);
+}
+
+.btn-outline-pink:hover {
+    background: #ec4899;
+    color: white;
 }
 
 /* end here =============== */

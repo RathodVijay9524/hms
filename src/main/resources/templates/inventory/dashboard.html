@@ -19,29 +19,6 @@
         })();
     </script>
     <style>
-        /* Inventory Portal Teal Theme */
-        .inventory-header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #f8fafc;
-            border-radius: 1.5rem;
-            padding: 2.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .inventory-header::after {
-            content: '';
-            position: absolute;
-            top: -20%;
-            right: -10%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(13, 148, 136, 0.15) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-
         .metric-card {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
@@ -93,10 +70,6 @@
         .metric-card:hover .metric-icon {
             transform: scale(1.1) rotate(5deg);
         }
-
-        [data-theme="light"] .inventory-header {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        }
     </style>
 </head>
 
@@ -108,9 +81,12 @@
         <div class="container-fluid">
             <!-- Innovative Header -->
             <div class="inventory-header d-flex justify-content-between align-items-center mb-4">
-                <div class="position-relative" style="z-index: 1;">
-                    <h2 class="fw-bold mb-1" style="font-family: 'Outfit';">Supply Chain Command Center</h2>
-                    <p class="mb-0 opacity-75 small">Centralized Hospital Store & Logistics Overview</p>
+                <div class="col-md-6">
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #0d9488;">
+                        Supply Chain Command Center
+                    </h1>
+                    <p class="text-muted mb-0 small text-theme-muted">Centralized Hospital Store & Logistics Overview
+                    </p>
                 </div>
                 <div class="d-none d-md-flex gap-3" style="z-index: 1;">
                     <button class="btn btn-sm btn-outline-light px-3 rounded-pill">
@@ -131,7 +107,7 @@
                             <i class="fas fa-boxes-packing"></i>
                         </div>
                         <div class="text-muted smaller fw-bold text-uppercase mb-1 ls-1">Total Stock Value</div>
-                        <h3 class="fw-bold mb-0 text-white" style="font-family: 'Outfit';">₹48.25L</h3>
+                        <h3 class="fw-bold mb-0 text-theme" style="font-family: 'Outfit';">₹48.25L</h3>
                         <div class="text-success small fw-bold mt-2"><i class="fas fa-arrow-up me-1"></i>+4.2%</div>
                     </div>
                 </div>
@@ -141,8 +117,8 @@
                             <i class="fas fa-hourglass-half"></i>
                         </div>
                         <div class="text-muted smaller fw-bold text-uppercase mb-1 ls-1">Pending Arrivals</div>
-                        <h3 class="fw-bold mb-0 text-white" style="font-family: 'Outfit';">12 Shipments</h3>
-                        <div class="text-muted small mt-2">Val: ₹5.4L</div>
+                        <h3 class="fw-bold mb-0 text-theme" style="font-family: 'Outfit';">12 Shipments</h3>
+                        <div class="text-muted small mt-2 text-theme-muted">Val: ₹5.4L</div>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -161,7 +137,7 @@
                             <i class="fas fa-truck-fast"></i>
                         </div>
                         <div class="text-muted smaller fw-bold text-uppercase mb-1 ls-1">Active Suppliers</div>
-                        <h3 class="fw-bold mb-0 text-white" style="font-family: 'Outfit';">42 Vendors</h3>
+                        <h3 class="fw-bold mb-0 text-theme" style="font-family: 'Outfit';">42 Vendors</h3>
                         <div class="text-success small fw-bold mt-2">98% Fulfillment</div>
                     </div>
                 </div>
@@ -355,7 +331,7 @@
         }
 
         .text-indigo-400 {
-            color: #818cf8;
+            color: #818cf8 !important;
         }
     </style>
 </body>

@@ -18,25 +18,25 @@
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
-    <style>
-        .ops-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1.5rem;
-            padding: 1.75rem;
-            transition: all 0.3s ease;
-        }
+    .ops-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 1.5rem;
+    padding: 1.75rem;
+    transition: all 0.3s ease;
+    }
 
-        .ops-card:hover {
-            border-color: #38bdf8;
-        }
+    .ops-card:hover {
+    border-color: #38bdf8;
+    background: linear-gradient(145deg, var(--bg-secondary), rgba(56, 189, 248, 0.05));
+    }
 
-        .efficiency-pill {
-            padding: 0.5rem 1.25rem;
-            border-radius: 2rem;
-            font-weight: 700;
-            font-size: 0.85rem;
-        }
+    .efficiency-pill {
+    padding: 0.5rem 1.25rem;
+    border-radius: 2rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    }
     </style>
 </head>
 
@@ -47,21 +47,21 @@
     <main class="main-content">
         <div class="container-fluid">
             <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="analytics-header d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #38bdf8;">Operational Efficiency</h1>
-                    <p class="text-muted mb-0">Staff Productivity, Patient Flow & Asset Utilization</p>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit';">Operational Efficiency</h1>
+                    <p class="opacity-75 mb-0 small text-white">Staff Productivity, Patient Flow & Asset Utilization</p>
                 </div>
-                <button class="btn btn-outline-info rounded-pill px-4">Efficiency Optimization Plan</button>
+                <button class="btn btn-sm btn-outline-light rounded-pill px-4">Efficiency Optimization Plan</button>
             </div>
 
             <!-- Ops Grid -->
             <div class="row g-4 mb-4">
                 <!-- Staff Productivity -->
                 <div class="col-lg-6">
-                    <div class="ops-card">
+                    <div class="ops-card h-100">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h5 class="fw-bold mb-0">Staff Utilization by Shift</h5>
+                            <h5 class="fw-bold mb-0 text-theme">Staff Utilization by Shift</h5>
                             <span
                                 class="efficiency-pill bg-success bg-opacity-10 text-success border border-success border-opacity-20">Optimally
                                 Staffed</span>
@@ -74,9 +74,9 @@
 
                 <!-- Patient Flow Heatmap -->
                 <div class="col-lg-6">
-                    <div class="ops-card">
+                    <div class="ops-card h-100">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h5 class="fw-bold mb-0">Patient Wait Time Trends</h5>
+                            <h5 class="fw-bold mb-0 text-theme">Patient Wait Time Trends</h5>
                             <span
                                 class="efficiency-pill bg-warning bg-opacity-10 text-orange-400 border border-warning border-opacity-20">Attention
                                 Needed (OPD)</span>
@@ -89,10 +89,10 @@
             </div>
 
             <!-- Departmental Table -->
-            <div class="ops-card">
-                <h5 class="fw-bold mb-4">Key Efficiency Indicators (KEIs)</h5>
+            <div class="ops-card mt-4">
+                <h5 class="fw-bold mb-4 text-theme">Key Efficiency Indicators (KEIs)</h5>
                 <div class="table-responsive">
-                    <table class="table table-dark table-hover align-middle">
+                    <table class="table table-premium align-middle mb-0">
                         <thead>
                             <tr class="text-muted small text-uppercase fw-bold">
                                 <th>Department</th>
@@ -104,29 +104,29 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="border-bottom border-light">
-                                <td class="fw-bold text-white">Emergency Center</td>
-                                <td>14 Mins</td>
-                                <td>18.5x</td>
-                                <td>1:3</td>
-                                <td>92%</td>
+                            <tr class="border-color-theme">
+                                <td class="fw-bold text-theme">Emergency Center</td>
+                                <td class="text-theme">14 Mins</td>
+                                <td class="text-theme">18.5x</td>
+                                <td class="text-theme">1:3</td>
+                                <td class="text-theme">92%</td>
                                 <td class="text-end"><span class="badge bg-success rounded-pill px-3">Excellent</span>
                                 </td>
                             </tr>
-                            <tr class="border-bottom border-light">
-                                <td class="fw-bold text-white">Main OT</td>
-                                <td>4.2 Hours</td>
-                                <td>4.2x</td>
-                                <td>1:6</td>
-                                <td>82%</td>
+                            <tr class="border-color-theme">
+                                <td class="fw-bold text-theme">Main OT</td>
+                                <td class="text-theme">4.2 Hours</td>
+                                <td class="text-theme">4.2x</td>
+                                <td class="text-theme">1:6</td>
+                                <td class="text-theme">82%</td>
                                 <td class="text-end"><span class="badge bg-info rounded-pill px-3">Effective</span></td>
                             </tr>
-                            <tr class="border-bottom border-light">
-                                <td class="fw-bold text-white">General Ward</td>
-                                <td>N/A</td>
-                                <td>0.8x</td>
-                                <td>1:10</td>
-                                <td>74%</td>
+                            <tr class="border-color-theme">
+                                <td class="fw-bold text-theme">General Ward</td>
+                                <td class="text-theme">N/A</td>
+                                <td class="text-theme">0.8x</td>
+                                <td class="text-theme">1:10</td>
+                                <td class="text-theme">74%</td>
                                 <td class="text-end"><span
                                         class="badge bg-warning text-dark rounded-pill px-3">Lagging</span></td>
                             </tr>
@@ -157,7 +157,7 @@
                 maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' }, max: 100 },
+                    y: { grid: { color: 'rgba(148, 163, 184, 0.1)' }, ticks: { color: '#94a3b8' }, max: 100 },
                     x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
                 }
             }
@@ -182,7 +182,7 @@
                 maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                    y: { grid: { color: 'rgba(148, 163, 184, 0.1)' }, ticks: { color: '#94a3b8' } },
                     x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
                 }
             }

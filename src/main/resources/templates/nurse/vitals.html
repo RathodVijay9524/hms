@@ -27,7 +27,7 @@
         }
 
         .batch-table th {
-            background: rgba(236, 72, 153, 0.05);
+            background: var(--bg-tertiary);
             font-family: 'Outfit';
             font-weight: 600;
             font-size: 0.75rem;
@@ -37,10 +37,10 @@
         }
 
         .vitals-input {
-            background: var(--bg-primary);
+            background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
             border-radius: 0.75rem;
-            color: white;
+            color: var(--text-primary);
             padding: 0.5rem 0.75rem;
             width: 100%;
             text-align: center;
@@ -62,7 +62,7 @@
             bottom: 2rem;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(15, 23, 42, 0.9);
+            background: var(--bg-secondary);
             backdrop-filter: blur(10px);
             padding: 1rem 2rem;
             border-radius: 5rem;
@@ -89,8 +89,8 @@
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #ec4899;">Batch Vitals Entry</h1>
-                    <p class="text-muted mb-0">Record vitals for all patients in Ward-C</p>
+                    <h1 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">Batch Vitals Entry</h1>
+                    <p class="text-theme-muted mb-0">Record vitals for all patients in Ward-C</p>
                 </div>
                 <div>
                     <span class="badge rounded-pill bg-success-subtle text-success px-3 py-2">Last Sync: 2 mins
@@ -100,16 +100,17 @@
 
             <div class="vitals-card">
                 <div class="table-responsive">
-                    <table class="table table-dark table-hover mb-0" style="vertical-align: middle;">
-                        <thead>
+                    <table class="table table-hover mb-0" style="vertical-align: middle;">
+                        <thead class="bg-tertiary-theme">
                             <tr>
-                                <th style="width: 250px;">Patient Name</th>
-                                <th>Bed</th>
-                                <th>BP (systolic/dia)</th>
-                                <th>Temp (°F)</th>
-                                <th>Pulse (bpm)</th>
-                                <th>SpO2 (%)</th>
-                                <th>Notes</th>
+                                <th style="width: 250px;" class="text-theme-muted small text-uppercase fw-bold">Patient
+                                    Name</th>
+                                <th class="text-theme-muted small text-uppercase fw-bold">Bed</th>
+                                <th class="text-theme-muted small text-uppercase fw-bold">BP (systolic/dia)</th>
+                                <th class="text-theme-muted small text-uppercase fw-bold">Temp (°F)</th>
+                                <th class="text-theme-muted small text-uppercase fw-bold">Pulse (bpm)</th>
+                                <th class="text-theme-muted small text-uppercase fw-bold">SpO2 (%)</th>
+                                <th class="text-theme-muted small text-uppercase fw-bold">Notes</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -168,7 +169,7 @@
                     style="width: 1px; height: 20px; background: rgba(255,255,255,0.1);"></div>
                 <div class="d-flex gap-2">
                     <button class="btn btn-outline-secondary rounded-pill px-4">Reset Form</button>
-                    <button class="btn text-white fw-bold px-5 rounded-pill" style="background: #ec4899;">
+                    <button class="btn btn-pink-theme text-white fw-bold px-5 rounded-pill">
                         Save All Vitals
                     </button>
                 </div>

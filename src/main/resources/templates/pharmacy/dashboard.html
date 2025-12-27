@@ -19,27 +19,6 @@
     </script>
     <style>
         /* Pharmacy Hub Blue/Cyan Theme */
-        .pharmacy-header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #f8fafc;
-            border-radius: 1.5rem;
-            padding: 2.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pharmacy-header::after {
-            content: '';
-            position: absolute;
-            top: -20%;
-            right: -10%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
-            border-radius: 50%;
-        }
 
         .metric-card {
             background: var(--bg-secondary);
@@ -195,10 +174,6 @@
             font-family: 'Outfit';
             font-weight: 700;
         }
-
-        [data-theme="light"] .pharmacy-header {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        }
     </style>
 </head>
 
@@ -215,15 +190,14 @@
             <div class="pharmacy-header d-flex justify-content-between align-items-center mb-4">
                 <div class="position-relative" style="z-index: 1;">
                     <h2 class="fw-bold mb-1" style="font-family: 'Outfit';">Pharmacy Hub</h2>
-                    <p class="mb-0 opacity-75 small">Inventory management, prescription fulfillment, and dispensing
-                        control.
-                    </p>
+                    <p class="mb-0 opacity-75 small text-white">Inventory management, prescription fulfillment, and
+                        dispensing control.</p>
                 </div>
                 <div class="d-none d-md-flex gap-3" style="z-index: 1;">
-                    <button class="btn btn-sm btn-outline-light px-3 rounded-pill">
+                    <button class="btn btn-sm btn-outline-light px-3 rounded-pill border-opacity-25">
                         <i class="fas fa-barcode me-2"></i>Scan SKU
                     </button>
-                    <button class="btn btn-sm text-white fw-bold px-4 rounded-pill" style="background: #38bdf8;">
+                    <button class="btn btn-sm btn-light text-sky-600 fw-bold px-4 rounded-pill">
                         <i class="fas fa-plus me-2"></i>Add Stock
                     </button>
                 </div>
@@ -239,7 +213,7 @@
                             </div>
                             <div>
                                 <div class="small text-muted text-uppercase fw-bold">Pending Rx</div>
-                                <div class="h3 fw-bold mb-0">12</div>
+                                <div class="h3 fw-bold mb-0 text-theme">12</div>
                             </div>
                         </div>
                     </div>
@@ -320,8 +294,8 @@
                 <!-- Live Prescription Feed -->
                 <div class="col-lg-7">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="section-title mb-0">Live Prescription Feed</h5>
-                        <a href="#" class="btn btn-sm btn-link text-decoration-none" style="color: #38bdf8;">View All <i
+                        <h5 class="section-title mb-0 text-theme">Live Prescription Feed</h5>
+                        <a href="#" class="btn btn-sm btn-link text-decoration-none text-sky-500">View All <i
                                 class="fas fa-arrow-right ms-1"></i></a>
                     </div>
 
@@ -385,7 +359,7 @@
                 <!-- Inventory Watchlist -->
                 <div class="col-lg-5">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="section-title mb-0">Inventory Alerts</h5>
+                        <h5 class="section-title mb-0 text-theme">Inventory Alerts</h5>
                         <span class="badge rounded-pill" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;">8
                             Low Stock</span>
                     </div>

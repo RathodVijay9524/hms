@@ -27,7 +27,7 @@
         }
 
         .mar-patient-header {
-            background: rgba(236, 72, 153, 0.05);
+            background: var(--bg-tertiary);
             padding: 1.25rem 2rem;
             border-bottom: 1px solid var(--border-color);
             display: flex;
@@ -58,6 +58,7 @@
             background: rgba(34, 197, 94, 0.1);
             border: 1px solid rgba(34, 197, 94, 0.3);
             color: #22c55e;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.1);
         }
 
         .dose-slot.due {
@@ -122,15 +123,14 @@
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #ec4899;">Medication Schedule (MAR)
-                    </h1>
-                    <p class="text-muted mb-0">Record and monitor medication administration for Ward-C</p>
+                    <h1 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">Medication Schedule (MAR)</h1>
+                    <p class="text-theme-muted mb-0">Record and monitor medication administration for Ward-C</p>
                 </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary rounded-pill px-4">
+                <div class="d-none d-md-flex gap-2">
+                    <button class="btn btn-outline-secondary rounded-pill px-4 border-opacity-25">
                         <i class="fas fa-barcode me-2"></i>Scan Barcode
                     </button>
-                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #ec4899;">
+                    <button class="btn btn-pink-theme text-white fw-bold px-4 rounded-pill">
                         <i class="fas fa-history me-2"></i>Administration Log
                     </button>
                 </div>
@@ -182,8 +182,7 @@
                                     </div>
                                 </td>
                                 <td class="text-end">
-                                    <button class="btn btn-pink text-white rounded-pill px-4"
-                                        style="background: #ec4899;">Administer</button>
+                                    <button class="btn btn-pink-theme text-white rounded-pill px-4">Administer</button>
                                 </td>
                             </tr>
                             <tr>

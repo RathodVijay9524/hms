@@ -40,22 +40,21 @@
     </style>
 </head>
 
-<body class="bg-inventory-dark">
+<body class="bg-inventory-dark intelligence-bg">
     <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div th:replace="~{fragments/sidebars/intelligence_sidebar :: intelligence_sidebar('intel-predict')}"></div>
 
     <main class="main-content min-vh-100">
         <div class="container-fluid">
             <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="intel-header d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h2 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #f87171;">Predictive Clinical Brain
-                    </h2>
-                    <p class="text-muted mb-0 small">Early Warning Systems (MEWS/PEWS) & Sepsis Defense</p>
+                    <h2 class="fw-bold mb-1" style="font-family: 'Outfit';">Predictive Clinical Brain</h2>
+                    <p class="opacity-75 mb-0 small">Early Warning Systems (MEWS/PEWS) & Sepsis Defense</p>
                 </div>
-                <div class="d-flex gap-2">
+                <div class="d-none d-md-flex">
                     <div
-                        class="badge bg-danger bg-opacity-10 text-danger p-2 border border-danger border-opacity-20 rounded-3 d-flex align-items-center">
+                        class="badge bg-danger bg-opacity-20 text-white p-2 border border-danger border-opacity-30 rounded-3 d-flex align-items-center">
                         <i class="fas fa-triangle-exclamation fs-5 me-2"></i>
                         <div class="text-start">
                             <div class="smaller fw-bold ls-1 text-uppercase">Critical Alerts</div>
@@ -74,10 +73,10 @@
                             <div class="d-flex align-items-center">
                                 <div class="rounded-circle overflow-hidden me-3 border border-2 border-secondary"
                                     style="width: 50px; height: 50px;">
-                                    <div class="bg-dark p-2 text-center text-white fw-bold">AS</div>
+                                    <div class="bg-secondary-theme p-2 text-center text-theme fw-bold">AS</div>
                                 </div>
                                 <div>
-                                    <h5 class="text-white fw-bold mb-0">Aditi Sharma</h5>
+                                    <h5 class="text-theme fw-bold mb-0">Aditi Sharma</h5>
                                     <div class="smaller text-danger fw-bold">SEPSIS PROTOCOL ENGAGED</div>
                                 </div>
                             </div>
@@ -86,15 +85,15 @@
 
                         <div class="row g-2 mb-4">
                             <div class="col-6">
-                                <div class="glass-card p-3 bg-opacity-10 text-center">
+                                <div class="glass-card p-3 bg-tertiary-theme text-center">
                                     <div class="smaller text-muted text-uppercase fw-bold ls-1">HR</div>
-                                    <div class="text-white fw-bold">118 BPM</div>
+                                    <div class="text-theme fw-bold">118 BPM</div>
                                 </div>
                             </div>
                             <div class="col-6">
-                                <div class="glass-card p-3 bg-opacity-10 text-center">
+                                <div class="glass-card p-3 bg-tertiary-theme text-center">
                                     <div class="smaller text-muted text-uppercase fw-bold ls-1">BP</div>
-                                    <div class="text-white fw-bold">90/60</div>
+                                    <div class="text-theme fw-bold">90/60</div>
                                 </div>
                             </div>
                         </div>
@@ -118,11 +117,11 @@
                             <div class="d-flex align-items-center">
                                 <div class="rounded-circle overflow-hidden me-3 border border-2 border-warning"
                                     style="width: 50px; height: 50px;">
-                                    <div class="bg-dark p-2 text-center text-white fw-bold">RV</div>
+                                    <div class="bg-secondary-theme p-2 text-center text-theme fw-bold">RV</div>
                                 </div>
                                 <div>
-                                    <h5 class="text-white fw-bold mb-0">Rahul Verma</h5>
-                                    <div class="smaller text-orange-400 fw-bold">ELEVATED MONITORING</div>
+                                    <h5 class="text-theme fw-bold mb-0">Rahul Verma</h5>
+                                    <div class="smaller text-warning fw-bold">ELEVATED MONITORING</div>
                                 </div>
                             </div>
                             <div class="mews-badge bg-warning text-dark">05</div>
@@ -130,15 +129,15 @@
 
                         <div class="row g-2 mb-4">
                             <div class="col-6">
-                                <div class="glass-card p-3 bg-opacity-10 text-center">
+                                <div class="glass-card p-3 bg-tertiary-theme text-center">
                                     <div class="smaller text-muted text-uppercase fw-bold ls-1">Temp</div>
-                                    <div class="text-white fw-bold">101.4°F</div>
+                                    <div class="text-theme fw-bold">101.4°F</div>
                                 </div>
                             </div>
                             <div class="col-6">
-                                <div class="glass-card p-3 bg-opacity-10 text-center">
+                                <div class="glass-card p-3 bg-tertiary-theme text-center">
                                     <div class="smaller text-muted text-uppercase fw-bold ls-1">O2 Sat</div>
-                                    <div class="text-white fw-bold">94%</div>
+                                    <div class="text-theme fw-bold">94%</div>
                                 </div>
                             </div>
                         </div>
@@ -160,10 +159,10 @@
                             <div class="d-flex align-items-center">
                                 <div class="rounded-circle overflow-hidden me-3 border border-2 border-success"
                                     style="width: 50px; height: 50px;">
-                                    <div class="bg-dark p-2 text-center text-white fw-bold">MK</div>
+                                    <div class="bg-secondary-theme p-2 text-center text-theme fw-bold">MK</div>
                                 </div>
                                 <div>
-                                    <h5 class="text-white fw-bold mb-0">Meena Kapoor</h5>
+                                    <h5 class="text-theme fw-bold mb-0">Meena Kapoor</h5>
                                     <div class="smaller text-success fw-bold">TRENDING TOWARDS STABILITY</div>
                                 </div>
                             </div>
@@ -172,15 +171,15 @@
 
                         <div class="row g-2 mb-4">
                             <div class="col-6">
-                                <div class="glass-card p-3 bg-opacity-10 text-center">
+                                <div class="glass-card p-3 bg-tertiary-theme text-center">
                                     <div class="smaller text-muted text-uppercase fw-bold ls-1">HR</div>
-                                    <div class="text-white fw-bold">82 BPM</div>
+                                    <div class="text-theme fw-bold">82 BPM</div>
                                 </div>
                             </div>
                             <div class="col-6">
-                                <div class="glass-card p-3 bg-opacity-10 text-center">
+                                <div class="glass-card p-3 bg-tertiary-theme text-center">
                                     <div class="smaller text-muted text-uppercase fw-bold ls-1">Resp Rate</div>
-                                    <div class="text-white fw-bold">16/m</div>
+                                    <div class="text-theme fw-bold">16/m</div>
                                 </div>
                             </div>
                         </div>
@@ -219,7 +218,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.3)' } } }
+                    scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }
                 }
             });
 
@@ -240,7 +239,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.3)' } } }
+                    scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }
                 }
             });
 
@@ -262,7 +261,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.3)' } } }
+                    scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }
                 }
             });
         });

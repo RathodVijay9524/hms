@@ -27,11 +27,11 @@
         }
 
         .patient-header {
-            background: rgba(56, 189, 248, 0.05);
+            background: var(--bg-tertiary);
             border-radius: 1rem;
             padding: 1.5rem;
             margin-bottom: 2rem;
-            border: 1px dashed rgba(56, 189, 248, 0.3);
+            border: 1px dashed var(--border-color);
         }
 
         .medicine-table th {
@@ -58,11 +58,12 @@
         }
 
         .quantity-badge {
-            background: rgba(56, 189, 248, 0.2);
+            background: var(--bg-tertiary);
             color: #38bdf8;
             padding: 0.25rem 0.75rem;
             border-radius: 0.5rem;
             font-weight: 700;
+            border: 1px solid rgba(56, 189, 248, 0.3);
         }
 
         .step-indicator {
@@ -98,14 +99,14 @@
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #38bdf8;">Medication Dispensing</h1>
-                    <p class="text-muted mb-0">Review and verify medication fulfillment</p>
+                    <h1 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">Medication Dispensing</h1>
+                    <p class="text-theme-muted mb-0 font-sm">Review and verify medication fulfillment</p>
                 </div>
-                <div class="d-flex gap-2">
+                <div class="d-none d-md-flex gap-2">
                     <button class="btn btn-outline-danger px-4 rounded-pill">
                         <i class="fas fa-times me-2"></i>Cancel
                     </button>
-                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #38bdf8;">
+                    <button class="btn btn-sky-theme text-white fw-bold px-4 rounded-pill">
                         <i class="fas fa-check-double me-2"></i>Finalize & Print
                     </button>
                 </div>
@@ -123,7 +124,7 @@
                                         style="width: 60px; height: 60px;">JS</div>
                                 </div>
                                 <div class="col">
-                                    <h4 class="fw-bold mb-1">John Smith</h4>
+                                    <h4 class="fw-bold mb-1 text-theme">John Smith</h4>
                                     <div class="text-muted small">
                                         <span class="me-3"><strong>UHID:</strong> 2024-0891</span>
                                         <span class="me-3"><strong>Age/Sex:</strong> 45y / Male</span>
@@ -138,7 +139,7 @@
                         </div>
 
                         <!-- Prescribed Medicines -->
-                        <h5 class="fw-bold mb-3" style="font-family: 'Outfit';">Prescribed Medicines</h5>
+                        <h5 class="fw-bold mb-3 text-theme" style="font-family: 'Outfit';">Prescribed Medicines</h5>
                         <div class="table-responsive">
                             <table class="table medicine-table">
                                 <thead>
@@ -185,8 +186,7 @@
 
                         <div class="mt-4">
                             <h6 class="fw-bold mb-2">Pharmacist Notes</h6>
-                            <textarea class="form-control" rows="2"
-                                style="background: var(--bg-primary); border: 1px solid var(--border-color); color: white;"
+                            <textarea class="form-control bg-tertiary-theme border-color-theme text-theme" rows="2"
                                 placeholder="Add any specific instructions for the patient..."></textarea>
                         </div>
                     </div>
@@ -195,7 +195,7 @@
                 <!-- Guidance & Verification -->
                 <div class="col-lg-4">
                     <div class="dispense-card">
-                        <h5 class="fw-bold mb-4" style="font-family: 'Outfit';">Verification Guide</h5>
+                        <h5 class="fw-bold mb-4 text-theme" style="font-family: 'Outfit';">Verification Guide</h5>
 
                         <div class="d-flex align-items-start mb-4">
                             <div class="step-indicator active">1</div>
@@ -231,13 +231,12 @@
                             </div>
                         </div>
 
-                        <div class="mt-5 p-3 rounded-3"
-                            style="background: rgba(56, 189, 248, 0.1); border: 1px solid #38bdf8;">
+                        <div class="mt-5 p-3 rounded-3 bg-tertiary-theme border-color-theme">
                             <div class="d-flex align-items-center mb-2">
-                                <i class="fas fa-info-circle text-primary me-2"></i>
-                                <h6 class="fw-bold mb-0" style="color: #38bdf8;">System Link</h6>
+                                <i class="fas fa-info-circle text-sky-500 me-2"></i>
+                                <h6 class="fw-bold mb-0 text-sky-500">System Link</h6>
                             </div>
-                            <p class="small text-muted mb-0">This transaction will automatically deduct items from
+                            <p class="small text-theme-muted mb-0">This transaction will automatically deduct items from
                                 Warehouse B-12 and notify Billing Station.</p>
                         </div>
                     </div>
