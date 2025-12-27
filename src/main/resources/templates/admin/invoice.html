@@ -12,153 +12,75 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/theme.css">
-    <style>
-        :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --success-color: #4cc9f0;
-            --card-border-radius: 12px;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa;
-        }
-
-        [data-theme="dark"] body {
-            background-color: #0f172a;
-            color: #f1f5f9;
-        }
-
-        .main-content {
-            padding: 2rem;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .invoice-card {
-            background: #ffffff;
-            border-radius: var(--card-border-radius);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            padding: 3rem;
-        }
-
-        [data-theme="dark"] .invoice-card {
-            background: #1e293b;
-        }
-
-        .invoice-header {
-            border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .status-badge {
-            font-size: 0.875rem;
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            font-weight: 600;
-        }
-
-        .table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-        }
-
-        [data-theme="dark"] .table th {
-            background-color: #334155;
-            color: #f1f5f9;
-        }
-
-        @media print {
-            .no-print {
-                display: none !important;
-            }
-
-            .invoice-card {
-                box-shadow: none !important;
-                padding: 0 !important;
-            }
-
-            body {
-                background: white !important;
-            }
-        }
-
-        .payment-method-icon {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            background: #f1f5f9;
-            margin-right: 1rem;
-        }
-    </style>
 </head>
 
 <body data-theme="light">
     <div class="main-content">
         <!-- Navigation Actions -->
         <div class="d-flex justify-content-between align-items-center mb-4 no-print">
-            <a href="/admin/billing" class="btn btn-light">
+            <a href="/admin/billing"
+                class="btn btn-outline-theme rounded-pill px-4 shadow-sm border-theme-light text-theme">
                 <i class="fas fa-arrow-left me-2"></i> Back to Billing
             </a>
             <div class="d-flex gap-2">
-                <button class="btn btn-outline-secondary" onclick="window.print()">
+                <button class="btn btn-outline-theme rounded-pill px-4 shadow-sm border-theme-light text-theme"
+                    onclick="window.print()">
                     <i class="fas fa-print me-2"></i> Print Invoice
                 </button>
-                <button class="btn btn-success" id="payBtn" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                <button class="btn btn-emerald-theme fw-bold px-4 rounded-pill shadow-sm" id="payBtn"
+                    data-bs-toggle="modal" data-bs-target="#paymentModal">
                     <i class="fas fa-hand-holding-dollar me-2"></i> Collect Payment
                 </button>
             </div>
         </div>
 
-        <div class="invoice-card" id="invoiceArea">
-            <div class="invoice-header d-flex justify-content-between align-items-start">
+        <div class="glass-card p-4 p-md-5 shadow-lg border-0" id="invoiceArea"
+            style="background: var(--bg-secondary) !important;">
+            <div
+                class="d-flex justify-content-between align-items-start mb-5 pb-4 border-bottom border-theme-light invoice-header">
                 <div>
-                    <h1 class="fw-bold text-primary mb-1">INVOICE</h1>
-                    <p class="text-muted mb-0" id="billNoDisplay">#INV-000000</p>
+                    <h1 class="fw-bold text-emerald-500 mb-1" style="font-family: 'Outfit';">INVOICE</h1>
+                    <p class="text-theme-muted mb-0" id="billNoDisplay">#INV-000000</p>
                     <div class="mt-3">
-                        <span class="status-badge" id="statusDisplay">DRAFT</span>
+                        <span class="badge rounded-pill px-3 py-1 fs-12 fw-bold border" id="statusDisplay">DRAFT</span>
                     </div>
                 </div>
                 <div class="text-end">
-                    <h4 class="fw-bold mb-1">HMS Hospital</h4>
-                    <p class="text-muted small mb-0">123 Healthcare Blvd, Medical District</p>
-                    <p class="text-muted small mb-0">GSTIN: 27AAAAA0000A1Z5</p>
-                    <p class="text-muted small mb-0">Phone: +91 98765 43210</p>
+                    <h4 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">HMS Hospital</h4>
+                    <p class="text-theme-muted small mb-0">123 Healthcare Blvd, Medical District</p>
+                    <p class="text-theme-muted small mb-0">GSTIN: 27AAAAA0000A1Z5</p>
+                    <p class="text-theme-muted small mb-0">Phone: +91 98765 43210</p>
                 </div>
             </div>
 
             <div class="row mb-5">
                 <div class="col-6">
-                    <h6 class="text-muted text-uppercase small fw-bold mb-3">Bill To:</h6>
-                    <h5 class="fw-bold mb-1" id="patientName">Patient Name</h5>
-                    <p class="text-muted mb-1" id="patientUhid">UHID: XXX-0000</p>
-                    <p class="text-muted mb-0" id="patientContact">Contact: +91 00000 00000</p>
+                    <h6 class="text-theme-muted text-uppercase small fw-bold mb-3" style="letter-spacing: 0.05em;">Bill
+                        To:</h6>
+                    <h5 class="fw-bold mb-1 text-theme" id="patientName" style="font-family: 'Outfit';">Patient Name
+                    </h5>
+                    <p class="text-theme-muted mb-1" id="patientUhid">UHID: XXX-0000</p>
+                    <p class="text-theme-muted mb-0" id="patientContact">Contact: +91 00000 00000</p>
                 </div>
                 <div class="col-6 text-end">
-                    <h6 class="text-muted text-uppercase small fw-bold mb-3">Invoice Details:</h6>
-                    <p class="mb-1"><span class="text-muted">Date:</span> <span id="billDate">--/--/----</span></p>
-                    <p class="mb-1" id="appointmentRow"><span class="text-muted">Appointment:</span> <span
-                            id="apptNo">--</span></p>
+                    <h6 class="text-theme-muted text-uppercase small fw-bold mb-3" style="letter-spacing: 0.05em;">
+                        Invoice Details:</h6>
+                    <p class="mb-1 text-theme"><span class="text-theme-muted">Date:</span> <span
+                            id="billDate">--/--/----</span></p>
+                    <p class="mb-1 text-theme" id="appointmentRow"><span class="text-theme-muted">Appointment:</span>
+                        <span id="apptNo">--</span></p>
                 </div>
             </div>
 
             <!-- Items Table -->
-            <table class="table mb-4">
+            <table class="table premium-table mb-4">
                 <thead>
                     <tr>
-                        <th class="ps-0">Description</th>
+                        <th>Description</th>
                         <th class="text-center">Qty</th>
                         <th class="text-end">Rate</th>
                         <th class="text-end">Tax (%)</th>
-                        <th class="text-end pe-0">Amount</th>
+                        <th class="text-end">Amount</th>
                     </tr>
                 </thead>
                 <tbody id="invoiceItems">
@@ -170,87 +92,94 @@
             <div class="row justify-content-end">
                 <div class="col-md-5">
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Subtotal:</span>
-                        <span id="subtotal">₹0.00</span>
+                        <span class="text-theme-muted">Subtotal:</span>
+                        <span class="text-theme" id="subtotal">₹0.00</span>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Tax Amount:</span>
-                        <span id="taxTotal">₹0.00</span>
+                        <span class="text-theme-muted">Tax Amount:</span>
+                        <span class="text-theme" id="taxTotal">₹0.00</span>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Discount:</span>
+                        <span class="text-theme-muted">Discount:</span>
                         <span class="text-danger" id="discountDisplay">-₹0.00</span>
                     </div>
-                    <hr>
+                    <hr class="border-theme-light opacity-10">
                     <div class="d-flex justify-content-between mb-3">
-                        <span class="fw-bold fs-5">Total Payable:</span>
-                        <span class="fw-bold fs-5" id="netAmount">₹0.00</span>
+                        <span class="fw-bold fs-5 text-theme">Total Payable:</span>
+                        <span class="fw-bold fs-5 text-emerald-500" id="netAmount">₹0.00</span>
                     </div>
 
-                    <div class="bg-light p-3 rounded">
+                    <div class="bg-theme-light p-3 rounded-4 border border-theme-light">
                         <div class="d-flex justify-content-between mb-1">
-                            <span class="text-muted small">Total Paid:</span>
+                            <span class="text-theme-muted small">Total Paid:</span>
                             <span class="text-success small fw-bold" id="paidAmount">₹0.00</span>
                         </div>
-                        <div class="d-flex justify-content-between border-top pt-2 mt-2">
-                            <span class="fw-bold">Balance Due:</span>
+                        <div class="d-flex justify-content-between border-top border-theme-light pt-2 mt-2">
+                            <span class="fw-bold text-theme">Balance Due:</span>
                             <span class="fw-bold text-danger" id="balanceAmount">₹0.00</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="mt-5 pt-5 border-top">
-                <p class="text-muted small text-center">This is a system-generated invoice. No signature required.</p>
+            <div class="mt-5 pt-5 border-top border-theme-light">
+                <p class="text-theme-muted small text-center">This is a system-generated invoice. No signature required.
+                </p>
             </div>
         </div>
     </div>
 
     <!-- Payment Modal -->
     <div class="modal fade" id="paymentModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Collect Payment</h5>
-                    <button type="button" class="btn-close" data-bs-toggle="modal"
-                        data-bs-target="#paymentModal"></button>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card overflow-hidden border-0">
+                <div class="modal-header border-bottom border-theme-light p-4">
+                    <h5 class="modal-title fw-bold text-theme" style="font-family: 'Outfit';">Collect Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="alert alert-info py-2 small">
+                <div class="modal-body p-4">
+                    <div
+                        class="alert bg-emerald-500 bg-opacity-10 border border-emerald-500/20 text-emerald-500 rounded-4 mb-4">
                         Outstanding Balance: <strong id="modalBalance">₹0.00</strong>
                     </div>
                     <form id="paymentForm">
-                        <div class="mb-3">
-                            <label class="form-label">Payment Amount (₹)</label>
-                            <input type="number" step="0.01" class="form-control form-control-lg fw-bold"
+                        <div class="mb-4">
+                            <label class="form-label text-theme fw-bold small">Payment Amount (₹)</label>
+                            <input type="number" step="0.01"
+                                class="form-control form-control-lg fw-bold bg-theme-light border-theme-light rounded-pill px-4 text-emerald-500"
                                 id="paymentAmount" required>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Payment Mode</label>
+                        <div class="mb-4">
+                            <label class="form-label text-theme fw-bold small">Payment Mode</label>
                             <div class="d-flex gap-2">
                                 <input type="radio" class="btn-check" name="payMode" id="modeCash" value="CASH" checked>
-                                <label class="btn btn-outline-primary flex-fill" for="modeCash"><i
-                                        class="fas fa-money-bill-wave me-1"></i> Cash</label>
+                                <label class="btn btn-outline-emerald-theme flex-fill rounded-pill" for="modeCash">
+                                    <i class="fas fa-money-bill-wave me-1"></i> Cash
+                                </label>
 
                                 <input type="radio" class="btn-check" name="payMode" id="modeCard" value="CARD">
-                                <label class="btn btn-outline-primary flex-fill" for="modeCard"><i
-                                        class="fas fa-credit-card me-1"></i> Card</label>
+                                <label class="btn btn-outline-emerald-theme flex-fill rounded-pill" for="modeCard">
+                                    <i class="fas fa-credit-card me-1"></i> Card
+                                </label>
 
                                 <input type="radio" class="btn-check" name="payMode" id="modeUpi" value="UPI">
-                                <label class="btn btn-outline-primary flex-fill" for="modeUpi"><i
-                                        class="fas fa-qrcode me-1"></i> UPI</label>
+                                <label class="btn btn-outline-emerald-theme flex-fill rounded-pill" for="modeUpi">
+                                    <i class="fas fa-qrcode me-1"></i> UPI
+                                </label>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Transaction Reference (Optional)</label>
-                            <input type="text" class="form-control" id="payRef" placeholder="UPI ID or Card Ref No.">
+                            <label class="form-label text-theme fw-bold small">Transaction Reference (Optional)</label>
+                            <input type="text" class="form-control bg-theme-light border-theme-light rounded-pill px-4"
+                                id="payRef" placeholder="UPI ID or Card Ref No.">
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-light" data-bs-toggle="modal"
-                        data-bs-target="#paymentModal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="confirmPayBtn">Confirm Payment</button>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-ghost-theme rounded-pill px-4 text-theme-muted"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-emerald-theme fw-bold rounded-pill px-4 shadow-sm"
+                        id="confirmPayBtn">Confirm Payment</button>
                 </div>
             </div>
         </div>
@@ -258,9 +187,9 @@
 
     <!-- Loading Overlay -->
     <div id="loading"
-        class="position-fixed top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex align-items-center justify-content-center d-none"
+        class="position-fixed top-0 start-0 w-100 h-100 bg-theme-light bg-opacity-75 d-flex align-items-center justify-content-center d-none"
         style="z-index: 2000;">
-        <div class="spinner-border text-primary" role="status"></div>
+        <div class="spinner-border text-emerald-500" role="status"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -286,7 +215,15 @@
             const b = currentBill;
             document.getElementById('billNoDisplay').textContent = '#' + b.billNumber;
             document.getElementById('statusDisplay').textContent = b.status.replace('_', ' ');
-            document.getElementById('statusDisplay').className = 'status-badge status-' + b.status;
+
+            const statusClasses = {
+                'DRAFT': 'bg-secondary-subtle text-secondary border-secondary/20',
+                'PENDING': 'bg-warning-subtle text-warning border-warning/20',
+                'PAID': 'bg-success-subtle text-success border-success/20',
+                'PARTIAL': 'bg-info-subtle text-info border-info/20',
+                'CANCELLED': 'bg-danger-subtle text-danger border-danger/20'
+            };
+            document.getElementById('statusDisplay').className = 'badge rounded-pill px-3 py-1 fs-12 fw-bold border ' + (statusClasses[b.status] || statusClasses['DRAFT']);
 
             document.getElementById('patientName').textContent = b.patientName;
             document.getElementById('patientUhid').textContent = 'UHID: ' + b.patientUhid;

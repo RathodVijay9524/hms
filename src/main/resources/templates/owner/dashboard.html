@@ -19,80 +19,6 @@
         })();
     </script>
     <style>
-        .owner-header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #f8fafc;
-            border-radius: 1.5rem;
-            padding: 2.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .owner-header::after {
-            content: '';
-            position: absolute;
-            top: -20%;
-            right: -10%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(245, 158, 11, 0.1) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-
-        .metric-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1.5rem;
-            padding: 1.5rem;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            overflow: hidden;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .metric-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px -15px rgba(245, 158, 11, 0.25);
-            border-color: rgba(245, 158, 11, 0.4);
-            background: linear-gradient(145deg, var(--bg-secondary), rgba(245, 158, 11, 0.05));
-        }
-
-        .metric-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .metric-card:hover::before {
-            opacity: 1;
-        }
-
-        .metric-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            transition: transform 0.3s ease;
-        }
-
-        .metric-card:hover .metric-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
         .metric-title {
             color: var(--text-muted);
             font-size: 0.75rem;
@@ -150,10 +76,6 @@
             background: rgba(245, 158, 11, 0.2);
             color: #f59e0b;
         }
-
-        [data-theme="light"] .owner-header {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        }
     </style>
 </head>
 
@@ -191,7 +113,7 @@
             <div class="row g-3 mb-4">
                 <div class="col-md-6 col-lg-4 col-xl-2">
                     <div class="metric-card h-100">
-                        <div class="metric-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                        <div class="metric-icon bg-amber-500 bg-opacity-10 text-amber-400">
                             <i class="fas fa-user-check"></i>
                         </div>
                         <div class="metric-title">Staff On Duty</div>
@@ -201,7 +123,7 @@
 
                 <div class="col-md-6 col-lg-4 col-xl-2">
                     <div class="metric-card h-100">
-                        <div class="metric-icon" style="background: rgba(99, 102, 241, 0.1); color: #6366f1;">
+                        <div class="metric-icon bg-indigo-500 bg-opacity-10 text-indigo-400">
                             <i class="fas fa-calendar-check"></i>
                         </div>
                         <div class="metric-title">Today's Visits</div>
@@ -211,7 +133,7 @@
 
                 <div class="col-md-6 col-lg-4 col-xl-2">
                     <div class="metric-card h-100">
-                        <div class="metric-icon" style="background: rgba(34, 197, 94, 0.1); color: #22c55e;">
+                        <div class="metric-icon bg-green-500 bg-opacity-10 text-green-500">
                             <i class="fas fa-bed"></i>
                         </div>
                         <div class="metric-title">Bed Occupancy</div>
@@ -221,7 +143,7 @@
 
                 <div class="col-md-6 col-lg-4 col-xl-2">
                     <div class="metric-card h-100">
-                        <div class="metric-icon" style="background: rgba(244, 63, 94, 0.1); color: #f43f5e;">
+                        <div class="metric-icon bg-rose-500 bg-opacity-10 text-rose-400">
                             <i class="fas fa-indian-rupee-sign"></i>
                         </div>
                         <div class="metric-title">Revenue (Today)</div>
@@ -233,7 +155,7 @@
 
                 <div class="col-md-6 col-lg-4 col-xl-2">
                     <div class="metric-card h-100">
-                        <div class="metric-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                        <div class="metric-icon bg-emerald-500 bg-opacity-10 text-emerald-400">
                             <i class="fas fa-smile"></i>
                         </div>
                         <div class="metric-title">Satisfaction</div>
@@ -243,7 +165,7 @@
 
                 <div class="col-md-6 col-lg-4 col-xl-2">
                     <div class="metric-card h-100">
-                        <div class="metric-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                        <div class="metric-icon bg-purple-500 bg-opacity-10 text-purple-400">
                             <i class="fas fa-clock"></i>
                         </div>
                         <div class="metric-title">Avg Stay (ALOS)</div>

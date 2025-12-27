@@ -96,60 +96,6 @@
             margin-top: 56px;
         }
 
-        .stat-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            transition: all 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-        }
-
-        .stat-icon.green {
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--primary-color);
-        }
-
-        .stat-icon.cyan {
-            background: rgba(6, 182, 212, 0.2);
-            color: var(--secondary-color);
-        }
-
-        .stat-icon.purple {
-            background: rgba(139, 92, 246, 0.2);
-            color: var(--accent-color);
-        }
-
-        .stat-icon.amber {
-            background: rgba(245, 158, 11, 0.2);
-            color: #f59e0b;
-        }
-
-        .stat-value {
-            font-family: 'Outfit', sans-serif;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .stat-label {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
 
         .quick-action {
             background: var(--bg-secondary);
@@ -281,46 +227,50 @@
 
         <div class="row g-4 mb-4">
             <div class="col-md-6 col-lg-3">
-                <div class="stat-card">
+                <div class="metric-card">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <div class="stat-value" th:text="${totalPatients}">152</div>
-                            <div class="stat-label">Total Patients</div>
+                            <div class="h2 fw-bold mb-1" th:text="${totalPatients}">152</div>
+                            <div class="small text-muted text-uppercase fw-bold">Total Patients</div>
                         </div>
-                        <div class="stat-icon green"><i class="fas fa-users"></i></div>
+                        <div class="metric-icon bg-emerald-500 bg-opacity-10 text-emerald-400 m-0"><i
+                                class="fas fa-users"></i></div>
                     </div>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
-                <div class="stat-card">
+                <div class="metric-card">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <div class="stat-value" th:text="${totalTests}">48</div>
-                            <div class="stat-label">Lab Tests</div>
+                            <div class="h2 fw-bold mb-1" th:text="${totalTests}">48</div>
+                            <div class="small text-muted text-uppercase fw-bold">Lab Tests</div>
                         </div>
-                        <div class="stat-icon cyan"><i class="fas fa-flask"></i></div>
+                        <div class="metric-icon bg-blue-500 bg-opacity-10 text-blue-400 m-0"><i
+                                class="fas fa-flask"></i></div>
                     </div>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
-                <div class="stat-card">
+                <div class="metric-card">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <div class="stat-value" th:text="${pendingOrders}">23</div>
-                            <div class="stat-label">Pending Orders</div>
+                            <div class="h2 fw-bold mb-1" th:text="${pendingOrders}">23</div>
+                            <div class="small text-muted text-uppercase fw-bold">Pending Orders</div>
                         </div>
-                        <div class="stat-icon amber"><i class="fas fa-clock"></i></div>
+                        <div class="metric-icon bg-amber-500 bg-opacity-10 text-amber-400 m-0"><i
+                                class="fas fa-clock"></i></div>
                     </div>
                 </div>
             </div>
             <div class="col-md-6 col-lg-3">
-                <div class="stat-card">
+                <div class="metric-card">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <div class="stat-value" th:text="${reportsReadyCount}">89</div>
-                            <div class="stat-label">Reports Ready</div>
+                            <div class="h2 fw-bold mb-1" th:text="${reportsReadyCount}">89</div>
+                            <div class="small text-muted text-uppercase fw-bold">Reports Ready</div>
                         </div>
-                        <div class="stat-icon purple"><i class="fas fa-file-medical"></i></div>
+                        <div class="metric-icon bg-purple-500 bg-opacity-10 text-purple-400 m-0"><i
+                                class="fas fa-file-medical"></i></div>
                     </div>
                 </div>
             </div>

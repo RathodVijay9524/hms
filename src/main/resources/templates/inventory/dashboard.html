@@ -19,57 +19,6 @@
         })();
     </script>
     <style>
-        .metric-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1.5rem;
-            padding: 1.5rem;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            overflow: hidden;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .metric-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px -15px rgba(13, 148, 136, 0.25);
-            border-color: rgba(13, 148, 136, 0.4);
-            background: linear-gradient(145deg, var(--bg-secondary), rgba(13, 148, 136, 0.05));
-        }
-
-        .metric-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, #0d9488 0%, #0f766e 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .metric-card:hover::before {
-            opacity: 1;
-        }
-
-        .metric-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            transition: transform 0.3s ease;
-        }
-
-        .metric-card:hover .metric-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
     </style>
 </head>
 
@@ -80,20 +29,16 @@
     <main class="main-content bg-inventory-dark min-vh-100">
         <div class="container-fluid">
             <!-- Innovative Header -->
-            <div class="inventory-header d-flex justify-content-between align-items-center mb-4">
-                <div class="col-md-6">
-                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #0d9488;">
-                        Supply Chain Command Center
-                    </h1>
-                    <p class="text-muted mb-0 small text-theme-muted">Centralized Hospital Store & Logistics Overview
-                    </p>
+            <div class="inventory-header d-flex justify-content-between align-items-center mb-4 text-white">
+                <div class="position-relative" style="z-index: 1;">
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit';">Supply Chain Command Center</h1>
+                    <p class="mb-0 small opacity-75">Centralized Hospital Store & Logistics Overview</p>
                 </div>
                 <div class="d-none d-md-flex gap-3" style="z-index: 1;">
-                    <button class="btn btn-sm btn-outline-light px-3 rounded-pill">
+                    <button class="btn btn-sm btn-outline-light px-3 rounded-pill shadow-sm">
                         <i class="fas fa-file-invoice me-2"></i>Audit
                     </button>
-                    <button class="btn btn-sm text-white fw-bold px-4 rounded-pill"
-                        style="background: #0d9488; border: none;">
+                    <button class="btn btn-sm btn-light text-theme fw-bold px-4 rounded-pill shadow-sm">
                         <i class="fas fa-plus me-2"></i>Create PO
                     </button>
                 </div>
@@ -149,7 +94,7 @@
                 <div class="col-lg-8">
                     <div class="glass-card p-4 h-100 shadow-lg">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h5 class="fw-bold text-white mb-0" style="font-family: 'Outfit';">Central Stock Valuation
+                            <h5 class="fw-bold text-theme mb-0" style="font-family: 'Outfit';">Central Stock Valuation
                                 Trend</h5>
                             <button class="btn btn-link text-teal-400 p-0 text-decoration-none smaller fw-bold">View
                                 Report <i class="fas fa-chevron-right ms-1"></i></button>
@@ -163,7 +108,7 @@
                 <!-- Departmental Needs -->
                 <div class="col-lg-4">
                     <div class="glass-card p-4 h-100 shadow-lg">
-                        <h5 class="fw-bold text-white mb-4" style="font-family: 'Outfit';">Departmental Requisitions
+                        <h5 class="fw-bold text-theme mb-4" style="font-family: 'Outfit';">Departmental Requisitions
                         </h5>
                         <div class="list-group list-group-flush mb-4">
                             <div class="list-group-item bg-transparent px-0 py-3">
@@ -174,8 +119,8 @@
                                             <i class="fas fa-pills"></i>
                                         </div>
                                         <div>
-                                            <div class="fw-bold text-white smaller">Pharmacy Hub</div>
-                                            <div class="smaller text-muted">15 Items requested</div>
+                                            <div class="fw-bold text-theme smaller">Pharmacy Hub</div>
+                                            <div class="smaller text-theme-muted">15 Items requested</div>
                                         </div>
                                     </div>
                                     <span
@@ -190,8 +135,8 @@
                                             <i class="fas fa-microscope"></i>
                                         </div>
                                         <div>
-                                            <div class="fw-bold text-white smaller">Lab Diagnostics</div>
-                                            <div class="smaller text-muted">8 Items requested</div>
+                                            <div class="fw-bold text-theme smaller">Lab Diagnostics</div>
+                                            <div class="smaller text-theme-muted">8 Items requested</div>
                                         </div>
                                     </div>
                                     <span
@@ -206,8 +151,8 @@
                                             <i class="fas fa-user-nurse"></i>
                                         </div>
                                         <div>
-                                            <div class="fw-bold text-white smaller">Nursing Wards</div>
-                                            <div class="smaller text-muted">22 Items requested</div>
+                                            <div class="fw-bold text-theme smaller">Nursing Wards</div>
+                                            <div class="smaller text-theme-muted">22 Items requested</div>
                                         </div>
                                     </div>
                                     <span

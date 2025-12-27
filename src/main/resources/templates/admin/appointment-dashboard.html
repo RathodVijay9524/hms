@@ -20,154 +20,58 @@
         })();
     </script>
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-        }
-
-        .navbar-custom {
-            background: var(--navbar-bg);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .sidebar {
-            background: var(--bg-secondary);
-            min-height: calc(100vh - 56px);
-            border-right: 1px solid var(--border-color);
-            padding: 1.5rem 1rem;
-            position: fixed;
-            width: 200px;
-            top: 56px;
-        }
-
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            color: var(--text-muted);
-            text-decoration: none;
-            border-radius: 0.5rem;
-            margin-bottom: 0.25rem;
-            transition: all 0.3s;
-        }
-
-        .sidebar-link:hover,
-        .sidebar-link.active {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--primary-color);
-        }
-
-        .sidebar-link i {
-            width: 24px;
-            margin-right: 12px;
-        }
-
-        .main-content {
-            margin-left: 200px;
-            padding: 2rem;
-            margin-top: 56px;
-        }
-
-        .card-custom {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            box-shadow: var(--shadow-md);
-        }
-
-        .status-badge {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .status-booked {
-            background: rgba(99, 102, 241, 0.1);
-            color: #818cf8;
-        }
-
-        .status-checked_in {
-            background: rgba(16, 185, 129, 0.1);
-            color: #34d399;
-        }
-
-        .status-completed {
-            background: rgba(59, 130, 246, 0.1);
-            color: #60a5fa;
-        }
-
-        .status-cancelled {
-            background: rgba(239, 68, 68, 0.1);
-            color: #f87171;
-        }
-
-        .status-no_show {
-            background: rgba(245, 158, 11, 0.1);
-            color: #fbbf24;
-        }
-
-        .appointment-row {
-            transition: background 0.2s;
-        }
-
-        .appointment-row:hover {
-            background: var(--bg-tertiary);
-        }
-    </style>
 </head>
 
 <body>
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-    <div th:replace="~{fragments/sidebar :: sidebar('queue')}"></div>
+    <div th:replace="~{fragments/sidebars/admin_sidebar :: admin_sidebar('queue')}"></div>
 
-    <div class="main-content">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 style="font-family: 'Outfit'; font-weight: 700;">Front Desk Dashboard</h2>
-                <p class="text-muted" id="currentDateDisplay">Today's Appointments - </p>
+    <main class="main-content">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">Front Desk Dashboard</h1>
+                    <p class="text-theme-muted mb-0" id="currentDateDisplay">Today's Appointments - </p>
+                </div>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-outline-theme rounded-pill px-4 shadow-sm border-theme-light text-theme"
+                        onclick="loadAppointments()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh List
+                    </button>
+                    <a th:href="@{/lab/appointments}" class="btn btn-emerald-theme fw-bold px-4 rounded-pill shadow-sm">
+                        <i class="fas fa-plus me-2"></i>New Booking
+                    </a>
+                </div>
             </div>
-            <div class="d-flex gap-2">
-                <button class="btn btn-outline-primary" onclick="loadAppointments()">
-                    <i class="fas fa-sync-alt me-2"></i>Refresh List
-                </button>
-                <a th:href="@{/lab/appointments}" class="btn btn-primary-gradient">
-                    <i class="fas fa-plus me-2"></i>New Booking
-                </a>
+
+            <div class="glass-card p-0 overflow-hidden shadow-sm">
+                <div class="table-responsive">
+                    <table class="table premium-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Appt #</th>
+                                <th>Patient Details</th>
+                                <th>Doctor</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointmentsTableBody">
+                            <!-- Appointments will be loaded here -->
+                            <tr>
+                                <td colspan="6" class="text-center py-5">
+                                    <div class="spinner-border text-emerald-500" role="status"></div>
+                                    <p class="mt-2 text-theme-muted">Loading appointments...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-
-        <div class="card card-custom p-0 overflow-hidden">
-            <div class="table-responsive">
-                <table class="table table-borderless align-middle mb-0 text-primary">
-                    <thead style="background: var(--bg-tertiary);">
-                        <tr>
-                            <th class="ps-4 py-3">Time</th>
-                            <th class="py-3">Appt #</th>
-                            <th class="py-3">Patient Details</th>
-                            <th class="py-3">Doctor</th>
-                            <th class="py-3">Status</th>
-                            <th class="py-3 text-end pe-4">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="appointmentsTableBody">
-                        <!-- Appointments will be loaded here -->
-                        <tr>
-                            <td colspan="6" class="text-center py-5">
-                                <div class="spinner-border text-primary" role="status"></div>
-                                <p class="mt-2 text-muted">Loading appointments...</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -212,25 +116,25 @@
                         <td>
                             <div>Dr. ${appt.doctorName}</div>
                         </td>
-                        <td>
-                            <span class="status-badge status-${appt.status.toLowerCase()}">${appt.status.replace('_', ' ')}</span>
-                        </td>
+                    <td>
+                        <span class="badge rounded-pill px-3 py-1 fs-10 fw-bold border ${statusClass}">${appt.status.replace('_', ' ')}</span>
+                    </td>
                         <td class="text-end pe-4">
                             ${appt.status === 'BOOKED' ? `
-                                <button class="btn btn-sm btn-success me-1" onclick="updateStatus(${appt.id}, 'CHECKED_IN')" title="Check-in">
+                                <button class="btn btn-sm btn-emerald-theme me-1 shadow-sm" onclick="updateStatus(${appt.id}, 'CHECKED_IN')" title="Check-in">
                                     <i class="fas fa-user-check"></i>
                                 </button>
                             ` : ''}
                             ${appt.status === 'CHECKED_IN' ? `
-                                <a href="/lab/patients/${appt.patientId}?visitId=${appt.visitId}" class="btn btn-sm btn-primary me-1" title="Open EMR Visit">
+                                <a href="/lab/patients/${appt.patientId}?visitId=${appt.visitId}" class="btn btn-sm btn-emerald-soft me-1 shadow-sm" title="Open EMR Visit">
                                     <i class="fas fa-notes-medical"></i>
                                 </a>
-                                <button class="btn btn-sm btn-outline-success me-1" onclick="updateStatus(${appt.id}, 'COMPLETED')" title="Mark as Completed">
+                                <button class="btn btn-sm btn-outline-emerald-theme me-1 shadow-sm" onclick="updateStatus(${appt.id}, 'COMPLETED')" title="Mark as Completed">
                                     <i class="fas fa-check-double"></i>
                                 </button>
                             ` : ''}
                             ${appt.status === 'BOOKED' ? `
-                                <button class="btn btn-sm btn-outline-danger" onclick="updateStatus(${appt.id}, 'CANCELLED')" title="Cancel">
+                                <button class="btn btn-sm btn-outline-danger shadow-sm" onclick="updateStatus(${appt.id}, 'CANCELLED')" title="Cancel">
                                     <i class="fas fa-times"></i>
                                 </button>
                             ` : ''}

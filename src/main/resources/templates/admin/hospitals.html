@@ -17,49 +17,6 @@
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
-    <style>
-        .network-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1.25rem;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-
-        .network-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(16, 185, 129, 0.4);
-        }
-
-        .hospital-banner {
-            height: 120px;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            position: relative;
-        }
-
-        .capacity-bar {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 0.5rem;
-        }
-
-        .capacity-fill {
-            height: 100%;
-            background: #10b981;
-            border-radius: 4px;
-        }
-
-        .node-stat {
-            background: rgba(16, 185, 129, 0.05);
-            border: 1px solid var(--border-color);
-            border-radius: 0.75rem;
-            padding: 0.75rem;
-            text-align: center;
-        }
-    </style>
 </head>
 
 <body>
@@ -74,110 +31,112 @@
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #10b981;">Hospital Network</h1>
-                    <p class="text-muted mb-0">Manage clinical nodes and infrastructure across the hospital system</p>
+                    <h1 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">Hospital Network</h1>
+                    <p class="text-theme-muted mb-0">Manage clinical nodes and infrastructure across the hospital system
+                    </p>
                 </div>
-                <button class="btn text-dark fw-bold px-4 rounded-pill" style="background: #10b981;">
+                <button class="btn btn-emerald-theme fw-bold px-4 rounded-pill shadow-sm">
                     <i class="fas fa-plus me-2"></i>Add New Node
                 </button>
             </div>
 
             <div class="row g-4">
                 <!-- Hospital Card 1 -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="network-card shadow-sm">
-                        <div class="hospital-banner d-flex align-items-center justify-content-center">
-                            <i class="fas fa-hospital text-white opacity-25" style="font-size: 4rem;"></i>
+                <div class="glass-card p-0 overflow-hidden shadow-sm h-100">
+                    <div class="d-flex align-items-center justify-content-center"
+                        style="height: 120px; background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        <i class="fas fa-hospital text-white opacity-25" style="font-size: 4rem;"></i>
+                    </div>
+                    <div class="p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="fw-bold mb-0 text-theme">City General Hospital</h5>
+                            <span class="badge bg-success-subtle text-success rounded-pill px-3">Active</span>
                         </div>
-                        <div class="p-4">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="fw-bold mb-0">City General Hospital</h5>
-                                <span class="badge bg-success rounded-pill">Active</span>
-                            </div>
-                            <p class="text-muted small mb-4"><i class="fas fa-map-marker-alt me-2"></i>Main Square,
-                                Sector 12</p>
+                        <p class="text-theme-muted small mb-4"><i
+                                class="fas fa-map-marker-alt me-2 text-emerald-500"></i>Main Square,
+                            Sector 12</p>
 
-                            <div class="row g-2 mb-4">
-                                <div class="col-6">
-                                    <div class="node-stat">
-                                        <div class="small text-muted">Doctors</div>
-                                        <div class="fw-bold">45</div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="node-stat">
-                                        <div class="small text-muted">Nurses</div>
-                                        <div class="fw-bold">120</div>
-                                    </div>
+                        <div class="row g-2 mb-4">
+                            <div class="col-6">
+                                <div class="bg-tertiary-theme border border-color-theme rounded-3 p-3 text-center">
+                                    <div class="small text-theme-muted">Doctors</div>
+                                    <div class="fw-bold text-theme">45</div>
                                 </div>
                             </div>
+                            <div class="col-6">
+                                <div class="bg-tertiary-theme border border-color-theme rounded-3 p-3 text-center">
+                                    <div class="small text-theme-muted">Nurses</div>
+                                    <div class="fw-bold text-theme">120</div>
+                                </div>
+                            </div>
+                        </div>
 
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between small mb-1">
-                                    <span class="text-muted">Bed Capacity</span>
-                                    <span class="fw-bold">85% Full</span>
-                                </div>
-                                <div class="capacity-bar">
-                                    <div class="capacity-fill" style="width: 85%;"></div>
-                                </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span class="text-theme-muted">Bed Capacity</span>
+                                <span class="fw-bold text-success">85% Full</span>
                             </div>
+                            <div class="progress"
+                                style="height: 8px; border-radius: 4px; background: rgba(255,255,255,0.05);">
+                                <div class="progress-bar bg-emerald-500" role="progressbar" style="width: 85%;"
+                                    aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
 
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-indigo w-100 rounded-pill"
-                                    style="background: #10b981; color: #000; border: none;">Configure</button>
-                                <button class="btn btn-outline-secondary rounded-pill"><i
-                                        class="fas fa-ellipsis-v"></i></button>
-                            </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-emerald-theme w-100 rounded-pill py-2">Configure</button>
+                            <button class="btn btn-outline-secondary rounded-pill"><i
+                                    class="fas fa-ellipsis-v"></i></button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Hospital Card 2 -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="network-card shadow-sm">
-                        <div class="hospital-banner d-flex align-items-center justify-content-center"
-                            style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);">
-                            <i class="fas fa-hospital-alt text-white opacity-25" style="font-size: 4rem;"></i>
+                <div class="glass-card p-0 overflow-hidden shadow-sm h-100">
+                    <div class="d-flex align-items-center justify-content-center"
+                        style="height: 120px; background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);">
+                        <i class="fas fa-hospital-alt text-white opacity-25" style="font-size: 4rem;"></i>
+                    </div>
+                    <div class="p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="fw-bold mb-0 text-theme">Metro Health Center</h5>
+                            <span class="badge bg-success-subtle text-success rounded-pill px-3">Active</span>
                         </div>
-                        <div class="p-4">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="fw-bold mb-0">Metro Health Center</h5>
-                                <span class="badge bg-success rounded-pill">Active</span>
-                            </div>
-                            <p class="text-muted small mb-4"><i class="fas fa-map-marker-alt me-2"></i>Downside Road,
-                                Block B</p>
+                        <p class="text-theme-muted small mb-4"><i
+                                class="fas fa-map-marker-alt me-2 text-blue-500"></i>Downside Road,
+                            Block B</p>
 
-                            <div class="row g-2 mb-4">
-                                <div class="col-6">
-                                    <div class="node-stat">
-                                        <div class="small text-muted">Doctors</div>
-                                        <div class="fw-bold">32</div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="node-stat">
-                                        <div class="small text-muted">Nurses</div>
-                                        <div class="fw-bold">84</div>
-                                    </div>
+                        <div class="row g-2 mb-4">
+                            <div class="col-6">
+                                <div class="bg-tertiary-theme border border-color-theme rounded-3 p-3 text-center">
+                                    <div class="small text-theme-muted">Doctors</div>
+                                    <div class="fw-bold text-theme">32</div>
                                 </div>
                             </div>
+                            <div class="col-6">
+                                <div class="bg-tertiary-theme border border-color-theme rounded-3 p-3 text-center">
+                                    <div class="small text-theme-muted">Nurses</div>
+                                    <div class="fw-bold text-theme">84</div>
+                                </div>
+                            </div>
+                        </div>
 
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between small mb-1">
-                                    <span class="text-muted">Bed Capacity</span>
-                                    <span class="fw-bold">60% Full</span>
-                                </div>
-                                <div class="capacity-bar">
-                                    <div class="capacity-fill" style="width: 60%; background: #3b82f6;"></div>
-                                </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span class="text-theme-muted">Bed Capacity</span>
+                                <span class="fw-bold text-blue-400">60% Full</span>
                             </div>
+                            <div class="progress"
+                                style="height: 8px; border-radius: 4px; background: rgba(255,255,255,0.05);">
+                                <div class="progress-bar bg-blue-500" role="progressbar" style="width: 60%;"
+                                    aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
 
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-indigo w-100 rounded-pill"
-                                    style="background: #10b981; color: #000; border: none;">Configure</button>
-                                <button class="btn btn-outline-secondary rounded-pill"><i
-                                        class="fas fa-ellipsis-v"></i></button>
-                            </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-blue-theme w-100 rounded-pill py-2">Configure</button>
+                            <button class="btn btn-outline-secondary rounded-pill"><i
+                                    class="fas fa-ellipsis-v"></i></button>
                         </div>
                     </div>
                 </div>

@@ -25,31 +25,28 @@
 
     <main class="main-content">
         <div class="container-fluid">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #6366f1;">Rx Management</h1>
-                    <p class="text-muted mb-0">Review and issue digital prescriptions</p>
+            <div class="doctor-header d-flex justify-content-between align-items-center mb-4 text-white">
+                <div class="position-relative" style="z-index: 1;">
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit';">Rx Management</h1>
+                    <p class="mb-0 opacity-75 small">Review and issue digital prescriptions</p>
                 </div>
-                <button class="btn btn-indigo" style="background: #6366f1; color: white;">
+                <button class="btn btn-sm btn-light text-primary fw-bold px-4 rounded-pill" style="z-index: 1;">
                     <i class="fas fa-file-signature me-2"></i>New Prescription
                 </button>
             </div>
 
-            <div class="card border-0 shadow-sm" style="background: var(--bg-secondary);">
-                <div class="card-body p-5 text-center">
-                    <div class="mb-4">
-                        <i class="fas fa-prescription-bottle-medical fs-1 text-muted opacity-50"></i>
-                    </div>
-                    <h4>Digital RX Engine Ready</h4>
-                    <p class="text-muted mx-auto" style="max-width: 500px;">
-                        The clinical prescription module is ready to be linked with the pharmacy inventory system for
-                        real-time drug availability checks.
-                    </p>
-                    <button class="btn btn-outline-indigo mt-3 border-indigo"
-                        style="border-color: #6366f1; color: #6366f1;">
-                        <i class="fas fa-link me-2"></i>Link with Pharmacy Hub
-                    </button>
+            <div class="glass-card p-5 text-center">
+                <div class="mb-4">
+                    <i class="fas fa-prescription-bottle-medical fs-1 text-indigo-400 opacity-50"></i>
                 </div>
+                <h4 class="text-theme">Digital RX Engine Ready</h4>
+                <p class="text-theme-muted mx-auto" style="max-width: 500px;">
+                    The clinical prescription module is ready to be linked with the pharmacy inventory system for
+                    real-time drug availability checks.
+                </p>
+                <button class="btn btn-outline-primary mt-3 rounded-pill px-4 fw-bold">
+                    <i class="fas fa-link me-2"></i>Link with Pharmacy Hub
+                </button>
             </div>
         </div>
     </main>

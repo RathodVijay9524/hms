@@ -17,198 +17,6 @@
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
-    <style>
-        /* Reception Desk Purple/Violet Theme */
-        .reception-header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #f8fafc;
-            border-radius: 1.5rem;
-            padding: 2.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .reception-header::after {
-            content: '';
-            position: absolute;
-            top: -20%;
-            right: -10%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-
-        .metric-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1.5rem;
-            padding: 1.5rem;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            overflow: hidden;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .metric-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px -15px rgba(139, 92, 246, 0.25);
-            border-color: rgba(139, 92, 246, 0.4);
-            background: linear-gradient(145deg, var(--bg-secondary), rgba(139, 92, 246, 0.05));
-        }
-
-        .metric-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, #8b5cf6 0%, #7c3aed 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .metric-card:hover::before {
-            opacity: 1;
-        }
-
-        .metric-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .queue-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            overflow: hidden;
-        }
-
-        .queue-item {
-            padding: 1.25rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.2s ease;
-        }
-
-        .queue-item:last-child {
-            border-bottom: none;
-        }
-
-        .queue-item:hover {
-            background: rgba(139, 92, 246, 0.05);
-        }
-
-        .token-badge {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 2rem;
-            font-weight: 700;
-            font-size: 1rem;
-            min-width: 60px;
-            text-align: center;
-        }
-
-        .status-waiting {
-            background: rgba(245, 158, 11, 0.15);
-            color: #f59e0b;
-            padding: 0.35rem 0.75rem;
-            border-radius: 2rem;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-
-        .status-in-consultation {
-            background: rgba(59, 130, 246, 0.15);
-            color: #3b82f6;
-            padding: 0.35rem 0.75rem;
-            border-radius: 2rem;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-
-        .status-completed {
-            background: rgba(34, 197, 94, 0.15);
-            color: #22c55e;
-            padding: 0.35rem 0.75rem;
-            border-radius: 2rem;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-
-        .quick-action {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1.25rem;
-            padding: 1.5rem;
-            text-align: center;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            cursor: pointer;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .quick-action:hover {
-            border-color: #8b5cf6;
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 35px -10px rgba(139, 92, 246, 0.4);
-            background: rgba(139, 92, 246, 0.08);
-        }
-
-        .quick-action i {
-            font-size: 1.75rem;
-            color: #8b5cf6;
-            transition: transform 0.3s ease;
-        }
-
-        .quick-action:hover i {
-            transform: scale(1.2) rotate(5deg);
-        }
-
-        .appointment-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            padding: 1.5rem;
-        }
-
-        .time-slot {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            background: rgba(139, 92, 246, 0.1);
-            color: #8b5cf6;
-            border-radius: 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .section-title {
-            font-family: 'Outfit';
-            font-weight: 700;
-        }
-
-        [data-theme="light"] .reception-header {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        }
-    </style>
 </head>
 
 <body>
@@ -221,17 +29,17 @@
     <main class="main-content">
         <div class="container-fluid">
             <!-- Innovative Header -->
-            <div class="reception-header d-flex justify-content-between align-items-center mb-4">
+            <div class="reception-header d-flex justify-content-between align-items-center mb-4 text-white">
                 <div class="position-relative" style="z-index: 1;">
                     <h2 class="fw-bold mb-1" style="font-family: 'Outfit';">Reception Desk</h2>
                     <p class="mb-0 opacity-75 small">Register patients, manage bookings, and coordinate the front desk.
                     </p>
                 </div>
                 <div class="d-none d-md-flex gap-3" style="z-index: 1;">
-                    <button class="btn btn-sm btn-outline-light px-3 rounded-pill">
+                    <button class="btn btn-sm btn-outline-light px-3 rounded-pill shadow-sm">
                         <i class="fas fa-ticket me-2"></i>Next Token
                     </button>
-                    <button class="btn btn-sm text-white fw-bold px-4 rounded-pill" style="background: #8b5cf6;">
+                    <button class="btn btn-sm btn-light text-theme fw-bold px-4 rounded-pill shadow-sm">
                         <i class="fas fa-user-plus me-2"></i>New Patient
                     </button>
                 </div>
@@ -242,12 +50,13 @@
                 <div class="col-md-6 col-lg-3">
                     <div class="metric-card">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="metric-icon" style="background: rgba(139, 92, 246, 0.1);">
-                                <i class="fas fa-users" style="color: #8b5cf6;"></i>
+                            <div class="metric-icon bg-purple-500 bg-opacity-10 text-purple-400">
+                                <i class="fas fa-users"></i>
                             </div>
                             <div>
-                                <div class="small text-muted text-uppercase fw-bold">Today's Patients</div>
-                                <div class="h3 fw-bold mb-0">45</div>
+                                <div class="text-theme-muted smaller fw-bold text-uppercase mb-1 ls-1">Today's Patients
+                                </div>
+                                <div class="h3 fw-bold mb-0 text-theme">45</div>
                             </div>
                         </div>
                     </div>
@@ -255,12 +64,12 @@
                 <div class="col-md-6 col-lg-3">
                     <div class="metric-card">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="metric-icon" style="background: rgba(245, 158, 11, 0.1);">
-                                <i class="fas fa-clock" style="color: #f59e0b;"></i>
+                            <div class="metric-icon bg-amber-500 bg-opacity-10 text-amber-400">
+                                <i class="fas fa-clock"></i>
                             </div>
                             <div>
-                                <div class="small text-muted text-uppercase fw-bold">In Queue</div>
-                                <div class="h3 fw-bold mb-0 text-warning">12</div>
+                                <div class="text-theme-muted smaller fw-bold text-uppercase mb-1 ls-1">In Queue</div>
+                                <div class="h3 fw-bold mb-0 text-amber-400">12</div>
                             </div>
                         </div>
                     </div>
@@ -268,12 +77,13 @@
                 <div class="col-md-6 col-lg-3">
                     <div class="metric-card">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="metric-icon" style="background: rgba(59, 130, 246, 0.1);">
-                                <i class="fas fa-calendar-check" style="color: #3b82f6;"></i>
+                            <div class="metric-icon bg-blue-500 bg-opacity-10 text-blue-400">
+                                <i class="fas fa-calendar-check"></i>
                             </div>
                             <div>
-                                <div class="small text-muted text-uppercase fw-bold">Appointments</div>
-                                <div class="h3 fw-bold mb-0">28</div>
+                                <div class="text-theme-muted smaller fw-bold text-uppercase mb-1 ls-1">Appointments
+                                </div>
+                                <div class="h3 fw-bold mb-0 text-theme">28</div>
                             </div>
                         </div>
                     </div>
@@ -281,12 +91,13 @@
                 <div class="col-md-6 col-lg-3">
                     <div class="metric-card">
                         <div class="d-flex align-items-center gap-3">
-                            <div class="metric-icon" style="background: rgba(34, 197, 94, 0.1);">
-                                <i class="fas fa-user-plus" style="color: #22c55e;"></i>
+                            <div class="metric-icon bg-emerald-500 bg-opacity-10 text-emerald-400">
+                                <i class="fas fa-user-plus"></i>
                             </div>
                             <div>
-                                <div class="small text-muted text-uppercase fw-bold">New Registrations</div>
-                                <div class="h3 fw-bold mb-0 text-success">8</div>
+                                <div class="text-theme-muted smaller fw-bold text-uppercase mb-1 ls-1">New Registrations
+                                </div>
+                                <div class="h3 fw-bold mb-0 text-emerald-400">8</div>
                             </div>
                         </div>
                     </div>
@@ -296,43 +107,43 @@
             <!-- Quick Actions -->
             <div class="row g-4 mb-4">
                 <div class="col-12">
-                    <h6 class="text-muted smaller fw-bold text-uppercase ls-1 mb-3">Quick Actions</h6>
+                    <h6 class="text-theme-muted smaller fw-bold text-uppercase ls-1 mb-3">Quick Actions</h6>
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
-                    <div class="quick-action">
-                        <i class="fas fa-user-plus"></i>
-                        <div class="fw-bold small">Register Patient</div>
-                    </div>
+                    <a href="#" class="hub-link text-center px-4">
+                        <i class="fas fa-user-plus text-purple-500 fs-2 mb-3"></i>
+                        <div class="fw-bold text-theme">Register Patient</div>
+                    </a>
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
-                    <div class="quick-action">
-                        <i class="fas fa-calendar-plus"></i>
-                        <div class="fw-bold small">Book Appointment</div>
-                    </div>
+                    <a href="#" class="hub-link text-center px-4">
+                        <i class="fas fa-calendar-plus text-blue-500 fs-2 mb-3"></i>
+                        <div class="fw-bold text-theme">Book Appointment</div>
+                    </a>
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
-                    <div class="quick-action">
-                        <i class="fas fa-ticket"></i>
-                        <div class="fw-bold small">Issue Token</div>
-                    </div>
+                    <a href="#" class="hub-link text-center px-4">
+                        <i class="fas fa-ticket text-amber-500 fs-2 mb-3"></i>
+                        <div class="fw-bold text-theme">Issue Token</div>
+                    </a>
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
-                    <div class="quick-action">
-                        <i class="fas fa-search"></i>
-                        <div class="fw-bold small">Find Patient</div>
-                    </div>
+                    <a href="#" class="hub-link text-center px-4">
+                        <i class="fas fa-search text-emerald-500 fs-2 mb-3"></i>
+                        <div class="fw-bold text-theme">Find Patient</div>
+                    </a>
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
-                    <div class="quick-action">
-                        <i class="fas fa-id-badge"></i>
-                        <div class="fw-bold small">Visitor Pass</div>
-                    </div>
+                    <a href="#" class="hub-link text-center px-4">
+                        <i class="fas fa-id-badge text-indigo-500 fs-2 mb-3"></i>
+                        <div class="fw-bold text-theme">Visitor Pass</div>
+                    </a>
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
-                    <div class="quick-action">
-                        <i class="fas fa-phone"></i>
-                        <div class="fw-bold small">Enquiry</div>
-                    </div>
+                    <a href="#" class="hub-link text-center px-4">
+                        <i class="fas fa-phone text-rose-500 fs-2 mb-3"></i>
+                        <div class="fw-bold text-theme">Enquiry</div>
+                    </a>
                 </div>
             </div>
 
@@ -340,65 +151,85 @@
                 <!-- Token Queue -->
                 <div class="col-lg-7">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="section-title mb-0">Current Queue</h5>
-                        <a href="#" class="btn btn-sm btn-link text-decoration-none" style="color: #8b5cf6;">View All <i
+                        <h5 class="section-title mb-0 text-theme" style="font-family: 'Outfit';">Current Queue</h5>
+                        <a href="#" class="btn btn-sm btn-link text-decoration-none text-purple-400">View All <i
                                 class="fas fa-arrow-right ms-1"></i></a>
                     </div>
 
-                    <div class="queue-card">
-                        <div class="queue-item">
+                    <div class="glass-card p-0 overflow-hidden shadow-lg">
+                        <div
+                            class="p-3 border-bottom border-color-theme d-flex justify-content-between align-items-center hover-bg-opacity-5 transition-all">
                             <div class="d-flex align-items-center gap-3">
-                                <span class="token-badge">T-015</span>
+                                <span class="badge bg-purple-500 text-white rounded-pill px-3 py-2 fw-bold"
+                                    style="min-width: 70px;">T-015</span>
                                 <div>
-                                    <div class="fw-bold">Rajesh Kumar</div>
-                                    <div class="small text-muted">Dr. Verma • General Medicine</div>
+                                    <div class="fw-bold text-theme">Rajesh Kumar</div>
+                                    <div class="small text-theme-muted">Dr. Verma • General Medicine</div>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center gap-2">
-                                <span class="time-slot">10:30 AM</span>
-                                <span class="status-in-consultation">IN CONSULTATION</span>
+                                <span
+                                    class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small">10:30
+                                    AM</span>
+                                <span class="badge bg-blue-500 bg-opacity-10 text-blue-400 rounded-pill px-3">IN
+                                    CONSULTATION</span>
                             </div>
                         </div>
 
-                        <div class="queue-item">
+                        <div
+                            class="p-3 border-bottom border-color-theme d-flex justify-content-between align-items-center hover-bg-opacity-5 transition-all">
                             <div class="d-flex align-items-center gap-3">
-                                <span class="token-badge">T-016</span>
+                                <span class="badge bg-purple-500 text-white rounded-pill px-3 py-2 fw-bold"
+                                    style="min-width: 70px;">T-016</span>
                                 <div>
-                                    <div class="fw-bold">Priya Sharma</div>
-                                    <div class="small text-muted">Dr. Patel • Cardiology</div>
+                                    <div class="fw-bold text-theme">Priya Sharma</div>
+                                    <div class="small text-theme-muted">Dr. Patel • Cardiology</div>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center gap-2">
-                                <span class="time-slot">10:45 AM</span>
-                                <span class="status-waiting">WAITING</span>
+                                <span
+                                    class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small">10:45
+                                    AM</span>
+                                <span
+                                    class="badge bg-amber-500 bg-opacity-10 text-amber-400 rounded-pill px-3">WAITING</span>
                             </div>
                         </div>
 
-                        <div class="queue-item">
+                        <div
+                            class="p-3 border-bottom border-color-theme d-flex justify-content-between align-items-center hover-bg-opacity-5 transition-all">
                             <div class="d-flex align-items-center gap-3">
-                                <span class="token-badge">T-017</span>
+                                <span class="badge bg-purple-500 text-white rounded-pill px-3 py-2 fw-bold"
+                                    style="min-width: 70px;">T-017</span>
                                 <div>
-                                    <div class="fw-bold">Amit Singh</div>
-                                    <div class="small text-muted">Dr. Gupta • Orthopedics</div>
+                                    <div class="fw-bold text-theme">Amit Singh</div>
+                                    <div class="small text-theme-muted">Dr. Gupta • Orthopedics</div>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center gap-2">
-                                <span class="time-slot">11:00 AM</span>
-                                <span class="status-waiting">WAITING</span>
+                                <span
+                                    class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small">11:00
+                                    AM</span>
+                                <span
+                                    class="badge bg-amber-500 bg-opacity-10 text-amber-400 rounded-pill px-3">WAITING</span>
                             </div>
                         </div>
 
-                        <div class="queue-item">
+                        <div
+                            class="p-3 d-flex justify-content-between align-items-center hover-bg-opacity-5 transition-all">
                             <div class="d-flex align-items-center gap-3">
-                                <span class="token-badge">T-018</span>
+                                <span class="badge bg-purple-500 text-white rounded-pill px-3 py-2 fw-bold"
+                                    style="min-width: 70px;">T-018</span>
                                 <div>
-                                    <div class="fw-bold">Sunita Devi</div>
-                                    <div class="small text-muted">Dr. Sharma • Dermatology</div>
+                                    <div class="fw-bold text-theme">Sunita Devi</div>
+                                    <div class="small text-theme-muted">Dr. Sharma • Dermatology</div>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center gap-2">
-                                <span class="time-slot">11:15 AM</span>
-                                <span class="status-waiting">WAITING</span>
+                                <span
+                                    class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small">11:15
+                                    AM</span>
+                                <span
+                                    class="badge bg-amber-500 bg-opacity-10 text-amber-400 rounded-pill px-3">WAITING</span>
                             </div>
                         </div>
                     </div>
@@ -407,55 +238,64 @@
                 <!-- Today's Appointments -->
                 <div class="col-lg-5">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="section-title mb-0">Upcoming Appointments</h5>
-                        <span class="badge rounded-pill"
-                            style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">28 Today</span>
+                        <h5 class="section-title mb-0 text-theme" style="font-family: 'Outfit';">Upcoming Appointments
+                        </h5>
+                        <span class="badge bg-purple-500 bg-opacity-10 text-purple-400 rounded-pill px-3">28
+                            Today</span>
                     </div>
 
-                    <div class="appointment-card mb-3">
+                    <div class="p-3 mb-3 glass-card shadow-sm hover-bg-opacity-5 transition-all">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div>
-                                <div class="fw-bold">Meera Joshi</div>
-                                <div class="small text-muted">UHID: 2024-0892</div>
+                                <div class="fw-bold text-theme">Meera Joshi</div>
+                                <div class="small text-theme-muted">UHID: 2024-0892</div>
                             </div>
-                            <span class="time-slot">11:30 AM</span>
+                            <span
+                                class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small">11:30
+                                AM</span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="small text-muted"><i class="fas fa-user-md me-1"></i> Dr. Verma •
+                            <span class="small text-theme-muted"><i class="fas fa-user-md me-1"></i> Dr. Verma •
                                 General</span>
-                            <button class="btn btn-sm btn-outline-primary rounded-pill">Check In</button>
+                            <button class="btn btn-sm btn-outline-pink rounded-pill px-3">Check In</button>
                         </div>
                     </div>
 
-                    <div class="appointment-card mb-3">
+                    <div class="p-3 mb-3 glass-card shadow-sm hover-bg-opacity-5 transition-all">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div>
-                                <div class="fw-bold">Rahul Kapoor</div>
-                                <div class="small text-muted">UHID: 2024-0893</div>
+                                <div class="fw-bold text-theme">Rahul Kapoor</div>
+                                <div class="small text-theme-muted">UHID: 2024-0893</div>
                             </div>
-                            <span class="time-slot">12:00 PM</span>
+                            <span
+                                class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small">12:00
+                                PM</span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="small text-muted"><i class="fas fa-user-md me-1"></i> Dr. Patel • Cardio</span>
-                            <button class="btn btn-sm btn-outline-primary rounded-pill">Check In</button>
+                            <span class="small text-theme-muted"><i class="fas fa-user-md me-1"></i> Dr. Patel •
+                                Cardio</span>
+                            <button class="btn btn-sm btn-outline-pink rounded-pill px-3">Check In</button>
                         </div>
                     </div>
 
-                    <div class="appointment-card mb-3">
+                    <div class="p-3 mb-3 glass-card shadow-sm hover-bg-opacity-5 transition-all">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div>
-                                <div class="fw-bold">Anita Rao</div>
-                                <div class="small text-muted">UHID: 2024-0894</div>
+                                <div class="fw-bold text-theme">Anita Rao</div>
+                                <div class="small text-theme-muted">UHID: 2024-0894</div>
                             </div>
-                            <span class="time-slot">12:30 PM</span>
+                            <span
+                                class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small">12:30
+                                PM</span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="small text-muted"><i class="fas fa-user-md me-1"></i> Dr. Gupta • Ortho</span>
-                            <button class="btn btn-sm btn-outline-primary rounded-pill">Check In</button>
+                            <span class="small text-theme-muted"><i class="fas fa-user-md me-1"></i> Dr. Gupta •
+                                Ortho</span>
+                            <button class="btn btn-sm btn-outline-pink rounded-pill px-3">Check In</button>
                         </div>
                     </div>
 
-                    <button class="btn btn-outline-primary w-100 rounded-pill">
+                    <button class="btn btn-pink-theme w-100 rounded-pill py-2">
                         <i class="fas fa-calendar-week me-2"></i>View Full Schedule
                     </button>
                 </div>

@@ -17,70 +17,6 @@
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
-    <style>
-        .terminal-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1.25rem;
-            padding: 2rem;
-            height: 100%;
-        }
-
-        .payment-mode-btn {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: 100%;
-        }
-
-        .payment-mode-btn:hover {
-            border-color: #f43f5e;
-            background: rgba(244, 63, 94, 0.05);
-        }
-
-        .payment-mode-btn.active {
-            border-color: #f43f5e;
-            background: rgba(244, 63, 94, 0.1);
-            box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.2);
-        }
-
-        .payment-mode-btn i {
-            font-size: 2rem;
-            margin-bottom: 0.75rem;
-            color: #f43f5e;
-        }
-
-        .collection-table th {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            border-bottom: 2px solid var(--border-color);
-            padding: 1rem;
-        }
-
-        .collection-table td {
-            padding: 1rem;
-            vertical-align: middle;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .amount-display {
-            font-family: 'Outfit';
-            font-weight: 700;
-            font-size: 2rem;
-            color: #f43f5e;
-            text-align: right;
-            padding: 1rem;
-            background: var(--bg-primary);
-            border-radius: 0.75rem;
-            border: 1px solid var(--border-color);
-        }
-    </style>
 </head>
 
 <body>
@@ -92,17 +28,16 @@
 
     <main class="main-content">
         <div class="container-fluid">
-            <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #f43f5e;">Collections Terminal</h1>
-                    <p class="text-muted mb-0">Daily cash/payment collection and shift reconciliation</p>
+            <div class="billing-header d-flex justify-content-between align-items-center mb-4 text-white">
+                <div class="position-relative" style="z-index: 1;">
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit';">Collections Terminal</h1>
+                    <p class="mb-0 opacity-75 small">Daily cash/payment collection and shift reconciliation</p>
                 </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary rounded-pill px-4">
+                <div class="d-flex gap-2" style="z-index: 1;">
+                    <button class="btn btn-sm btn-outline-light rounded-pill px-4">
                         <i class="fas fa-print me-2"></i>Daily Summary
                     </button>
-                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #f43f5e;">
+                    <button class="btn btn-sm btn-light text-theme fw-bold px-4 rounded-pill">
                         <i class="fas fa-lock me-2"></i>Close Shift
                     </button>
                 </div>
@@ -111,51 +46,51 @@
             <div class="row g-4">
                 <!-- Payment Entry -->
                 <div class="col-lg-5">
-                    <div class="terminal-card">
-                        <h5 class="fw-bold mb-4" style="font-family: 'Outfit';">Receive Payment</h5>
+                    <div class="glass-card">
+                        <h5 class="fw-bold mb-4 text-theme" style="font-family: 'Outfit';">Receive Payment</h5>
 
                         <div class="mb-4">
-                            <label class="small text-muted mb-2">Invoice Number</label>
+                            <label class="small text-theme-muted mb-2">Invoice Number</label>
                             <div class="input-group">
-                                <input type="text" class="form-control bg-primary border-0 text-white"
+                                <input type="text" class="form-control bg-primary bg-opacity-10 border-0 text-theme"
                                     style="border-radius: 0.75rem 0 0 0.75rem; padding: 0.75rem;"
                                     placeholder="e.g. INV-2025-0812">
-                                <button class="btn btn-danger px-4"
-                                    style="background: #f43f5e; border-radius: 0 0.75rem 0.75rem 0;">Fetch</button>
+                                <button class="btn btn-pink-theme px-4"
+                                    style="border-radius: 0 0.75rem 0.75rem 0;">Fetch</button>
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label class="small text-muted mb-2">Payment Mode</label>
+                            <label class="small text-theme-muted mb-2">Payment Mode</label>
                             <div class="row g-3">
                                 <div class="col-4">
-                                    <div class="payment-mode-btn active">
-                                        <i class="fas fa-money-bill-wave"></i>
-                                        <div class="small fw-bold">Cash</div>
+                                    <div class="hub-link text-center active p-3">
+                                        <i class="fas fa-money-bill-wave text-emerald-400 fs-3 mb-2"></i>
+                                        <div class="small fw-bold text-theme">Cash</div>
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <div class="payment-mode-btn">
-                                        <i class="fas fa-credit-card"></i>
-                                        <div class="small fw-bold">Card</div>
+                                    <div class="hub-link text-center p-3">
+                                        <i class="fas fa-credit-card text-blue-400 fs-3 mb-2"></i>
+                                        <div class="small fw-bold text-theme">Card</div>
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <div class="payment-mode-btn">
-                                        <i class="fas fa-qrcode"></i>
-                                        <div class="small fw-bold">UPI</div>
+                                    <div class="hub-link text-center p-3">
+                                        <i class="fas fa-qrcode text-purple-400 fs-3 mb-2"></i>
+                                        <div class="small fw-bold text-theme">UPI</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="small text-muted mb-2">Amount to Collect</label>
-                            <div class="amount-display">₹ 0.00</div>
+                        <div class="mb-4 text-end">
+                            <label class="small text-theme-muted mb-2 d-block">Amount to Collect</label>
+                            <div class="insight-value text-theme py-2 px-3 bg-primary bg-opacity-10 rounded-4">₹ 0.00
+                            </div>
                         </div>
 
-                        <button class="btn text-white fw-bold w-100 py-3 rounded-pill shadow-lg"
-                            style="background: #f43f5e;">
+                        <button class="btn btn-pink-theme w-100 py-3 rounded-pill shadow-lg fw-bold">
                             Confirm Receipt & Print
                         </button>
                     </div>
@@ -163,12 +98,12 @@
 
                 <!-- Recent Collections -->
                 <div class="col-lg-7">
-                    <div class="terminal-card">
-                        <h5 class="fw-bold mb-4" style="font-family: 'Outfit';">Recent Activity (Today)</h5>
+                    <div class="glass-card">
+                        <h5 class="fw-bold mb-4 text-theme" style="font-family: 'Outfit';">Recent Activity (Today)</h5>
                         <div class="table-responsive">
-                            <table class="table collection-table mb-0">
+                            <table class="table table-premium align-middle mb-0">
                                 <thead>
-                                    <tr>
+                                    <tr class="text-theme-muted small text-uppercase fw-bold ls-1 border-0">
                                         <th>Time</th>
                                         <th>Invoice #</th>
                                         <th>Mode</th>

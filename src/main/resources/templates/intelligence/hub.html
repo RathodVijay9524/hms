@@ -17,20 +17,6 @@
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
-    .insight-value {
-    font-family: 'Outfit';
-    font-size: 2.25rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    }
-
-    [data-theme="dark"] .insight-value {
-    background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    }
-    </style>
 </head>
 
 <body class="bg-inventory-dark intelligence-bg">
@@ -55,8 +41,7 @@
                     <button class="btn btn-sm btn-outline-light px-3 rounded-pill">
                         <i class="fas fa-gear me-2"></i>Parameters
                     </button>
-                    <button class="btn btn-sm text-white fw-bold px-4 rounded-pill"
-                        style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none;">
+                    <button class="btn btn-sm btn-light text-primary fw-bold px-4 rounded-pill">
                         <i class="fas fa-bolt me-2"></i>Force Retrain
                     </button>
                 </div>
@@ -66,7 +51,7 @@
             <div class="row g-4 mb-5">
                 <div class="col-md-3">
                     <div class="metric-card">
-                        <div class="metric-icon mb-3">
+                        <div class="metric-icon bg-indigo-500 bg-opacity-10 text-indigo-400 mb-3">
                             <i class="fas fa-stethoscope"></i>
                         </div>
                         <div class="text-muted smaller fw-bold text-uppercase mb-1 ls-1">Clinical Confidence</div>
@@ -80,7 +65,7 @@
                 </div>
                 <div class="col-md-3">
                     <div class="metric-card">
-                        <div class="metric-icon mb-3" style="color: #ec4899; background: rgba(236, 72, 153, 0.1);">
+                        <div class="metric-icon bg-pink-500 bg-opacity-10 text-pink-400 mb-3">
                             <i class="fas fa-bed"></i>
                         </div>
                         <div class="text-muted smaller fw-bold text-uppercase mb-1 ls-1">Predictive Occupancy</div>
@@ -93,26 +78,26 @@
                 </div>
                 <div class="col-md-3">
                     <div class="metric-card">
-                        <div class="metric-icon mb-3" style="color: #10b981; background: rgba(16, 185, 129, 0.1);">
-                            <i class="fas fa-file-invoice-dollar"></i>
+                        <div class="metric-icon bg-emerald-500 bg-opacity-10 text-emerald-400 mb-3">
+                            <i class="fas fa-shield-halved"></i>
                         </div>
                         <div class="text-muted smaller fw-bold text-uppercase mb-1 ls-1">Audit Shield Rate</div>
                         <div class="insight-value mb-2">97%</div>
                         <div class="progress bg-white bg-opacity-5" style="height: 4px;">
                             <div class="progress-bar" style="width: 97%; background: #10b981;"></div>
                         </div>
-                        <div class="smaller text-muted mt-3">28 anomalies today</div>
+                        <div class="smaller text-theme-muted mt-3">28 anomalies today</div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="metric-card">
-                        <div class="metric-icon mb-3" style="color: #f59e0b; background: rgba(245, 158, 11, 0.1);">
-                            <i class="fas fa-box-open"></i>
+                        <div class="metric-icon bg-amber-500 bg-opacity-10 text-amber-400 mb-3">
+                            <i class="fas fa-microchip"></i>
                         </div>
-                        <div class="text-muted smaller fw-bold text-uppercase mb-1 ls-1">Restock Accuracy</div>
-                        <div class="insight-value mb-2">95%</div>
-                        <div class="progress" style="height: 4px; background: var(--bg-tertiary);">
-                            <div class="progress-bar" style="width: 95%; background: #f59e0b;"></div>
+                        <div class="text-muted smaller fw-bold text-uppercase mb-1 ls-1">Model Accuracy</div>
+                        <div class="insight-value mb-2">99.1%</div>
+                        <div class="progress bg-white bg-opacity-5" style="height: 4px;">
+                            <div class="progress-bar" style="width: 99.1%; background: #f59e0b;"></div>
                         </div>
                         <div class="smaller text-warning mt-3 fw-bold">Neural logic engaged</div>
                     </div>
@@ -178,8 +163,7 @@
                     <div class="glass-card p-5 shadow-lg h-100">
                         <h4 class="fw-bold text-theme mb-4" style="font-family: 'Outfit';">AI Task Synthesizer</h4>
                         <div class="task-ai-list">
-                            <div class="glass-card p-4 mb-3"
-                                style="border: 1px solid rgba(139, 92, 246, 0.2); background: var(--bg-tertiary);">
+                            <div class="metric-card p-4 mb-3" style="background: var(--bg-tertiary);">
                                 <div class="d-flex align-items-center mb-1">
                                     <i class="fas fa-file-medical text-indigo-400 me-2"></i>
                                     <span class="smaller fw-bold text-theme text-uppercase">GenAI Draft Ready</span>
@@ -187,18 +171,16 @@
                                 <div class="small text-theme-muted mb-3">Discharge summary for Patient P-1201 is 90%
                                     synthesized.</div>
                                 <button
-                                    class="btn btn-sm btn-outline-indigo w-100 rounded-pill py-2 smaller fw-bold mt-2">REVIEW
+                                    class="btn btn-sm btn-outline-primary w-100 rounded-pill py-2 smaller fw-bold mt-2">REVIEW
                                     SUMMARY</button>
                             </div>
-                            <div class="glass-card p-4 mb-3"
-                                style="border: 1px solid rgba(245, 158, 11, 0.2); background: var(--bg-tertiary);">
+                            <div class="metric-card p-4 mb-3" style="background: var(--bg-tertiary);">
                                 <div class="d-flex align-items-center mb-1">
                                     <i class="fas fa-boxes-packing text-warning me-2"></i>
                                     <span class="smaller fw-bold text-theme text-uppercase">Procurement Alert</span>
                                 </div>
                                 <div class="small text-theme-muted mb-3">Neural forecasting suggests 20% spike in
-                                    Dialysis Kit
-                                    need.</div>
+                                    Dialysis Kit need.</div>
                                 <button
                                     class="btn btn-sm btn-outline-warning w-100 rounded-pill py-2 smaller fw-bold mt-2">GENERATE
                                     SMART PO</button>

@@ -17,62 +17,6 @@
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
-    <style>
-        .account-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1.25rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .account-card:hover {
-            border-color: rgba(16, 185, 129, 0.4);
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 0.5rem;
-        }
-
-        .dot-active {
-            background: #22c55e;
-            box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
-        }
-
-        .dot-locked {
-            background: #ef4444;
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
-        }
-
-        .dot-pending {
-            background: #f59e0b;
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
-        }
-
-        .search-accounts {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 2rem;
-            padding: 0.6rem 1.25rem 0.6rem 2.75rem;
-            color: white;
-            font-size: 0.9rem;
-            width: 300px;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 1.1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-    </style>
 </head>
 
 <body>
@@ -87,82 +31,105 @@
             <!-- Header -->
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
                 <div>
-                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #10b981;">Account Health</h1>
-                    <p class="text-muted mb-0">Monitor user activation, lockouts, and security standing</p>
+                    <h1 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">Account Health</h1>
+                    <p class="text-theme-muted mb-0">Monitor user activation, lockouts, and security standing</p>
                 </div>
-                <div class="position-relative">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="search-accounts" placeholder="UHID or Username...">
+                <div class="position-relative" style="width: 300px;">
+                    <i class="fas fa-search position-absolute text-theme-muted"
+                        style="left: 1.25rem; top: 50%; transform: translateY(-50%);"></i>
+                    <input type="text" class="form-control rounded-pill ps-5 bg-theme-light border-theme-light"
+                        placeholder="UHID or Username...">
                 </div>
             </div>
 
             <!-- Summary -->
             <div class="row g-4 mb-4">
                 <div class="col-md-3">
-                    <div class="account-card p-3 text-center mb-0">
-                        <small class="text-muted text-uppercase fw-bold d-block mb-1">Active Now</small>
+                    <div class="glass-card p-3 text-center mb-0">
+                        <small class="text-theme-muted text-uppercase fw-bold d-block mb-1 fs-10"
+                            style="letter-spacing: 0.05em;">Active Now</small>
                         <h3 class="fw-bold mb-0 text-success">182</h3>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="account-card p-3 text-center mb-0">
-                        <small class="text-muted text-uppercase fw-bold d-block mb-1">Locked Out</small>
+                    <div class="glass-card p-3 text-center mb-0">
+                        <small class="text-theme-muted text-uppercase fw-bold d-block mb-1 fs-10"
+                            style="letter-spacing: 0.05em;">Locked Out</small>
                         <h3 class="fw-bold mb-0 text-danger">08</h3>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="account-card p-3 text-center mb-0">
-                        <small class="text-muted text-uppercase fw-bold d-block mb-1">Pending Sync</small>
+                    <div class="glass-card p-3 text-center mb-0">
+                        <small class="text-theme-muted text-uppercase fw-bold d-block mb-1 fs-10"
+                            style="letter-spacing: 0.05em;">Pending Sync</small>
                         <h3 class="fw-bold mb-0 text-warning">15</h3>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="account-card p-3 text-center mb-0">
-                        <small class="text-muted text-uppercase fw-bold d-block mb-1">Failed Logins</small>
-                        <h3 class="fw-bold mb-0">24</h3>
+                    <div class="glass-card p-3 text-center mb-0">
+                        <small class="text-theme-muted text-uppercase fw-bold d-block mb-1 fs-10"
+                            style="letter-spacing: 0.05em;">Failed Logins</small>
+                        <h3 class="fw-bold mb-0 text-theme">24</h3>
                     </div>
                 </div>
             </div>
 
             <!-- List -->
-            <div class="card bg-secondary border-0 rounded-4 overflow-hidden shadow-sm">
+            <div class="glass-card p-0 overflow-hidden shadow-sm">
                 <div class="table-responsive">
-                    <table class="table text-white mb-0">
+                    <table class="table premium-table mb-0">
                         <thead>
-                            <tr class="text-muted small text-uppercase" style="background: rgba(16, 185, 129, 0.05);">
-                                <th class="p-3">User</th>
-                                <th class="p-3">Last Access</th>
-                                <th class="p-3">Security Level</th>
-                                <th class="p-3">Status</th>
-                                <th class="p-3 text-end">Action</th>
+                            <tr>
+                                <th>User</th>
+                                <th>Last Access</th>
+                                <th>Security Level</th>
+                                <th>Status</th>
+                                <th class="text-end">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="align-middle border-bottom border-secondary">
+                            <tr class="align-middle">
                                 <td class="p-3">
-                                    <div class="fw-bold">rahul.singh_92</div>
-                                    <div class="small text-muted">Lab Technician • G-102</div>
+                                    <div class="fw-bold text-theme">rahul.singh_92</div>
+                                    <div class="small text-theme-muted">Lab Technician • G-102</div>
                                 </td>
-                                <td class="p-3 small">Today, 04:15 PM</td>
-                                <td class="p-3"><span
-                                        class="badge bg-success-subtle text-success px-3 rounded-pill">High</span></td>
-                                <td class="p-3"><span class="status-dot dot-active"></span>Active</td>
+                                <td class="p-3 small text-theme-muted">Today, 04:15 PM</td>
+                                <td class="p-3">
+                                    <span
+                                        class="badge bg-success-subtle text-success px-3 rounded-pill border border-success/20 fw-bold fs-10">High</span>
+                                </td>
+                                <td class="p-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="rounded-circle bg-success shadow-sm"
+                                            style="width: 8px; height: 8px;"></div>
+                                        <span class="text-theme">Active</span>
+                                    </div>
+                                </td>
                                 <td class="p-3 text-end">
-                                    <button class="btn btn-sm btn-outline-light rounded-pill px-3">Sync Now</button>
+                                    <button class="btn btn-sm btn-emerald-theme rounded-pill px-3 shadow-sm fs-12">Sync
+                                        Now</button>
                                 </td>
                             </tr>
-                            <tr class="align-middle border-bottom border-secondary">
+                            <tr class="align-middle">
                                 <td class="p-3">
                                     <div class="fw-bold text-danger">priya.patel_nurse</div>
-                                    <div class="small text-muted text-danger">Emergency Dept • Ward 4</div>
+                                    <div class="small text-theme-muted">Emergency Dept • Ward 4</div>
                                 </td>
-                                <td class="p-3 small">Yesterday, 11:20 PM</td>
-                                <td class="p-3"><span
-                                        class="badge bg-warning-subtle text-warning px-3 rounded-pill">Suspicious</span>
+                                <td class="p-3 small text-theme-muted">Yesterday, 11:20 PM</td>
+                                <td class="p-3">
+                                    <span
+                                        class="badge bg-warning-subtle text-warning px-3 rounded-pill border border-warning/20 fw-bold fs-10">Suspicious</span>
                                 </td>
-                                <td class="p-3"><span class="status-dot dot-locked"></span>Locked (3 Failed)</td>
+                                <td class="p-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="rounded-circle bg-danger shadow-sm"
+                                            style="width: 8px; height: 8px;"></div>
+                                        <span class="text-theme">Locked (3 Failed)</span>
+                                    </div>
+                                </td>
                                 <td class="p-3 text-end">
-                                    <button class="btn btn-sm btn-danger rounded-pill px-3">Unlock Account</button>
+                                    <button class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm fs-12">Unlock
+                                        Account</button>
                                 </td>
                             </tr>
                         </tbody>

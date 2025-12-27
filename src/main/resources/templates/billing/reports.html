@@ -17,34 +17,6 @@
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
-    <style>
-        .report-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1.25rem;
-            padding: 2rem;
-            height: 100%;
-        }
-
-        .metric-box {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .chart-placeholder {
-            height: 300px;
-            background: rgba(244, 63, 94, 0.03);
-            border: 1px dashed rgba(244, 63, 94, 0.2);
-            border-radius: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-    </style>
 </head>
 
 <body>
@@ -56,17 +28,17 @@
 
     <main class="main-content">
         <div class="container-fluid">
-            <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #f43f5e;">Revenue Reports</h1>
-                    <p class="text-muted mb-0">Financial insights and collection analysis for the current period</p>
+            <div class="billing-header d-flex justify-content-between align-items-center mb-4 text-white">
+                <div class="position-relative" style="z-index: 1;">
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit';">Revenue Reports</h1>
+                    <p class="mb-0 opacity-75 small">Financial insights and collection analysis for the current period
+                    </p>
                 </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary rounded-pill px-4">
+                <div class="d-flex gap-2" style="z-index: 1;">
+                    <button class="btn btn-sm btn-outline-light rounded-pill px-4">
                         <i class="fas fa-calendar-alt me-2"></i>Date Range
                     </button>
-                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #f43f5e;">
+                    <button class="btn btn-sm btn-light text-theme fw-bold px-4 rounded-pill">
                         <i class="fas fa-download me-2"></i>Download PDF
                     </button>
                 </div>
@@ -75,26 +47,26 @@
             <div class="row g-4 mb-4">
                 <!-- Summary Metrics -->
                 <div class="col-lg-4">
-                    <div class="report-card">
-                        <h6 class="fw-bold mb-4" style="font-family: 'Outfit';">Financial Overview</h6>
+                    <div class="glass-card">
+                        <h6 class="fw-bold mb-4 text-theme" style="font-family: 'Outfit';">Financial Overview</h6>
 
-                        <div class="metric-box">
-                            <small class="text-muted d-block mb-1">Total Gross Revenue</small>
-                            <h3 class="fw-bold mb-0">₹ 24.52L</h3>
-                            <span class="small text-success"><i class="fas fa-arrow-up me-1"></i> 12.5% vs last
+                        <div class="p-3 bg-primary bg-opacity-5 rounded-4 border border-color-theme mb-3">
+                            <small class="text-theme-muted d-block mb-1">Total Gross Revenue</small>
+                            <h3 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">₹ 24.52L</h3>
+                            <span class="small text-emerald-400"><i class="fas fa-arrow-up me-1"></i> 12.5% vs last
                                 month</span>
                         </div>
 
-                        <div class="metric-box">
-                            <small class="text-muted d-block mb-1">Tax Liabilities (GST)</small>
-                            <h3 class="fw-bold mb-0">₹ 2.94L</h3>
-                            <span class="small text-muted">12% Average composite tax</span>
+                        <div class="p-3 bg-primary bg-opacity-5 rounded-4 border border-color-theme mb-3">
+                            <small class="text-theme-muted d-block mb-1">Tax Liabilities (GST)</small>
+                            <h3 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">₹ 2.94L</h3>
+                            <span class="small text-theme-muted">12% Average composite tax</span>
                         </div>
 
-                        <div class="metric-box">
-                            <small class="text-muted d-block mb-1">Average Revenue Per Patient</small>
-                            <h3 class="fw-bold mb-0">₹ 8,420</h3>
-                            <span class="small text-danger"><i class="fas fa-arrow-down me-1"></i> 3.2% vs last
+                        <div class="p-3 bg-primary bg-opacity-5 rounded-4 border border-color-theme">
+                            <small class="text-theme-muted d-block mb-1">Average Revenue Per Patient</small>
+                            <h3 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">₹ 8,420</h3>
+                            <span class="small text-red-400"><i class="fas fa-arrow-down me-1"></i> 3.2% vs last
                                 month</span>
                         </div>
                     </div>
@@ -102,45 +74,49 @@
 
                 <!-- Collection Trends -->
                 <div class="col-lg-8">
-                    <div class="report-card">
+                    <div class="glass-card">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h6 class="fw-bold mb-0" style="font-family: 'Outfit';">Collection Trends (Last 15 Days)
-                            </h6>
+                            <h6 class="fw-bold mb-0 text-theme" style="font-family: 'Outfit';">Collection Trends (Last
+                                15 Days)</h6>
                             <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-pill"
+                                <button class="btn btn-sm btn-outline-pink dropdown-toggle rounded-pill px-3"
                                     type="button" data-bs-toggle="dropdown">
                                     Display Modes
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Revenue (Bar)</a></li>
-                                    <li><a class="dropdown-item" href="#">Invoices (Line)</a></li>
+                                <ul class="dropdown-menu shadow-lg border-0 bg-secondary">
+                                    <li><a class="dropdown-item text-theme" href="#">Revenue (Bar)</a></li>
+                                    <li><a class="dropdown-item text-theme" href="#">Invoices (Line)</a></li>
                                 </ul>
                             </div>
                         </div>
 
-                        <div class="chart-placeholder">
-                            <i class="fas fa-chart-area fs-1 text-danger mb-3" style="opacity: 0.2;"></i>
-                            <p class="text-muted fw-semi-bold mb-0">Analytics Engine Initializing...</p>
-                            <small class="text-muted">Interactive charts powered by Highcharts</small>
+                        <div class="chart-container bg-primary bg-opacity-5 rounded-4 border border-dashed border-color-theme d-flex flex-column align-items-center justify-content-center p-5"
+                            style="min-height: 300px;">
+                            <i class="fas fa-chart-area fs-1 text-pink-500 mb-3 opacity-25"></i>
+                            <p class="text-theme-muted fw-bold mb-0">Analytics Engine Initializing...</p>
+                            <small class="text-theme-muted opacity-50">Interactive charts powered by Highcharts</small>
                         </div>
 
                         <div class="row g-3 mt-4">
                             <div class="col-md-4">
-                                <div class="p-3 rounded-4" style="background: rgba(244, 63, 94, 0.05);">
-                                    <div class="small text-muted mb-1">OPD Revenue</div>
-                                    <h5 class="fw-bold mb-0">₹ 8.2L</h5>
+                                <div
+                                    class="p-3 rounded-4 bg-primary bg-opacity-5 border border-color-theme text-center">
+                                    <div class="small text-theme-muted mb-1">OPD Revenue</div>
+                                    <h5 class="fw-bold mb-0 text-theme" style="font-family: 'Outfit';">₹ 8.2L</h5>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="p-3 rounded-4" style="background: rgba(244, 63, 94, 0.05);">
-                                    <div class="small text-muted mb-1">IPD Revenue</div>
-                                    <h5 class="fw-bold mb-0">₹ 12.8L</h5>
+                                <div
+                                    class="p-3 rounded-4 bg-primary bg-opacity-5 border border-color-theme text-center">
+                                    <div class="small text-theme-muted mb-1">IPD Revenue</div>
+                                    <h5 class="fw-bold mb-0 text-theme" style="font-family: 'Outfit';">₹ 12.8L</h5>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="p-3 rounded-4" style="background: rgba(244, 63, 94, 0.05);">
-                                    <div class="small text-muted mb-1">Pharmacy/Lab</div>
-                                    <h5 class="fw-bold mb-0">₹ 3.5L</h5>
+                                <div
+                                    class="p-3 rounded-4 bg-primary bg-opacity-5 border border-color-theme text-center">
+                                    <div class="small text-theme-muted mb-1">Pharmacy/Lab</div>
+                                    <h5 class="fw-bold mb-0 text-theme" style="font-family: 'Outfit';">₹ 3.5L</h5>
                                 </div>
                             </div>
                         </div>

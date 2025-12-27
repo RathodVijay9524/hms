@@ -38,72 +38,6 @@
             })();
     </script>
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-        }
-
-        .role-card {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .role-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--primary-color);
-            box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.2);
-        }
-
-        .role-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--gradient-primary);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .role-card:hover::after {
-            opacity: 1;
-        }
-
-        .role-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .card-title {
-            font-family: 'Outfit';
-            font-weight: 700;
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .pulse-btn {
-            background: var(--gradient-primary);
-            box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.39);
-        }
-
-        .pulse-btn:hover {
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.23);
-        }
-    </style>
 </head>
 
 <body class="min-h-screen flex items-center justify-center p-6">
@@ -112,11 +46,13 @@
         <div class="text-center mb-12">
             <div class="flex items-center justify-center gap-3 mb-4">
                 <i class="fas fa-stethoscope text-4xl text-emerald-500"></i>
-                <span class="text-3xl font-bold tracking-tight" style="font-family: 'Outfit';">MedLab Pro</span>
+                <span class="text-3xl font-bold tracking-tight text-theme" style="font-family: 'Outfit';">MedLab
+                    Pro</span>
             </div>
-            <h1 class="text-4xl font-extrabold mb-3" style="font-family: 'Outfit';">Welcome, <span
+            <h1 class="text-4xl font-extrabold mb-3 text-theme" style="font-family: 'Outfit';">Welcome, <span
                     th:text="${userName}">User</span>!</h1>
-            <p class="text-lg opacity-60">You have multiple roles assigned. Please select a portal to continue:</p>
+            <p class="text-lg text-theme-muted opacity-80">You have multiple roles assigned. Please select a portal to
+                continue:</p>
         </div>
 
         <!-- Role Grid -->
@@ -124,160 +60,203 @@
 
             <!-- Admin Role -->
             <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
-                onclick="window.location.href='/admin/dashboard'" class="role-card p-8 rounded-2xl">
-                <div class="role-icon bg-emerald-500/10 text-emerald-500">
+                onclick="window.location.href='/admin/dashboard'"
+                class="glass-card p-8 cursor-pointer group hover:-translate-y-2 transition-all duration-300">
+                <div
+                    class="metric-icon bg-emerald-500 bg-opacity-10 text-emerald-500 mb-6 group-hover:scale-110 transition-transform">
                     <i class="fas fa-user-shield"></i>
                 </div>
-                <h3 class="card-title">Super Admin</h3>
-                <p class="text-sm opacity-60">Complete system oversight, user management, and hospital configuration.
-                </p>
-                <div class="mt-6 flex items-center text-emerald-500 font-semibold text-sm">
+                <h3 class="card-title text-theme font-bold text-xl mb-2" style="font-family: 'Outfit';">Super Admin</h3>
+                <p class="text-sm text-theme-muted opacity-80 mb-6">Complete system oversight, user management, and
+                    hospital configuration.</p>
+                <div class="flex items-center text-emerald-500 font-semibold text-sm group-hover:gap-2 transition-all">
                     Enter Portal <i class="fas fa-arrow-right ml-2"></i>
                 </div>
             </div>
 
             <!-- Hospital Owner Role -->
             <div th:if="${#authorization.expression('hasRole(''OWNER'') or hasRole(''ADMIN'')')}"
-                onclick="window.location.href='/owner/dashboard'" class="role-card p-8 rounded-2xl">
-                <div class="role-icon bg-cyan-500/10 text-cyan-500">
+                onclick="window.location.href='/owner/dashboard'"
+                class="glass-card p-8 cursor-pointer group hover:-translate-y-2 transition-all duration-300">
+                <div
+                    class="metric-icon bg-cyan-500 bg-opacity-10 text-cyan-500 mb-6 group-hover:scale-110 transition-transform">
                     <i class="fas fa-hospital"></i>
                 </div>
-                <h3 class="card-title">Hospital Owner</h3>
-                <p class="text-sm opacity-60">Branch performance metrics, staff management, and operational control.
-                </p>
-                <div class="mt-6 flex items-center text-cyan-500 font-semibold text-sm">
+                <h3 class="card-title text-theme font-bold text-xl mb-2" style="font-family: 'Outfit';">Hospital Owner
+                </h3>
+                <p class="text-sm text-theme-muted opacity-80 mb-6">Branch performance metrics, staff management, and
+                    operational control.</p>
+                <div class="flex items-center text-cyan-500 font-semibold text-sm group-hover:gap-2 transition-all">
                     Enter Portal <i class="fas fa-arrow-right ml-2"></i>
                 </div>
             </div>
 
             <!-- Doctor Role -->
             <div th:if="${#authorization.expression('hasRole(''DOCTOR'') or hasRole(''ADMIN'')')}"
-                onclick="window.location.href='/doctor/dashboard'" class="role-card p-8 rounded-2xl">
-                <div class="role-icon bg-blue-500/10 text-blue-500">
+                onclick="window.location.href='/doctor/dashboard'"
+                class="glass-card p-8 cursor-pointer group hover:-translate-y-2 transition-all duration-300">
+                <div
+                    class="metric-icon bg-blue-500 bg-opacity-10 text-blue-500 mb-6 group-hover:scale-110 transition-transform">
                     <i class="fas fa-user-md"></i>
                 </div>
-                <h3 class="card-title">Doctor Portal</h3>
-                <p class="text-sm opacity-60">Access patient EMR, manage appointments, and clinical records.</p>
-                <div class="mt-6 flex items-center text-blue-500 font-semibold text-sm">
+                <h3 class="card-title text-theme font-bold text-xl mb-2" style="font-family: 'Outfit';">Doctor Portal
+                </h3>
+                <p class="text-sm text-theme-muted opacity-80 mb-6">Access patient EMR, manage appointments, and
+                    clinical records.</p>
+                <div class="flex items-center text-blue-500 font-semibold text-sm group-hover:gap-2 transition-all">
                     Enter Portal <i class="fas fa-arrow-right ml-2"></i>
                 </div>
             </div>
 
             <!-- Reception Role -->
             <div th:if="${#authorization.expression('hasRole(''RECEPTIONIST'') or hasRole(''ADMIN'')')}"
-                onclick="window.location.href='/reception/dashboard'" class="role-card p-8 rounded-2xl">
-                <div class="role-icon bg-purple-500/10 text-purple-500">
+                onclick="window.location.href='/reception/dashboard'"
+                class="glass-card p-8 cursor-pointer group hover:-translate-y-2 transition-all duration-300">
+                <div
+                    class="metric-icon bg-purple-500 bg-opacity-10 text-purple-500 mb-6 group-hover:scale-110 transition-transform">
                     <i class="fas fa-desktop"></i>
                 </div>
-                <h3 class="card-title">Reception Desk</h3>
-                <p class="text-sm opacity-60">Register patients, manage bookings, and coordinate the front desk.</p>
-                <div class="mt-6 flex items-center text-purple-500 font-semibold text-sm">
+                <h3 class="card-title text-theme font-bold text-xl mb-2" style="font-family: 'Outfit';">Reception Desk
+                </h3>
+                <p class="text-sm text-theme-muted opacity-80 mb-6">Register patients, manage bookings, and coordinate
+                    the front desk.</p>
+                <div class="flex items-center text-purple-500 font-semibold text-sm group-hover:gap-2 transition-all">
                     Enter Portal <i class="fas fa-arrow-right ml-2"></i>
                 </div>
             </div>
 
             <!-- Lab Role -->
             <div th:if="${#authorization.expression('hasRole(''LAB_TECHNICIAN'') or hasRole(''ADMIN'')')}"
-                onclick="window.location.href='/lab/dashboard'" class="role-card p-8 rounded-2xl">
-                <div class="role-icon bg-amber-500/10 text-amber-500">
+                onclick="window.location.href='/lab/dashboard'"
+                class="glass-card p-8 cursor-pointer group hover:-translate-y-2 transition-all duration-300">
+                <div
+                    class="metric-icon bg-amber-500 bg-opacity-10 text-amber-500 mb-6 group-hover:scale-110 transition-transform">
                     <i class="fas fa-microscope"></i>
                 </div>
-                <h3 class="card-title">Laboratory</h3>
-                <p class="text-sm opacity-60">Enter test results, manage lab orders, and diagnostic reports.</p>
-                <div class="mt-6 flex items-center text-amber-500 font-semibold text-sm">
+                <h3 class="card-title text-theme font-bold text-xl mb-2" style="font-family: 'Outfit';">Laboratory</h3>
+                <p class="text-sm text-theme-muted opacity-80 mb-6">Enter test results, manage lab orders, and
+                    diagnostic reports.</p>
+                <div class="flex items-center text-amber-500 font-semibold text-sm group-hover:gap-2 transition-all">
                     Enter Portal <i class="fas fa-arrow-right ml-2"></i>
                 </div>
             </div>
 
             <!-- Pharmacy Role -->
             <div th:if="${#authorization.expression('hasRole(''PHARMACIST'') or hasRole(''ADMIN'')')}"
-                onclick="window.location.href='/pharmacy/dashboard'" class="role-card p-8 rounded-2xl">
-                <div class="role-icon bg-blue-400/10 text-blue-400">
+                onclick="window.location.href='/pharmacy/dashboard'"
+                class="glass-card p-8 cursor-pointer group hover:-translate-y-2 transition-all duration-300">
+                <div
+                    class="metric-icon bg-blue-500 bg-opacity-10 text-blue-400 mb-6 group-hover:scale-110 transition-transform">
                     <i class="fas fa-pills"></i>
                 </div>
-                <h3 class="card-title">Pharmacy Hub</h3>
-                <p class="text-sm opacity-60">Inventory tracking, SKU scanning, and prescription fulfillment.</p>
-                <div class="mt-6 flex items-center text-blue-400 font-semibold text-sm">
+                <h3 class="card-title text-theme font-bold text-xl mb-2" style="font-family: 'Outfit';">Pharmacy Hub
+                </h3>
+                <p class="text-sm text-theme-muted opacity-80 mb-6">Inventory tracking, SKU scanning, and prescription
+                    fulfillment.</p>
+                <div class="flex items-center text-blue-400 font-semibold text-sm group-hover:gap-2 transition-all">
                     Enter Portal <i class="fas fa-arrow-right ml-2"></i>
                 </div>
             </div>
 
             <!-- Nurse Role -->
             <div th:if="${#authorization.expression('hasRole(''NURSE'') or hasRole(''ADMIN'')')}"
-                onclick="window.location.href='/nurse/dashboard'" class="role-card p-8 rounded-2xl">
-                <div class="role-icon bg-pink-500/10 text-pink-500">
+                onclick="window.location.href='/nurse/dashboard'"
+                class="glass-card p-8 cursor-pointer group hover:-translate-y-2 transition-all duration-300">
+                <div
+                    class="metric-icon bg-pink-500 bg-opacity-10 text-pink-500 mb-6 group-hover:scale-110 transition-transform">
                     <i class="fas fa-user-nurse"></i>
                 </div>
-                <h3 class="card-title">Nursing Station</h3>
-                <p class="text-sm opacity-60">Patient vitals, medication schedule, and ward task management.</p>
-                <div class="mt-6 flex items-center text-pink-500 font-semibold text-sm">
+                <h3 class="card-title text-theme font-bold text-xl mb-2" style="font-family: 'Outfit';">Nursing Station
+                </h3>
+                <p class="text-sm text-theme-muted opacity-80 mb-6">Patient vitals, medication schedule, and ward task
+                    management.</p>
+                <div class="flex items-center text-pink-500 font-semibold text-sm group-hover:gap-2 transition-all">
                     Enter Portal <i class="fas fa-arrow-right ml-2"></i>
                 </div>
             </div>
 
             <!-- Billing Role -->
             <div th:if="${#authorization.expression('hasRole(''BILLING'') or hasRole(''ACCOUNTANT'') or hasRole(''ADMIN'')')}"
-                onclick="window.location.href='/billing/dashboard'" class="role-card p-8 rounded-2xl">
-                <div class="role-icon bg-rose-500/10 text-rose-500">
+                onclick="window.location.href='/billing/dashboard'"
+                class="glass-card p-8 cursor-pointer group hover:-translate-y-2 transition-all duration-300">
+                <div
+                    class="metric-icon bg-rose-500 bg-opacity-10 text-rose-500 mb-6 group-hover:scale-110 transition-transform">
                     <i class="fas fa-file-invoice-dollar"></i>
                 </div>
-                <h3 class="card-title">Finance & Billing</h3>
-                <p class="text-sm opacity-60">Revenue oversight, invoicing, and collection management.</p>
-                <div class="mt-6 flex items-center text-rose-500 font-semibold text-sm">
+                <h3 class="card-title text-theme font-bold text-xl mb-2" style="font-family: 'Outfit';">Finance &
+                    Billing</h3>
+                <p class="text-sm text-theme-muted opacity-80 mb-6">Revenue oversight, invoicing, and collection
+                    management.</p>
+                <div class="flex items-center text-rose-500 font-semibold text-sm group-hover:gap-2 transition-all">
                     Enter Portal <i class="fas fa-arrow-right ml-2"></i>
                 </div>
             </div>
 
             <!-- Patient Role -->
             <div th:if="${#authorization.expression('hasRole(''PATIENT'') or hasRole(''ADMIN'')')}"
-                onclick="window.location.href='/patient/dashboard'" class="role-card p-8 rounded-2xl">
-                <div class="role-icon bg-indigo-500/10 text-indigo-500">
+                onclick="window.location.href='/patient/dashboard'"
+                class="glass-card p-8 cursor-pointer group hover:-translate-y-2 transition-all duration-300">
+                <div
+                    class="metric-icon bg-indigo-500 bg-opacity-10 text-indigo-500 mb-6 group-hover:scale-110 transition-transform">
                     <i class="fas fa-hospital-user"></i>
                 </div>
-                <h3 class="card-title">Patient Portal</h3>
-                <p class="text-sm opacity-60">View your medical reports, bills, and book your appointments.</p>
-                <div class="mt-6 flex items-center text-indigo-500 font-semibold text-sm">
+                <h3 class="card-title text-theme font-bold text-xl mb-2" style="font-family: 'Outfit';">Patient Portal
+                </h3>
+                <p class="text-sm text-theme-muted opacity-80 mb-6">View your medical reports, bills, and book your
+                    appointments.</p>
+                <div class="flex items-center text-indigo-500 font-semibold text-sm group-hover:gap-2 transition-all">
                     Enter Portal <i class="fas fa-arrow-right ml-2"></i>
                 </div>
             </div>
 
             <!-- Inventory Role -->
             <div th:if="${#authorization.expression('hasRole(''INVENTORY_MANAGER'') or hasRole(''ADMIN'')')}"
-                onclick="window.location.href='/inventory/dashboard'" class="role-card p-8 rounded-2xl">
-                <div class="role-icon bg-teal-500/10 text-teal-500">
+                onclick="window.location.href='/inventory/dashboard'"
+                class="glass-card p-8 cursor-pointer group hover:-translate-y-2 transition-all duration-300">
+                <div
+                    class="metric-icon bg-teal-500 bg-opacity-10 text-teal-500 mb-6 group-hover:scale-110 transition-transform">
                     <i class="fas fa-warehouse"></i>
                 </div>
-                <h3 class="card-title">Central Inventory</h3>
-                <p class="text-sm opacity-60">Manage hospital supply chain, procurement, and stock Logistics.</p>
-                <div class="mt-6 flex items-center text-teal-500 font-semibold text-sm">
+                <h3 class="card-title text-theme font-bold text-xl mb-2" style="font-family: 'Outfit';">Central
+                    Inventory</h3>
+                <p class="text-sm text-theme-muted opacity-80 mb-6">Manage hospital supply chain, procurement, and stock
+                    Logistics.</p>
+                <div class="flex items-center text-teal-500 font-semibold text-sm group-hover:gap-2 transition-all">
                     Enter Portal <i class="fas fa-arrow-right ml-2"></i>
                 </div>
             </div>
 
             <!-- Analytics / MIS Role -->
             <div th:if="${#authorization.expression('hasRole(''MIS_ANALYST'') or hasRole(''ADMIN'')')}"
-                onclick="window.location.href='/analytics/dashboard'" class="role-card p-8 rounded-2xl">
-                <div class="role-icon bg-sky-500/10 text-sky-500">
+                onclick="window.location.href='/analytics/dashboard'"
+                class="glass-card p-8 cursor-pointer group hover:-translate-y-2 transition-all duration-300">
+                <div
+                    class="metric-icon bg-blue-500 bg-opacity-10 text-blue-400 mb-6 group-hover:scale-110 transition-transform">
                     <i class="fas fa-chart-network"></i>
                 </div>
-                <h3 class="card-title">Executive Analytics</h3>
-                <p class="text-sm opacity-60">Executive data command center for hospital-wide performance analytics.</p>
-                <div class="mt-6 flex items-center text-sky-500 font-semibold text-sm">
+                <h3 class="card-title text-theme font-bold text-xl mb-2" style="font-family: 'Outfit';">Executive
+                    Analytics</h3>
+                <p class="text-sm text-theme-muted opacity-80 mb-6">Executive data command center for hospital-wide
+                    performance analytics.</p>
+                <div class="flex items-center text-blue-400 font-semibold text-sm group-hover:gap-2 transition-all">
                     Enter Portal <i class="fas fa-arrow-right ml-2"></i>
                 </div>
             </div>
 
             <!-- AI Intelligence Layer Role -->
             <div th:if="${#authorization.expression('hasRole(''AI_STRATEGIST'') or hasRole(''ADMIN'')')}"
-                onclick="window.location.href='/intelligence/hub'" class="role-card p-8 rounded-2xl"
-                style="background: linear-gradient(145deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05)); border: 1px solid rgba(139, 92, 246, 0.1);">
-                <div class="role-icon bg-indigo-500/10 text-indigo-500">
+                onclick="window.location.href='/intelligence/hub'"
+                class="glass-card p-8 cursor-pointer group hover:-translate-y-2 transition-all duration-300"
+                style="background: linear-gradient(145deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05));">
+                <div
+                    class="metric-icon bg-indigo-500 bg-opacity-10 text-indigo-500 mb-6 group-hover:scale-110 transition-transform">
                     <i class="fas fa-brain"></i>
                 </div>
-                <h3 class="card-title">Neural Intelligence</h3>
-                <p class="text-sm opacity-60">AI-driven predictive diagnostics, resource forecasting, and generative
-                    administration.</p>
-                <div class="mt-6 flex items-center text-indigo-500 font-semibold text-sm">
+                <h3 class="card-title text-theme font-bold text-xl mb-2" style="font-family: 'Outfit';">Neural
+                    Intelligence</h3>
+                <p class="text-sm text-theme-muted opacity-80 mb-6">AI-driven predictive diagnostics, resource
+                    forecasting, and generative administration.</p>
+                <div class="flex items-center text-indigo-500 font-semibold text-sm group-hover:gap-2 transition-all">
                     Enter Portal <i class="fas fa-arrow-right ml-2"></i>
                 </div>
             </div>
@@ -287,7 +266,7 @@
         <!-- Logout -->
         <div class="text-center">
             <a href="/logout"
-                class="text-sm font-medium opacity-40 hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                class="text-sm font-medium text-theme opacity-60 hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                 <i class="fas fa-sign-out-alt"></i> Back to Login
             </a>
         </div>

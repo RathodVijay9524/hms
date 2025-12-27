@@ -194,78 +194,6 @@
             background: linear-gradient(180deg, var(--bg-primary), var(--bg-secondary));
         }
 
-        .section-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-
-        .section-subtitle {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto 3rem;
-        }
-
-        .feature-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1.25rem;
-            padding: 2rem;
-            height: 100%;
-            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .feature-icon.green {
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--primary-color);
-        }
-
-        .feature-icon.cyan {
-            background: rgba(6, 182, 212, 0.2);
-            color: var(--secondary-color);
-        }
-
-        .feature-icon.purple {
-            background: rgba(139, 92, 246, 0.2);
-            color: var(--accent-color);
-        }
-
-        .feature-icon.amber {
-            background: rgba(245, 158, 11, 0.2);
-            color: #f59e0b;
-        }
-
-        .feature-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--text-primary);
-        }
-
-        .feature-text {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
 
         /* Stats Section */
         .stats {
@@ -526,36 +454,40 @@
                 <p class="section-subtitle">Everything you need to manage your hospital laboratory efficiently</p>
             </div>
             <div class="row g-4">
-                <div class="col-md-6 col-lg-3 animate-fade-in animate-delay-1">
-                    <div class="feature-card">
-                        <div class="feature-icon green"><i class="fas fa-flask"></i></div>
-                        <h3 class="feature-title">Lab Test Master</h3>
-                        <p class="feature-text">Manage test categories, parameters, and reference ranges with age/gender
-                            specific values.</p>
+                <div class="col-md-6 col-lg-3">
+                    <div class="glass-card">
+                        <div class="metric-icon bg-emerald-500 bg-opacity-10 text-emerald-400"><i
+                                class="fas fa-flask"></i></div>
+                        <h3 class="h5 fw-bold mb-2">Lab Test Master</h3>
+                        <p class="text-sm opacity-60">Manage test categories, parameters, and reference ranges with
+                            age/gender specific values.</p>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3 animate-fade-in animate-delay-2">
-                    <div class="feature-card">
-                        <div class="feature-icon cyan"><i class="fas fa-user-injured"></i></div>
-                        <h3 class="feature-title">Patient Management</h3>
-                        <p class="feature-text">Complete patient registry with history tracking and seamless order
+                <div class="col-md-6 col-lg-3">
+                    <div class="glass-card">
+                        <div class="metric-icon bg-blue-500 bg-opacity-10 text-blue-400"><i
+                                class="fas fa-user-injured"></i></div>
+                        <h3 class="h5 fw-bold mb-2">Patient Management</h3>
+                        <p class="text-sm opacity-60">Complete patient registry with history tracking and seamless order
                             management.</p>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3 animate-fade-in animate-delay-3">
-                    <div class="feature-card">
-                        <div class="feature-icon purple"><i class="fas fa-brain"></i></div>
-                        <h3 class="feature-title">AI Clinical Insights</h3>
-                        <p class="feature-text">Automated clinical summaries powered by AI to assist doctors in report
-                            interpretation.</p>
+                <div class="col-md-6 col-lg-3">
+                    <div class="glass-card">
+                        <div class="metric-icon bg-purple-500 bg-opacity-10 text-purple-400"><i
+                                class="fas fa-brain"></i></div>
+                        <h3 class="h5 fw-bold mb-2">AI Clinical Insights</h3>
+                        <p class="text-sm opacity-60">Automated clinical summaries powered by AI to assist doctors in
+                            report interpretation.</p>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3 animate-fade-in">
-                    <div class="feature-card">
-                        <div class="feature-icon amber"><i class="fas fa-file-pdf"></i></div>
-                        <h3 class="feature-title">PDF Reports</h3>
-                        <p class="feature-text">Generate professional branded reports with digital signatures and AI
-                            insights.</p>
+                <div class="col-md-6 col-lg-3">
+                    <div class="glass-card">
+                        <div class="metric-icon bg-amber-500 bg-opacity-10 text-amber-400"><i
+                                class="fas fa-file-pdf"></i></div>
+                        <h3 class="h5 fw-bold mb-2">PDF Reports</h3>
+                        <p class="text-sm opacity-60">Generate professional branded reports with digital signatures and
+                            AI insights.</p>
                     </div>
                 </div>
             </div>

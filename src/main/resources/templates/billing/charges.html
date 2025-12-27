@@ -17,90 +17,6 @@
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
-    <style>
-        .charge-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1.25rem;
-            transition: all 0.3s ease;
-        }
-
-        .charge-card:hover {
-            border-color: rgba(244, 63, 94, 0.4);
-            box-shadow: 0 10px 30px -10px rgba(244, 63, 94, 0.15);
-        }
-
-        .category-badge {
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 0.25rem 0.75rem;
-            border-radius: 2rem;
-            text-transform: uppercase;
-            border: 1px solid transparent;
-        }
-
-        .cat-consultation {
-            background: rgba(59, 130, 246, 0.1);
-            color: #3b82f6;
-            border-color: rgba(59, 130, 246, 0.2);
-        }
-
-        .cat-lab {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-            border-color: rgba(16, 185, 129, 0.2);
-        }
-
-        .cat-procedure {
-            background: rgba(245, 158, 11, 0.1);
-            color: #f59e0b;
-            border-color: rgba(245, 158, 11, 0.2);
-        }
-
-        .cat-registration {
-            background: rgba(139, 92, 246, 0.1);
-            color: #8b5cf6;
-            border-color: rgba(139, 92, 246, 0.2);
-        }
-
-        .charge-table th {
-            background: rgba(244, 63, 94, 0.03);
-            font-family: 'Outfit';
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-            padding: 1.25rem;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .charge-table td {
-            padding: 1.25rem;
-            vertical-align: middle;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .price-text {
-            font-family: 'Outfit';
-            font-weight: 700;
-            color: #f43f5e;
-        }
-
-        .search-box {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 2rem;
-            padding-left: 3rem;
-        }
-
-        .stat-mini-card {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            padding: 1rem;
-            text-align: center;
-        }
-    </style>
 </head>
 
 <body>
@@ -112,16 +28,15 @@
 
     <main class="main-content">
         <div class="container-fluid">
-            <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #f43f5e;">Charge Master</h1>
-                    <p class="text-muted mb-0">Define and manage hospital service price lists and taxation</p>
+            <div class="billing-header d-flex justify-content-between align-items-center mb-4 text-white">
+                <div class="position-relative" style="z-index: 1;">
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit';">Charge Master</h1>
+                    <p class="mb-0 opacity-75 small">Define and manage hospital service price lists and taxation</p>
                 </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary rounded-pill px-4">Bulk Import</button>
-                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #f43f5e;"
-                        data-bs-toggle="modal" data-bs-target="#chargeModal">
+                <div class="d-flex gap-2" style="z-index: 1;">
+                    <button class="btn btn-sm btn-outline-light rounded-pill px-4">Bulk Import</button>
+                    <button class="btn btn-sm btn-light text-theme fw-bold px-4 rounded-pill" data-bs-toggle="modal"
+                        data-bs-target="#chargeModal">
                         <i class="fas fa-plus me-2"></i>New Charge Item
                     </button>
                 </div>
@@ -130,19 +45,20 @@
             <!-- Stats & Filter Row -->
             <div class="row g-4 mb-4">
                 <div class="col-lg-8">
-                    <div class="charge-card p-3">
+                    <div class="glass-card p-3">
                         <div class="row g-3">
                             <div class="col-md-7">
                                 <div class="position-relative">
-                                    <i class="fas fa-search position-absolute text-muted"
+                                    <i class="fas fa-search position-absolute text-theme-muted"
                                         style="left: 1.25rem; top: 1rem;"></i>
-                                    <input type="text" id="searchInput" class="form-control search-box"
+                                    <input type="text" id="searchInput"
+                                        class="form-control rounded-pill bg-primary bg-opacity-10 border-0 px-5"
                                         placeholder="Search by service name or category...">
                                 </div>
                             </div>
                             <div class="col-md-5">
                                 <select id="categoryFilter"
-                                    class="form-select rounded-pill bg-primary border-0 text-white py-2 px-3">
+                                    class="form-select rounded-pill bg-primary bg-opacity-10 border-0 text-theme py-2 px-3">
                                     <option value="">All Categories</option>
                                     <option value="CONSULTATION">Consultation</option>
                                     <option value="LAB_TEST">Lab Test</option>
@@ -155,15 +71,15 @@
                 <div class="col-lg-4">
                     <div class="row g-3">
                         <div class="col-6">
-                            <div class="stat-mini-card">
-                                <small class="text-muted d-block mb-1">Total Items</small>
-                                <h4 class="fw-bold mb-0" id="totalServices">42</h4>
+                            <div class="metric-card p-3 text-center">
+                                <small class="text-theme-muted d-block mb-1 fw-bold text-uppercase">Total Items</small>
+                                <h4 class="fw-bold mb-0 text-theme" id="totalServices">42</h4>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="stat-mini-card">
-                                <small class="text-muted d-block mb-1">Active</small>
-                                <h4 class="fw-bold mb-0 text-success" id="activeCount">38</h4>
+                            <div class="metric-card p-3 text-center">
+                                <small class="text-theme-muted d-block mb-1 fw-bold text-uppercase">Active</small>
+                                <h4 class="fw-bold mb-0 text-emerald-400" id="activeCount">38</h4>
                             </div>
                         </div>
                     </div>
@@ -171,39 +87,42 @@
             </div>
 
             <!-- Table Card -->
-            <div class="charge-card overflow-hidden">
+            <div class="glass-card p-0 overflow-hidden">
                 <div class="table-responsive">
-                    <table class="table charge-table mb-0">
-                        <thead>
-                            <tr>
-                                <th class="ps-4">Service Details</th>
-                                <th>Category</th>
-                                <th>Base Amount</th>
-                                <th>Tax (%)</th>
-                                <th>Total Price</th>
-                                <th>Status</th>
-                                <th class="text-end pe-4">Actions</th>
+                    <table class="table table-premium align-middle mb-0">
+                        <thead class="bg-primary bg-opacity-10">
+                            <tr class="text-theme-muted small text-uppercase fw-bold ls-1 border-0">
+                                <th class="ps-4 py-3">Service Details</th>
+                                <th class="py-3">Category</th>
+                                <th class="py-3">Base Amount</th>
+                                <th class="py-3">Tax (%)</th>
+                                <th class="py-3">Total Price</th>
+                                <th class="py-3">Status</th>
+                                <th class="text-end pe-4 py-3">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="chargeTableBody">
+                        <tbody id="chargeTableBody" class="border-0">
                             <!-- Dummy data for preview, will be replaced by JS -->
                             <tr>
                                 <td class="ps-4">
-                                    <div class="fw-bold fs-6">OPD Special Consultation</div>
-                                    <div class="small text-muted">Neuro Surgery Dept</div>
+                                    <div class="fw-bold text-theme">OPD Special Consultation</div>
+                                    <div class="small text-theme-muted">Neuro Surgery Dept</div>
                                 </td>
-                                <td><span class="category-badge cat-consultation">Consultation</span></td>
-                                <td>₹ 1,200.00</td>
-                                <td>12%</td>
+                                <td><span
+                                        class="badge bg-blue-500 bg-opacity-10 text-blue-400 rounded-pill px-3">Consultation</span>
+                                </td>
+                                <td class="text-theme">₹ 1,200.00</td>
+                                <td class="text-theme">12%</td>
                                 <td>
-                                    <div class="price-text fs-5">₹ 1,344.00</div>
+                                    <div class="insight-value fs-5 text-red-500">₹ 1,344.00</div>
                                 </td>
-                                <td><span class="badge bg-success-subtle text-success rounded-pill px-3">Active</span>
+                                <td><span
+                                        class="badge bg-emerald-500 bg-opacity-10 text-emerald-400 rounded-pill px-3">Active</span>
                                 </td>
                                 <td class="text-end pe-4">
-                                    <button class="btn btn-sm btn-outline-danger border-0 rounded-circle"
+                                    <button class="btn btn-sm btn-outline-pink rounded-circle"
                                         style="width: 32px; height: 32px;"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-outline-danger border-0 rounded-circle"
+                                    <button class="btn btn-sm btn-outline-pink rounded-circle ms-1"
                                         style="width: 32px; height: 32px;"><i class="fas fa-trash"></i></button>
                                 </td>
                             </tr>
@@ -274,8 +193,8 @@
                             </div>
                         </div>
 
-                        <button type="button" class="btn text-white fw-bold w-100 py-3 rounded-pill"
-                            style="background: #f43f5e;" id="saveChargeBtn">Record Charge Item</button>
+                        <button type="button" class="btn btn-pink-theme fw-bold w-100 py-3 rounded-pill"
+                            id="saveChargeBtn">Record Charge Item</button>
                     </form>
                 </div>
             </div>
@@ -325,21 +244,21 @@
                 return `
                     <tr>
                         <td class="ps-4">
-                            <div class="fw-bold fs-6">${c.name}</div>
-                            <div class="small text-muted">${c.category} Dept</div>
+                            <div class="fw-bold text-theme">${c.name}</div>
+                            <div class="small text-theme-muted">${c.category} Dept</div>
                         </td>
-                        <td><span class="category-badge ${catClass}">${c.category}</span></td>
-                        <td>₹ ${c.baseAmount.toLocaleString()}</td>
-                        <td>${c.taxPercent}%</td>
-                        <td><div class="price-text fs-5">₹ ${total.toLocaleString()}</div></td>
+                        <td><span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3">${c.category}</span></td>
+                        <td class="text-theme">₹ ${c.baseAmount.toLocaleString()}</td>
+                        <td class="text-theme">${c.taxPercent}%</td>
+                        <td><div class="insight-value fs-5 text-red-500">₹ ${total.toLocaleString()}</div></td>
                         <td>
-                            <span class="badge ${c.active ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-muted'} rounded-pill px-3">
+                            <span class="badge ${c.active ? 'bg-emerald-500 bg-opacity-10 text-emerald-400' : 'bg-primary bg-opacity-10 text-theme-muted'} rounded-pill px-3">
                                 ${c.active ? 'Active' : 'Inactive'}
                             </span>
                         </td>
                         <td class="text-end pe-4">
-                            <button class="btn btn-sm btn-outline-danger border-0 rounded-circle" onclick="editCharge(${c.id})" style="width: 32px; height: 32px;"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-sm btn-outline-danger border-0 rounded-circle" onclick="deleteCharge(${c.id})" style="width: 32px; height: 32px;"><i class="fas fa-trash"></i></button>
+                            <button class="btn btn-sm btn-outline-pink rounded-circle" onclick="editCharge(${c.id})" style="width: 32px; height: 32px;"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-outline-pink rounded-circle ms-1" onclick="deleteCharge(${c.id})" style="width: 32px; height: 32px;"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
                 `;

@@ -17,63 +17,6 @@
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
-    <style>
-        .perm-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 1.25rem;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .perm-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .perm-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            background: rgba(16, 185, 129, 0.03);
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            margin-bottom: 1rem;
-            transition: all 0.2s ease;
-        }
-
-        .perm-item:hover {
-            border-color: rgba(16, 185, 129, 0.4);
-            background: rgba(16, 185, 129, 0.05);
-        }
-
-        .form-check-input:checked {
-            background-color: #10b981;
-            border-color: #10b981;
-        }
-
-        .perm-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .perm-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-        }
-    </style>
 </head>
 
 <body>
@@ -88,47 +31,58 @@
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #10b981;">Permissions Control</h1>
-                    <p class="text-muted mb-0">Manage granular access to specific system features and data</p>
+                    <h1 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">Permissions Control</h1>
+                    <p class="text-theme-muted mb-0">Manage granular access to specific system features and data</p>
                 </div>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary rounded-pill px-4">Reset Defaults</button>
-                    <button class="btn text-dark fw-bold px-4 rounded-pill" style="background: #10b981;">Save
-                        Changes</button>
+                    <button
+                        class="btn btn-outline-theme rounded-pill px-4 shadow-sm border-theme-light text-theme">Reset
+                        Defaults</button>
+                    <button class="btn btn-emerald-theme fw-bold px-4 rounded-pill shadow-sm">Save Changes</button>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-lg-6">
                     <!-- User Management Permissions -->
-                    <div class="perm-card shadow-sm">
-                        <div class="perm-header">
-                            <h5 class="fw-bold mb-0">User & Security</h5>
-                            <span class="badge bg-indigo-subtle text-indigo rounded-pill px-3">Active</span>
+                    <div class="glass-card p-4 shadow-sm mb-4">
+                        <div
+                            class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-theme-light">
+                            <h5 class="fw-bold mb-0 text-theme" style="font-family: 'Outfit';">User & Security</h5>
+                            <span
+                                class="badge bg-emerald-500 bg-opacity-10 text-emerald-500 rounded-pill px-3 border border-emerald-500/20">Active</span>
                         </div>
-                        <div class="perm-item">
-                            <div class="perm-info">
-                                <div class="perm-icon"><i class="fas fa-user-plus"></i></div>
+                        <div
+                            class="d-flex justify-content-between align-items-center p-3 bg-emerald-500 bg-opacity-5 border border-theme-light rounded-4 mb-3 hover:border-emerald-500/40 transition-all duration-200">
+                            <div class="d-flex align-items-center gap-3">
+                                <div
+                                    class="metric-icon w-40h-40 bg-emerald-500 bg-opacity-10 text-emerald-500 rounded-3">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
                                 <div>
-                                    <div class="fw-bold text-white small">Create Users</div>
-                                    <div class="text-muted" style="font-size: 0.75rem;">Allows creation of new user
-                                        accounts</div>
+                                    <div class="fw-bold text-theme small">Create Users</div>
+                                    <div class="text-theme-muted" style="font-size: 0.75rem;">Allows creation of new
+                                        user accounts</div>
                                 </div>
                             </div>
-                            <div class="form-check form-switch">
+                            <div class="form-check form-switch custom-switch">
                                 <input class="form-check-input" type="checkbox" checked>
                             </div>
                         </div>
-                        <div class="perm-item">
-                            <div class="perm-info">
-                                <div class="perm-icon"><i class="fas fa-user-tag"></i></div>
+                        <div
+                            class="d-flex justify-content-between align-items-center p-3 bg-emerald-500 bg-opacity-5 border border-theme-light rounded-4 mb-3 hover:border-emerald-500/40 transition-all duration-200">
+                            <div class="d-flex align-items-center gap-3">
+                                <div
+                                    class="metric-icon w-40h-40 bg-emerald-500 bg-opacity-10 text-emerald-500 rounded-3">
+                                    <i class="fas fa-user-tag"></i>
+                                </div>
                                 <div>
-                                    <div class="fw-bold text-white small">Assign Roles</div>
-                                    <div class="text-muted" style="font-size: 0.75rem;">Modify system-wide RBAC
+                                    <div class="fw-bold text-theme small">Assign Roles</div>
+                                    <div class="text-theme-muted" style="font-size: 0.75rem;">Modify system-wide RBAC
                                         assignments</div>
                                 </div>
                             </div>
-                            <div class="form-check form-switch">
+                            <div class="form-check form-switch custom-switch">
                                 <input class="form-check-input" type="checkbox" checked>
                             </div>
                         </div>
@@ -137,36 +91,42 @@
 
                 <div class="col-lg-6">
                     <!-- Data & Privacy Permissions -->
-                    <div class="perm-card shadow-sm">
-                        <div class="perm-header">
-                            <h5 class="fw-bold mb-0">Data & Privacy</h5>
-                            <span class="badge bg-danger-subtle text-danger rounded-pill px-3">Restricted</span>
+                    <div class="glass-card p-4 shadow-sm mb-4">
+                        <div
+                            class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-theme-light">
+                            <h5 class="fw-bold mb-0 text-theme" style="font-family: 'Outfit';">Data & Privacy</h5>
+                            <span
+                                class="badge bg-danger-subtle text-danger rounded-pill px-3 border border-danger/20">Restricted</span>
                         </div>
-                        <div class="perm-item">
-                            <div class="perm-info">
-                                <div class="perm-icon" style="color: #ef4444; background: rgba(239, 68, 68, 0.1);"><i
-                                        class="fas fa-eye-slash"></i></div>
+                        <div
+                            class="d-flex justify-content-between align-items-center p-3 bg-red-500 bg-opacity-5 border border-theme-light rounded-4 mb-3 hover:border-red-500/40 transition-all duration-200">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="metric-icon w-40h-40 bg-red-500 bg-opacity-10 text-red-500 rounded-3">
+                                    <i class="fas fa-eye-slash"></i>
+                                </div>
                                 <div>
-                                    <div class="fw-bold text-white small">View Patient Identifiers</div>
-                                    <div class="text-muted" style="font-size: 0.75rem;">Full access to UHIDs and PII
-                                        logs</div>
+                                    <div class="fw-bold text-theme small">View Patient Identifiers</div>
+                                    <div class="text-theme-muted" style="font-size: 0.75rem;">Full access to UHIDs and
+                                        PII logs</div>
                                 </div>
                             </div>
-                            <div class="form-check form-switch">
+                            <div class="form-check form-switch custom-switch">
                                 <input class="form-check-input" type="checkbox">
                             </div>
                         </div>
-                        <div class="perm-item">
-                            <div class="perm-info">
-                                <div class="perm-icon" style="color: #ef4444; background: rgba(239, 68, 68, 0.1);"><i
-                                        class="fas fa-file-export"></i></div>
+                        <div
+                            class="d-flex justify-content-between align-items-center p-3 bg-red-500 bg-opacity-5 border border-theme-light rounded-4 mb-3 hover:border-red-500/40 transition-all duration-200">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="metric-icon w-40h-40 bg-red-500 bg-opacity-10 text-red-500 rounded-3">
+                                    <i class="fas fa-file-export"></i>
+                                </div>
                                 <div>
-                                    <div class="fw-bold text-white small">Export Audit Logs</div>
-                                    <div class="text-muted" style="font-size: 0.75rem;">Download system forensic reports
-                                    </div>
+                                    <div class="fw-bold text-theme small">Export Audit Logs</div>
+                                    <div class="text-theme-muted" style="font-size: 0.75rem;">Download system forensic
+                                        reports</div>
                                 </div>
                             </div>
-                            <div class="form-check form-switch">
+                            <div class="form-check form-switch custom-switch">
                                 <input class="form-check-input" type="checkbox">
                             </div>
                         </div>
