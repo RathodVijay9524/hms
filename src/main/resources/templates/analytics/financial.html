@@ -18,25 +18,27 @@
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
-    .finance-card {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 1.5rem;
-    padding: 1.75rem;
-    transition: all 0.3s ease;
-    }
+    <style>
+        .finance-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.5rem;
+            padding: 1.75rem;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
 
-    .finance-card:hover {
-    border-color: #38bdf8;
-    background: linear-gradient(145deg, var(--bg-secondary), rgba(56, 189, 248, 0.05));
-    }
+        .finance-card:hover {
+            border-color: #0dcaf0;
+            background: linear-gradient(145deg, var(--bg-secondary), rgba(13, 202, 240, 0.05));
+        }
 
-    .amount-display {
-    font-family: 'Outfit';
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    }
+        .amount-display {
+            font-family: 'Outfit';
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
     </style>
 </head>
 

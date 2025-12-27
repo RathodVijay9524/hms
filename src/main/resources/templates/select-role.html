@@ -31,6 +31,19 @@
         rel="stylesheet">
     <link th:href="@{/css/theme.css}" rel="stylesheet">
 
+    <style>
+        .metric-icon {
+            @apply flex items-center justify-center rounded-xl text-2xl transition-all duration-300;
+            width: 56px;
+            height: 56px;
+            background: rgba(var(--icon-color-rgb), 0.15) !important;
+            /* Increased from 0.1 */
+        }
+
+        .text-theme-muted {
+            color: var(--text-muted);
+        }
+    </style>
     <script>
             (function () {
                 const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
@@ -231,14 +244,14 @@
                 onclick="window.location.href='/analytics/dashboard'"
                 class="glass-card p-8 cursor-pointer group hover:-translate-y-2 transition-all duration-300">
                 <div
-                    class="metric-icon bg-blue-500 bg-opacity-10 text-blue-400 mb-6 group-hover:scale-110 transition-transform">
+                    class="metric-icon bg-sky-500 bg-opacity-20 text-sky-400 mb-6 group-hover:scale-110 transition-transform">
                     <i class="fas fa-chart-network"></i>
                 </div>
                 <h3 class="card-title text-theme font-bold text-xl mb-2" style="font-family: 'Outfit';">Executive
                     Analytics</h3>
                 <p class="text-sm text-theme-muted opacity-80 mb-6">Executive data command center for hospital-wide
                     performance analytics.</p>
-                <div class="flex items-center text-blue-400 font-semibold text-sm group-hover:gap-2 transition-all">
+                <div class="flex items-center text-sky-400 font-semibold text-sm group-hover:gap-2 transition-all">
                     Enter Portal <i class="fas fa-arrow-right ml-2"></i>
                 </div>
             </div>

@@ -14,14 +14,17 @@
     --secondary-color: #06b6d4;
     --accent-color: #8b5cf6;
 
-    --bg-primary: #0b0f1a;
-    --bg-secondary: #161e2d;
+    --bg-primary: #080c14;
+    /* Slightly darker for more depth */
+    --bg-secondary: #0f172a;
+    /* Lighter than primary for cards/sidebar */
     --bg-tertiary: #1e293b;
     --bg-hover: #2d3748;
 
     --text-primary: #f8fafc;
     --text-secondary: #cbd5e1;
-    --text-muted: #64748b;
+    --text-muted: #94a3b8;
+    /* Brighter muted text for better legibility */
     --text-inverse: #0f172a;
 
     --border-color: rgba(255, 255, 255, 0.08);
@@ -113,7 +116,8 @@
 .sidebar {
     background: var(--bg-secondary);
     height: calc(100vh - 48px);
-    border-right: none;
+    border-right: 1px solid var(--border-color);
+    /* Added border for separation */
     padding: 1rem 0.75rem;
     position: fixed;
     left: 0;
@@ -123,7 +127,6 @@
     z-index: 1000;
     overflow-y: auto;
     overflow-x: hidden;
-    box-shadow: 10px 0 20px -5px rgba(0, 0, 0, 0.1);
 }
 
 /* Gap filler - extends sidebar background to cover any gap */
@@ -290,6 +293,7 @@ body,
     align-items: center;
     padding: 0.55rem 0.75rem;
     color: var(--text-secondary);
+    /* Using text-secondary instead of text-muted for better visibility */
     text-decoration: none !important;
     border-radius: 0.5rem;
     margin-bottom: 0.2rem;

@@ -18,25 +18,31 @@
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
-    .ops-card {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 1.5rem;
-    padding: 1.75rem;
-    transition: all 0.3s ease;
-    }
+    <style>
+        .ops-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.5rem;
+            padding: 1.75rem;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
 
-    .ops-card:hover {
-    border-color: #38bdf8;
-    background: linear-gradient(145deg, var(--bg-secondary), rgba(56, 189, 248, 0.05));
-    }
+        .ops-card:hover {
+            border-color: #0dcaf0;
+            background: linear-gradient(145deg, var(--bg-secondary), rgba(13, 202, 240, 0.05));
+        }
 
-    .efficiency-pill {
-    padding: 0.5rem 1.25rem;
-    border-radius: 2rem;
-    font-weight: 700;
-    font-size: 0.85rem;
-    }
+        .efficiency-pill {
+            padding: 0.5rem 1.25rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .text-orange-400 {
+            color: #f59e0b;
+        }
     </style>
 </head>
 
@@ -188,11 +194,6 @@
             }
         });
     </script>
-    <style>
-        .text-orange-400 {
-            color: #f59e0b;
-        }
-    </style>
 </body>
 
 </html>
