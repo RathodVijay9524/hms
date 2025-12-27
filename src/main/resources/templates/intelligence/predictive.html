@@ -26,24 +26,6 @@
             padding: 1rem;
         }
 
-        .alert-glow-red {
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
-            animation: alert-pulse-red 2s infinite;
-        }
-
-        @keyframes alert-pulse-red {
-            0% {
-                box-shadow: 0 0 5px rgba(239, 68, 68, 0.4);
-            }
-
-            50% {
-                box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
-            }
-
-            100% {
-                box-shadow: 0 0 5px rgba(239, 68, 68, 0.4);
-            }
-        }
 
         .mews-badge {
             width: 40px;
@@ -87,11 +69,10 @@
             <div class="row g-4 mb-5">
                 <!-- Critical Patient Card -->
                 <div class="col-lg-4">
-                    <div class="glass-card p-4 h-100 alert-glow-red border-danger border-opacity-20 shadow-lg"
-                        style="background: rgba(239, 68, 68, 0.05);">
+                    <div class="glass-card p-4 h-100 shadow-lg">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div class="d-flex align-items-center">
-                                <div class="rounded-circle overflow-hidden me-3 border border-2 border-danger"
+                                <div class="rounded-circle overflow-hidden me-3 border border-2 border-secondary"
                                     style="width: 50px; height: 50px;">
                                     <div class="bg-dark p-2 text-center text-white fw-bold">AS</div>
                                 </div>
