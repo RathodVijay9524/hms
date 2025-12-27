@@ -402,6 +402,23 @@ body {
     color: #ec4899;
 }
 
+/* Intelligence Portal Overrides (Indigo/Purple) */
+.sidebar-intelligence .sidebar-link.active {
+    background: #6366f1 !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4) !important;
+}
+
+.sidebar-intelligence .sidebar-link.active i {
+    color: #ffffff !important;
+}
+
+.sidebar-intelligence .sidebar-link:hover:not(.active) {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
 /* Pharmacy Portal Overrides (Blue/Cyan) */
 .sidebar-pharmacy .sidebar-link.active {
     background: #38bdf8 !important;
