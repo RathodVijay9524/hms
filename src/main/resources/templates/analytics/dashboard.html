@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Dashboard - MedLab Pro MIS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .ana-grid-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.5rem;
+            padding: 1.75rem;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .ana-grid-card:hover {
+            border-color: #38bdf8;
+            transform: translateY(-3px);
+        }
+
+        .kpi-value {
+            font-family: 'Outfit';
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/sidebars/analytics_sidebar :: analytics_sidebar('ana-dash')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #38bdf8;">
+                        Executive Command Center
+                    </h1>
+                    <p class="text-muted mb-0">Strategic Intelligence & Real-time Hospital KPIs</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-info rounded-pill px-4"><i class="fas fa-satellite me-2"></i>Live
+                        Stream</button>
+                    <button class="btn btn-info rounded-pill px-4 text-dark fw-bold"
+                        style="background: #38bdf8; border: none;">
+                        <i class="fas fa-print me-2"></i>Quarterly Summary
+                    </button>
+                </div>
+            </div>
+
+            <!-- Major KPIs -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-3">
+                    <div class="ana-grid-card text-center">
+                        <div class="text-muted small fw-bold text-uppercase mb-2">Hospital Health Index</div>
+                        <div class="kpi-value">94<small class="fs-4 text-muted">%</small></div>
+                        <div class="text-success small fw-bold"><i class="fas fa-caret-up me-1"></i>2.1% Exceptional
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="ana-grid-card text-center">
+                        <div class="text-muted small fw-bold text-uppercase mb-2">Patient Satisfaction</div>
+                        <div class="kpi-value">4.8<small class="fs-4 text-muted">/5</small></div>
+                        <div class="text-success small fw-bold"><i class="fas fa-caret-up me-1"></i>0.2 Improved</div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="ana-grid-card text-center">
+                        <div class="text-muted small fw-bold text-uppercase mb-2">Total Monthly Revenue</div>
+                        <div class="kpi-value">₹1.42<small class="fs-4 text-muted">Cr</small></div>
+                        <div class="text-success small fw-bold"><i class="fas fa-caret-up me-1"></i>₹12L vs Prev</div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="ana-grid-card text-center">
+                        <div class="text-muted small fw-bold text-uppercase mb-2">Bed Occupancy</div>
+                        <div class="kpi-value">82<small class="fs-4 text-muted">%</small></div>
+                        <div class="text-warning small fw-bold"><i class="fas fa-minus me-1"></i>Optimal Zone</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualization Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8">
+                    <div class="ana-grid-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold mb-0">Volume vs Revenue Performance</h5>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-light active">Patients</button>
+                                <button class="btn btn-outline-light">Revenue</button>
+                            </div>
+                        </div>
+                        <div style="height: 400px;">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="ana-grid-card">
+                        <h5 class="fw-bold mb-4">Domain Efficiency</h5>
+                        <div style="height: 400px;">
+                            <canvas id="radarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts & Feed -->
+            <div class="row g-4">
+                <div class="col-lg-12">
+                    <div class="ana-grid-card p-4">
+                        <h5 class="fw-bold mb-4">Departmental Intelligence Summary</h5>
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover align-middle">
+                                <thead class="border-bottom border-light">
+                                    <tr class="text-muted small text-uppercase fw-bold">
+                                        <th>Department</th>
+                                        <th>Active Staff</th>
+                                        <th>Patient Flow</th>
+                                        <th>Revenue Share</th>
+                                        <th>Quality Score</th>
+                                        <th class="text-end">Efficiency</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-bottom border-light">
+                                        <td class="fw-bold text-white">OPD Medicine</td>
+                                        <td>24</td>
+                                        <td>142 Today</td>
+                                        <td>35%</td>
+                                        <td>98%</td>
+                                        <td class="text-end text-success fw-bold">96%</td>
+                                    </tr>
+                                    <tr class="border-bottom border-light">
+                                        <td class="fw-bold text-white">Pathology Lab</td>
+                                        <td>12</td>
+                                        <td>420 Samples</td>
+                                        <td>22%</td>
+                                        <td>99.9%</td>
+                                        <td class="text-end text-success fw-bold">94%</td>
+                                    </tr>
+                                    <tr class="border-bottom border-light">
+                                        <td class="fw-bold text-white">Surgery / OT</td>
+                                        <td>18</td>
+                                        <td>12 Procedures</td>
+                                        <td>28%</td>
+                                        <td>94%</td>
+                                        <td class="text-end text-warning fw-bold">82%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+    <script>
+        const perfCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(perfCtx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Patient Volume',
+                    data: [120, 150, 140, 180, 210, 240, 190],
+                    borderColor: '#38bdf8',
+                    backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+
+        const radarCtx = document.getElementById('radarChart').getContext('2d');
+        new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Clinical', 'Finance', 'Logistics', 'Reception', 'Nursing', 'Lab'],
+                datasets: [{
+                    label: 'Target',
+                    data: [90, 85, 95, 80, 85, 90],
+                    borderColor: 'rgba(255,255,255,0.2)',
+                    borderWidth: 1,
+                    pointRadius: 0
+                }, {
+                    label: 'Actual',
+                    data: [94, 78, 92, 85, 82, 94],
+                    backgroundColor: 'rgba(56, 189, 248, 0.2)',
+                    borderColor: '#38bdf8',
+                    pointBackgroundColor: '#38bdf8'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(255,255,255,0.1)' },
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        pointLabels: { color: '#94a3b8' },
+                        ticks: { display: false }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

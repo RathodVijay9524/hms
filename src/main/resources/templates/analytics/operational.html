@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operational Efficiency - MedLab Pro MIS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .ops-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.5rem;
+            padding: 1.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .ops-card:hover {
+            border-color: #38bdf8;
+        }
+
+        .efficiency-pill {
+            padding: 0.5rem 1.25rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/sidebars/analytics_sidebar :: analytics_sidebar('ana-ops')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #38bdf8;">Operational Efficiency</h1>
+                    <p class="text-muted mb-0">Staff Productivity, Patient Flow & Asset Utilization</p>
+                </div>
+                <button class="btn btn-outline-info rounded-pill px-4">Efficiency Optimization Plan</button>
+            </div>
+
+            <!-- Ops Grid -->
+            <div class="row g-4 mb-4">
+                <!-- Staff Productivity -->
+                <div class="col-lg-6">
+                    <div class="ops-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold mb-0">Staff Utilization by Shift</h5>
+                            <span
+                                class="efficiency-pill bg-success bg-opacity-10 text-success border border-success border-opacity-20">Optimally
+                                Staffed</span>
+                        </div>
+                        <div style="height: 300px;">
+                            <canvas id="staffChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patient Flow Heatmap -->
+                <div class="col-lg-6">
+                    <div class="ops-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold mb-0">Patient Wait Time Trends</h5>
+                            <span
+                                class="efficiency-pill bg-warning bg-opacity-10 text-orange-400 border border-warning border-opacity-20">Attention
+                                Needed (OPD)</span>
+                        </div>
+                        <div style="height: 300px;">
+                            <canvas id="flowChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Departmental Table -->
+            <div class="ops-card">
+                <h5 class="fw-bold mb-4">Key Efficiency Indicators (KEIs)</h5>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle">
+                        <thead>
+                            <tr class="text-muted small text-uppercase fw-bold">
+                                <th>Department</th>
+                                <th>Avg Turnaround Time</th>
+                                <th>Bed Turnover Rate</th>
+                                <th>Staffing Ratio</th>
+                                <th>Asset Utilization</th>
+                                <th class="text-end">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-bottom border-light">
+                                <td class="fw-bold text-white">Emergency Center</td>
+                                <td>14 Mins</td>
+                                <td>18.5x</td>
+                                <td>1:3</td>
+                                <td>92%</td>
+                                <td class="text-end"><span class="badge bg-success rounded-pill px-3">Excellent</span>
+                                </td>
+                            </tr>
+                            <tr class="border-bottom border-light">
+                                <td class="fw-bold text-white">Main OT</td>
+                                <td>4.2 Hours</td>
+                                <td>4.2x</td>
+                                <td>1:6</td>
+                                <td>82%</td>
+                                <td class="text-end"><span class="badge bg-info rounded-pill px-3">Effective</span></td>
+                            </tr>
+                            <tr class="border-bottom border-light">
+                                <td class="fw-bold text-white">General Ward</td>
+                                <td>N/A</td>
+                                <td>0.8x</td>
+                                <td>1:10</td>
+                                <td>74%</td>
+                                <td class="text-end"><span
+                                        class="badge bg-warning text-dark rounded-pill px-3">Lagging</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+    <script>
+        // Staff Chart
+        new Chart(document.getElementById('staffChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Morning', 'Afternoon', 'Evening', 'Night'],
+                datasets: [{
+                    label: 'Capacity Utilization (%)',
+                    data: [82, 94, 78, 45],
+                    backgroundColor: ['#38bdf8', '#10b981', '#fbbf24', '#f472b6'],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' }, max: 100 },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+
+        // Flow Chart
+        new Chart(document.getElementById('flowChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['09AM', '12PM', '03PM', '06PM', '09PM'],
+                datasets: [{
+                    label: 'Wait Time (Mins)',
+                    data: [15, 45, 30, 60, 20],
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+    </script>
+    <style>
+        .text-orange-400 {
+            color: #f59e0b;
+        }
+    </style>
+</body>
+
+</html>

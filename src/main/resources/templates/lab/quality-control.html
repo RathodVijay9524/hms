@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quality Control - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .qc-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .qc-card:hover {
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+
+        .machine-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/sidebars/lab_sidebar :: lab_sidebar('lab-qc')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #f59e0b;">
+                        <i class="fas fa-microscope me-2"></i>QC & Machine Logs
+                    </h1>
+                    <p class="text-muted mb-0">Equipment Health & Diagnostic Precision Tracking</p>
+                </div>
+                <button class="btn btn-warning px-4 rounded-pill"
+                    style="background: #f59e0b; color: #000; border: none;">
+                    <i class="fas fa-tools me-2"></i>New Calibration
+                </button>
+            </div>
+
+            <!-- Machine Grid -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-4">
+                    <div class="qc-card p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-white fw-bold mb-0">Roche Cobas c311</h6>
+                            <span class="badge bg-success-subtle text-success rounded-pill px-3">Online</span>
+                        </div>
+                        <div class="small text-muted mb-4 text-uppercase fw-bold ls-1">Biochemistry Analyzer</div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small text-muted">Last Calibration</span>
+                            <span class="small text-white">24-Dec 09:00 AM</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="small text-muted">Next Due</span>
+                            <span class="small text-warning">Tomorrow 9 AM</span>
+                        </div>
+                        <div style="height: 120px;">
+                            <canvas id="qcChart1"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="qc-card p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-white fw-bold mb-0">Sysmex XN-1000</h6>
+                            <span class="badge bg-success-subtle text-success rounded-pill px-3">Online</span>
+                        </div>
+                        <div class="small text-muted mb-4 text-uppercase fw-bold ls-1">Hematology Analyzer</div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small text-muted">Last Calibration</span>
+                            <span class="small text-white">26-Dec 08:30 AM</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="small text-muted">Next Due</span>
+                            <span class="small text-white">30-Dec 2025</span>
+                        </div>
+                        <div style="height: 120px;">
+                            <canvas id="qcChart2"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="qc-card p-4 border-danger border-opacity-25">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-white fw-bold mb-0">Beckman Coulter</h6>
+                            <span class="badge bg-danger-subtle text-danger rounded-pill px-3">Offline</span>
+                        </div>
+                        <div class="small text-muted mb-4 text-uppercase fw-bold ls-1">Immunoassay Analyzer</div>
+                        <div class="text-center py-4">
+                            <i class="fas fa-exclamation-triangle text-danger fs-2 mb-2"></i>
+                            <div class="text-white fw-bold">Maintenance Required</div>
+                            <div class="small text-muted">Error Code: ERR-992 (Optics)</div>
+                        </div>
+                        <button class="btn btn-outline-danger btn-sm w-100 mt-2 rounded-pill">Contact Support</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Log Table -->
+            <div class="qc-card overflow-hidden">
+                <div class="card-header bg-transparent border-bottom border-light p-4">
+                    <h5 class="mb-0 fw-bold"><i class="fas fa-history me-2 text-warning"></i>Recent Machine Events</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0 align-middle">
+                        <tbody>
+                            <tr class="border-bottom border-light">
+                                <td class="ps-4" style="width: 150px;"><span class="text-muted">10:45 AM</span></td>
+                                <td><span class="fw-bold">Cobas c311</span></td>
+                                <td><span class="badge bg-info-subtle text-info rounded-pill px-3">Daily QC</span></td>
+                                <td class="text-white">All 14 parameters within normal SD ranges.</td>
+                                <td class="text-end pe-4"><i class="fas fa-check-circle text-success"></i></td>
+                            </tr>
+                            <tr class="border-bottom border-light">
+                                <td class="ps-4"><span class="text-muted">08:12 AM</span></td>
+                                <td><span class="fw-bold">Sysmex XN</span></td>
+                                <td><span
+                                        class="badge bg-warning-subtle text-warning rounded-pill px-3">Calibration</span>
+                                </td>
+                                <td class="text-white">Routine reagent priming and laser alignment completed.</td>
+                                <td class="text-end pe-4"><i class="fas fa-check-circle text-success"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+    <script>
+        const qcOptions = {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { display: false }, y: { display: false } }
+        };
+
+        new Chart(document.getElementById('qcChart1').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: [1, 2, 3, 4, 5, 6, 7],
+                datasets: [{
+                    data: [1.2, 1.1, 1.3, 1.2, 1.2, 1.1, 1.2],
+                    borderColor: '#10b981', tension: 0.4, borderWidth: 2, pointRadius: 0
+                }]
+            },
+            options: qcOptions
+        });
+
+        new Chart(document.getElementById('qcChart2').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: [1, 2, 3, 4, 5, 6, 7],
+                datasets: [{
+                    data: [2.1, 2.3, 2.2, 2.4, 2.3, 2.2, 2.3],
+                    borderColor: '#10b981', tension: 0.4, borderWidth: 2, pointRadius: 0
+                }]
+            },
+            options: qcOptions
+        });
+    </script>
+</body>
+
+</html>

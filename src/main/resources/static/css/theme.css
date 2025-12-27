@@ -487,6 +487,40 @@ body {
     color: #f59e0b;
 }
 
+/* Inventory Portal Overrides (Silver/Teal) */
+.sidebar-inventory .sidebar-link.active {
+    background: #0d9488 !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.4) !important;
+}
+
+.sidebar-inventory .sidebar-link.active i {
+    color: #ffffff !important;
+}
+
+.sidebar-inventory .sidebar-link:hover:not(.active) {
+    background: rgba(13, 148, 136, 0.1);
+    color: #0d9488;
+}
+
+/* Analytics Portal Overrides (Deep Navy / Neon Blue) */
+.sidebar-analytics .sidebar-link.active {
+    background: #38bdf8 !important;
+    color: #0f172a !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4) !important;
+}
+
+.sidebar-analytics .sidebar-link.active i {
+    color: #0f172a !important;
+}
+
+.sidebar-analytics .sidebar-link:hover:not(.active) {
+    background: rgba(56, 189, 248, 0.1);
+    color: #38bdf8;
+}
+
 /* Card Styling */
 .card-executive {
     background: var(--bg-secondary);
@@ -671,6 +705,178 @@ body {
 
 [data-theme="dark"] .table-hover tbody tr:hover {
     background: rgba(255, 255, 255, 0.03);
+}
+
+/* end here =============== */
+
+/* --- Premium Inventory Portal UI Styles --- */
+
+.bg-inventory-dark {
+    background-color: #0b1220 !important;
+    /* Deep Navy from reference image */
+}
+
+/* Glassmorphism Card System */
+.glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.5rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(13, 148, 136, 0.3);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Premium Table System */
+.table-premium {
+    width: 100%;
+    margin-bottom: 0;
+    color: var(--text-primary);
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+.table-premium thead th {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: none;
+    font-size: 0.70rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 1.25rem 1rem;
+    color: var(--text-muted);
+}
+
+.table-premium tbody tr {
+    background: rgba(255, 255, 255, 0.02);
+    transition: all 0.3s ease;
+    border-radius: 1rem;
+}
+
+.table-premium tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    transform: scale(1.005);
+}
+
+.table-premium tbody td {
+    padding: 1.25rem 1rem;
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.table-premium tbody td:first-child {
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+    border-top-left-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+}
+
+.table-premium tbody td:last-child {
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+
+/* Premium Buttons */
+.btn-premium-teal {
+    background: linear-gradient(135deg, #0d9488, #2dd4bf);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 15px rgba(13, 148, 136, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-premium-teal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(13, 148, 136, 0.5);
+    color: white;
+}
+
+.smaller {
+    font-size: 0.75rem;
+}
+
+.smaller-x {
+    font-size: 0.65rem;
+}
+
+.ls-1 {
+    letter-spacing: 0.05em;
+}
+
+/* Color Utilities */
+.bg-teal-500 {
+    background-color: #0d9488 !important;
+}
+
+.text-teal-400 {
+    color: #2dd4bf !important;
+}
+
+.bg-blue-500 {
+    background-color: #3b82f6 !important;
+}
+
+.text-blue-400 {
+    color: #60a5fa !important;
+}
+
+.bg-orange-500 {
+    background-color: #f59e0b !important;
+}
+
+.text-orange-400 {
+    color: #fbbf24 !important;
+}
+
+.bg-amber-500 {
+    background-color: #f59e0b !important;
+}
+
+.text-amber-400 {
+    color: #fbbf24 !important;
+}
+
+.bg-pink-500 {
+    background-color: #ec4899 !important;
+}
+
+.text-pink-400 {
+    color: #f472b6 !important;
+}
+
+.bg-red-500 {
+    background-color: #ef4444 !important;
+}
+
+.text-red-400 {
+    color: #f87171 !important;
+}
+
+.bg-indigo-500 {
+    background-color: #6366f1 !important;
+}
+
+.text-indigo-400 {
+    color: #818cf8 !important;
+}
+
+.bg-purple-500 {
+    background-color: #8b5cf6 !important;
+}
+
+.text-purple-400 {
+    color: #a78bfa !important;
+}
+
+.ls-1 {
+    letter-spacing: 0.05em;
 }
 
 /* end here =============== */

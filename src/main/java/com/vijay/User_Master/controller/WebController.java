@@ -119,12 +119,100 @@ public class WebController {
         return "reception/visitors";
     }
 
+    // --- Inventory Portal ---
+    @GetMapping("/inventory/dashboard")
+    public String inventoryDashboard(Model model) {
+        return "inventory/dashboard";
+    }
+
+    @GetMapping("/inventory/procurement")
+    public String inventoryProcurement(Model model) {
+        return "inventory/procurement";
+    }
+
+    @GetMapping("/inventory/grn")
+    public String inventoryGrn(Model model) {
+        return "inventory/grn";
+    }
+
+    @GetMapping("/inventory/requisitions")
+    public String inventoryRequisitions(Model model) {
+        return "inventory/requisitions";
+    }
+
+    @GetMapping("/inventory/vendors")
+    public String inventoryVendors(Model model) {
+        return "inventory/vendors";
+    }
+
+    @GetMapping("/inventory/audits")
+    public String inventoryAudits(Model model) {
+        return "inventory/audits";
+    }
+
+    // --- Executive Intelligence & Analytics Portal (MIS) ---
+    @GetMapping("/analytics/dashboard")
+    public String analyticsDashboard(Model model) {
+        return "analytics/dashboard";
+    }
+
+    @GetMapping("/analytics/clinical")
+    public String analyticsClinical(Model model) {
+        return "analytics/clinical";
+    }
+
+    @GetMapping("/analytics/financial")
+    public String analyticsFinancial(Model model) {
+        return "analytics/financial";
+    }
+
+    @GetMapping("/analytics/operational")
+    public String analyticsOperational(Model model) {
+        return "analytics/operational";
+    }
+
+    @GetMapping("/analytics/inventory")
+    public String analyticsInventory(Model model) {
+        return "analytics/inventory";
+    }
+
+    @GetMapping("/analytics/reports")
+    public String analyticsReports(Model model) {
+        return "analytics/reports";
+    }
+
     @GetMapping("/lab/dashboard")
     public String labDashboard(Model model) {
         model.addAttribute("pendingOrders", labOrderService.getPendingOrderCount());
         model.addAttribute("reportsReady", labOrderService.getReportsReadyCount());
         model.addAttribute("recentOrders", labOrderService.getRecentOrders(10));
         return "lab/dashboard";
+    }
+
+    @GetMapping("/lab/inventory")
+    public String labInventory(Model model) {
+        // Mock stock status
+        model.addAttribute("lowStockCount", 4);
+        return "lab/inventory";
+    }
+
+    @GetMapping("/lab/quality-control")
+    public String labQualityControl(Model model) {
+        // Equipment status
+        return "lab/quality-control";
+    }
+
+    @GetMapping("/lab/outsourced")
+    public String labOutsourced(Model model) {
+        // External referrals
+        return "lab/outsourced";
+    }
+
+    @GetMapping("/lab/analytics")
+    public String labAnalytics(Model model) {
+        // Efficiency metrics
+        model.addAttribute("avgTAT", "1.4 Hours");
+        return "lab/analytics";
     }
 
     @GetMapping("/doctor/dashboard")
@@ -169,6 +257,32 @@ public class WebController {
     @GetMapping("/doctor/alerts")
     public String doctorAlerts() {
         return "doctor/alerts";
+    }
+
+    @GetMapping("/doctor/clinical-ai")
+    public String clinicalAI(Model model) {
+        // Mocking AI insights
+        model.addAttribute("highRiskCount", 3);
+        model.addAttribute("diagnosticConfidence", 92);
+        return "doctor/clinical-ai";
+    }
+
+    @GetMapping("/doctor/surgeries")
+    public String doctorSurgeries(Model model) {
+        return "doctor/surgeries";
+    }
+
+    @GetMapping("/doctor/consults")
+    public String doctorConsults() {
+        return "doctor/consults";
+    }
+
+    @GetMapping("/doctor/analytics")
+    public String doctorAnalytics(Model model) {
+        // Productivity metrics
+        model.addAttribute("patientVolume", 156);
+        model.addAttribute("revenueContribution", "₹4.5L");
+        return "doctor/analytics";
     }
 
     

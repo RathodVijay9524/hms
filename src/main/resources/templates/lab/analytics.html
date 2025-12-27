@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Efficiency - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .ana-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.5rem;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .ana-card:hover {
+            border-color: rgba(245, 158, 11, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .ana-value {
+            font-family: 'Outfit';
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/sidebars/lab_sidebar :: lab_sidebar('lab-analytics')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #f59e0b;">
+                        <i class="fas fa-chart-line me-2"></i>Efficiency Suite
+                    </h1>
+                    <p class="text-muted mb-0">Laboratory Turnaround Time (TAT) & Throughput Performance</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-warning rounded-pill px-4"><i class="fas fa-download me-2"></i>Export
+                        Performance</button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-3">
+                    <div class="ana-card p-4">
+                        <div class="text-muted small fw-bold text-uppercase mb-2">Average TAT</div>
+                        <div class="ana-value" th:text="${avgTAT}">1.4 <small class="fs-5 text-muted">Hrs</small></div>
+                        <div class="text-success small fw-bold"><i class="fas fa-arrow-down me-1"></i>12m improved</div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="ana-card p-4">
+                        <div class="text-muted small fw-bold text-uppercase mb-2">Total Tests (Month)</div>
+                        <div class="ana-value">2,840</div>
+                        <div class="text-success small fw-bold"><i class="fas fa-arrow-up me-1"></i>15% growth</div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="ana-card p-4">
+                        <div class="text-muted small fw-bold text-uppercase mb-2">Error Rate (QC)</div>
+                        <div class="ana-value">0.02 <small class="fs-5 text-muted">%</small></div>
+                        <div class="text-warning small fw-bold">Within Global Std</div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="ana-card p-4">
+                        <div class="text-muted small fw-bold text-uppercase mb-2">Revenue contribution</div>
+                        <div class="ana-value">₹12.4L</div>
+                        <div class="text-success small fw-bold"><i class="fas fa-arrow-up me-1"></i>₹1.2L growth</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="ana-card p-4">
+                        <h6 class="fw-bold mb-4 text-uppercase small ls-1 text-muted">Turnaround Time (TAT) Weekly Trend
+                        </h6>
+                        <div style="height: 350px;">
+                            <canvas id="tatChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="ana-card p-4 text-center">
+                        <h6 class="fw-bold mb-4 text-uppercase small ls-1 text-muted">Test Load by Category</h6>
+                        <div class="mb-4">
+                            <canvas id="loadChart"></canvas>
+                        </div>
+                        <div class="row text-start g-2 small">
+                            <div class="col-6"><span class="badge w-100 py-2"
+                                    style="background: #f59e0b; color: #000;">BioChem: 40%</span></div>
+                            <div class="col-6"><span class="badge bg-warning w-100 py-2" style="color: #000;">Hemato:
+                                    30%</span></div>
+                            <div class="col-6"><span class="badge bg-light w-100 py-2 text-dark">Immuno: 20%</span>
+                            </div>
+                            <div class="col-6"><span class="badge bg-secondary w-100 py-2">Other: 10%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+    <script th:inline="javascript">
+        // TAT Chart
+        new Chart(document.getElementById('tatChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['Wk 1', 'Wk 2', 'Wk 3', 'Wk 4'],
+                datasets: [{
+                    label: 'Avg TAT (Hours)',
+                    data: [1.8, 1.6, 1.5, 1.4],
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.05)',
+                    tension: 0.4,
+                    fill: true,
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.3)' } },
+                    x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.3)' } }
+                }
+            }
+        });
+
+        // Load Chart
+        new Chart(document.getElementById('loadChart').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['BioChem', 'Hemato', 'Immuno', 'Other'],
+                datasets: [{
+                    data: [40, 30, 20, 10],
+                    backgroundColor: ['#f59e0b', '#fbbf24', '#fef3c7', '#4b5563'],
+                    borderWidth: 0,
+                    cutout: '80%'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
+        });
+    </script>
+</body>
+
+</html>

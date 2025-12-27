@@ -42,6 +42,27 @@
                 <span>Test Catalog</span>
             </a>
 
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">Operations</small></div>
+
+            <a th:href="@{/lab/inventory}" class="sidebar-link"
+                th:classappend="${activeLink == 'lab-inv' ? 'active' : ''}">
+                <i class="fas fa-boxes"></i>
+                <span>Inventory Hub</span>
+            </a>
+
+            <a th:href="@{/lab/quality-control}" class="sidebar-link"
+                th:classappend="${activeLink == 'lab-qc' ? 'active' : ''}">
+                <i class="fas fa-microscope"></i>
+                <span>QC & Machine Logs</span>
+            </a>
+
+            <a th:href="@{/lab/outsourced}" class="sidebar-link"
+                th:classappend="${activeLink == 'lab-ref' ? 'active' : ''}">
+                <i class="fas fa-truck-loading"></i>
+                <span>Reference Hub</span>
+            </a>
+
             <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Clinical
                     Ops</small></div>
 
@@ -55,6 +76,15 @@
                 th:classappend="${activeLink == 'lab-appointments' ? 'active' : ''}">
                 <i class="fas fa-calendar-alt"></i>
                 <span>Appointments</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">Insights</small></div>
+
+            <a th:href="@{/lab/analytics}" class="sidebar-link"
+                th:classappend="${activeLink == 'lab-analytics' ? 'active' : ''}">
+                <i class="fas fa-chart-line"></i>
+                <span>Efficiency Suite</span>
             </a>
 
             <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"

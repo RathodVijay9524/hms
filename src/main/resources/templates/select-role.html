@@ -241,6 +241,32 @@
                 </div>
             </div>
 
+            <!-- Inventory Role -->
+            <div th:if="${#authorization.expression('hasRole(''INVENTORY_MANAGER'') or hasRole(''ADMIN'')')}"
+                onclick="window.location.href='/inventory/dashboard'" class="role-card p-8 rounded-2xl">
+                <div class="role-icon bg-teal-500/10 text-teal-500">
+                    <i class="fas fa-warehouse"></i>
+                </div>
+                <h3 class="card-title">Central Inventory</h3>
+                <p class="text-sm opacity-60">Manage hospital supply chain, procurement, and stock Logistics.</p>
+                <div class="mt-6 flex items-center text-teal-500 font-semibold text-sm">
+                    Enter Portal <i class="fas fa-arrow-right ml-2"></i>
+                </div>
+            </div>
+
+            <!-- Analytics / MIS Role -->
+            <div th:if="${#authorization.expression('hasRole(''MIS_ANALYST'') or hasRole(''ADMIN'')')}"
+                onclick="window.location.href='/analytics/dashboard'" class="role-card p-8 rounded-2xl">
+                <div class="role-icon bg-sky-500/10 text-sky-500">
+                    <i class="fas fa-chart-network"></i>
+                </div>
+                <h3 class="card-title">Strategic Intelligence</h3>
+                <p class="text-sm opacity-60">Executive data command center for hospital-wide performance analytics.</p>
+                <div class="mt-6 flex items-center text-sky-500 font-semibold text-sm">
+                    Enter Portal <i class="fas fa-arrow-right ml-2"></i>
+                </div>
+            </div>
+
         </div>
 
         <!-- Logout -->

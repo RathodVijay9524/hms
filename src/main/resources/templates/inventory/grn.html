@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goods Received (GRN) - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .grn-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .grn-card:hover {
+            border-color: #0d9488;
+        }
+
+        .log-item {
+            border-left: 3px solid #0d9488;
+            background: rgba(13, 148, 136, 0.05);
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/sidebars/inventory_sidebar :: inventory_sidebar('inv-grn')}"></div>
+
+    <main class="main-content bg-inventory-dark min-vh-100">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #0d9488;">
+                        Goods Received (GRN)
+                    </h1>
+                    <p class="text-muted mb-0">Log Shipments & Update Central Stock Ledger</p>
+                </div>
+                <button class="btn btn-premium-teal rounded-pill px-4">
+                    <i class="fas fa-barcode me-2"></i>Scan Manifest
+                </button>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <!-- Log Form -->
+                <div class="col-lg-5">
+                    <div class="glass-card p-5 shadow-lg border-light">
+                        <h4 class="fw-bold text-white mb-4" style="font-family: 'Outfit';">New Stock Entry</h4>
+                        <form>
+                            <div class="mb-4">
+                                <label class="smaller text-muted mb-2 text-uppercase fw-bold ls-1">Link to Purchase
+                                    Order</label>
+                                <select class="form-select bg-dark border-light text-white rounded-pill px-4 py-3">
+                                    <option>Select PO# (Active)</option>
+                                    <option>PO-2025-9901 (Sun Pharma)</option>
+                                    <option>PO-2025-9905 (Hindustan Syringes)</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label class="smaller text-muted mb-2 text-uppercase fw-bold ls-1">Invoice / Challan
+                                    Number</label>
+                                <input type="text"
+                                    class="form-control bg-dark border-light text-white rounded-pill px-4 py-3"
+                                    placeholder="INV-2025-X">
+                            </div>
+                            <div class="row mb-5">
+                                <div class="col-md-6">
+                                    <label class="smaller text-muted mb-2 text-uppercase fw-bold ls-1">Received
+                                        Qty</label>
+                                    <input type="number"
+                                        class="form-control bg-dark border-light text-white rounded-pill px-4 py-3"
+                                        placeholder="0">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="smaller text-muted mb-2 text-uppercase fw-bold ls-1">Batch
+                                        Number</label>
+                                    <input type="text"
+                                        class="form-control bg-dark border-light text-white rounded-pill px-4 py-3"
+                                        placeholder="B-2025">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-premium-teal w-100 rounded-pill py-3 fw-bold fs-5">Post
+                                to Central Stock</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Recent Logs -->
+                <div class="col-lg-7">
+                    <div class="glass-card p-5 shadow-lg border-light">
+                        <div class="d-flex justify-content-between align-items-center mb-5">
+                            <h4 class="fw-bold text-white mb-0" style="font-family: 'Outfit';">Recent Receipts</h4>
+                            <button class="btn btn-link text-teal-400 p-0 text-decoration-none smaller fw-bold">View
+                                History <i class="fas fa-arrow-right ms-1"></i></button>
+                        </div>
+
+                        <div class="glass-card bg-opacity-10 p-4 mb-4 border-light shadow-sm">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-4 bg-teal-500 bg-opacity-10 text-teal-400 p-3 me-3 d-flex align-items-center justify-content-center"
+                                        style="width: 54px; height: 54px;">
+                                        <i class="fas fa-file-invoice fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-white fs-5">GRN-55011</div>
+                                        <div class="smaller text-muted">Sun Pharmaceuticals • Paracetamol 500mg</div>
+                                    </div>
+                                </div>
+                                <span
+                                    class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-20 px-3 py-2 rounded-pill">VERIFIED</span>
+                            </div>
+                            <div
+                                class="d-flex justify-content-between align-items-center border-top border-light pt-3 mt-3">
+                                <div class="smaller text-muted"><i class="fas fa-clock me-1"></i> Today, 02:30 PM</div>
+                                <div class="text-white fw-bold">₹1.25L</div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card bg-opacity-10 p-4 mb-4 border-light shadow-sm">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-4 bg-blue-500 bg-opacity-10 text-blue-400 p-3 me-3 d-flex align-items-center justify-content-center"
+                                        style="width: 54px; height: 54px;">
+                                        <i class="fas fa-boxes-stacked fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-white fs-5">GRN-55010</div>
+                                        <div class="smaller text-muted">Hindustan Syringes • Syringes 5ml</div>
+                                    </div>
+                                </div>
+                                <span
+                                    class="badge bg-blue-500 bg-opacity-10 text-blue-400 border border-blue-500 border-opacity-20 px-3 py-2 rounded-pill">VERIFIED</span>
+                            </div>
+                            <div
+                                class="d-flex justify-content-between align-items-center border-top border-light pt-3 mt-3">
+                                <div class="smaller text-muted"><i class="fas fa-clock me-1"></i> Yesterday, 11:15 AM
+                                </div>
+                                <div class="text-white fw-bold">₹22K</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+    <style>
+        .btn-teal {
+            background-color: #0d9488;
+            border-color: #0d9488;
+            color: white;
+        }
+
+        .text-teal-400 {
+            color: #2dd4bf;
+        }
+
+        .bg-teal-500 {
+            background-color: #0d9488;
+        }
+
+        .bg-blue-500 {
+            background-color: #3b82f6;
+        }
+
+        .text-blue-400 {
+            color: #60a5fa;
+        }
+    </style>
+</body>
+
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head></head>
+
+<body>
+    <div th:fragment="analytics_sidebar(activeLink)" class="sidebar sidebar-analytics">
+        <!-- Analytics Header -->
+        <div class="mb-4 px-2">
+            <div class="d-flex align-items-center mb-3">
+                <div class="flex-shrink-0 rounded-3 p-2 me-3"
+                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(56, 189, 248, 0.1);">
+                    <i class="fas fa-chart-network fs-5" style="color: #38bdf8;"></i>
+                </div>
+                <div>
+                    <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.6rem;">Intelligence
+                        Hub</small>
+                    <span class="fw-bold" style="font-family: 'Outfit';">MIS Insights</span>
+                </div>
+            </div>
+            <hr style="opacity: 0.1; margin: 0 -1rem;">
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="px-2">
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">Strategic View</small></div>
+
+            <a th:href="@{/analytics/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'ana-dash' ? 'active' : ''}">
+                <i class="fas fa-radar"></i>
+                <span>Executive Center</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Domain
+                    Intelligence</small></div>
+
+            <a th:href="@{/analytics/clinical}" class="sidebar-link"
+                th:classappend="${activeLink == 'ana-clinical' ? 'active' : ''}">
+                <i class="fas fa-heart-pulse"></i>
+                <span>Clinical Quality</span>
+            </a>
+
+            <a th:href="@{/analytics/financial}" class="sidebar-link"
+                th:classappend="${activeLink == 'ana-finance' ? 'active' : ''}">
+                <i class="fas fa-money-bill-trend-up"></i>
+                <span>Financial Suite</span>
+            </a>
+
+            <a th:href="@{/analytics/operational}" class="sidebar-link"
+                th:classappend="${activeLink == 'ana-ops' ? 'active' : ''}">
+                <i class="fas fa-users-gear"></i>
+                <span>Operator Efficiency</span>
+            </a>
+
+            <a th:href="@{/analytics/inventory}" class="sidebar-link"
+                th:classappend="${activeLink == 'ana-inv' ? 'active' : ''}">
+                <i class="fas fa-boxes-stacked"></i>
+                <span>Supply Optimization</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Data
+                    Export</small></div>
+
+            <a th:href="@{/analytics/reports}" class="sidebar-link"
+                th:classappend="${activeLink == 'ana-reports' ? 'active' : ''}">
+                <i class="fas fa-file-export"></i>
+                <span>Automated Reports</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">System</small></div>
+
+            <a th:href="@{/select-role}" class="sidebar-link">
+                <i class="fas fa-th-large"></i>
+                <span>Switch Portal</span>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

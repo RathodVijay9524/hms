@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reference Hub - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .ref-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .ref-card:hover {
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+
+        .partner-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #f59e0b;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/sidebars/lab_sidebar :: lab_sidebar('lab-ref')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #f59e0b;">
+                        <i class="fas fa-truck-loading me-2"></i>Reference Hub
+                    </h1>
+                    <p class="text-muted mb-0">External Laboratory Referrals & Sample Logistics</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-warning rounded-pill px-4">Courier Tracker</button>
+                    <button class="btn btn-warning rounded-pill px-4"
+                        style="background: #f59e0b; color: #000; border: none;">
+                        <i class="fas fa-plus me-2"></i>New Referral
+                    </button>
+                </div>
+            </div>
+
+            <!-- Active Partners -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="ref-card p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="partner-logo me-3">DL</div>
+                            <div>
+                                <h6 class="text-white fw-bold mb-0">Dr. Lal PathLabs</h6>
+                                <div class="small text-muted">Primary Reference Partner</div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between small text-white">
+                            <span>Active Samples</span>
+                            <span class="fw-bold">12</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ref-card p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="partner-logo me-3">MC</div>
+                            <div>
+                                <h6 class="text-white fw-bold mb-0">Metropolis Healthcare</h6>
+                                <div class="small text-muted">Specialized Genomics</div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between small text-white">
+                            <span>Active Samples</span>
+                            <span class="fw-bold">05</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ref-card p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="partner-logo me-3">SR</div>
+                            <div>
+                                <h6 class="text-white fw-bold mb-0">SRL Diagnostics</h6>
+                                <div class="small text-muted">Histopathology Referral</div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between small text-white">
+                            <span>Active Samples</span>
+                            <span class="fw-bold">08</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Referral Table -->
+            <div class="ref-card overflow-hidden">
+                <div
+                    class="card-header bg-transparent border-bottom border-light p-4 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">Outsourced Test Monitor</h5>
+                    <span class="badge bg-warning text-dark px-3 rounded-pill fw-bold">25 TOTAL ACTIVE</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0 align-middle">
+                        <thead class="bg-light-subtle">
+                            <tr class="text-muted small text-uppercase ls-1">
+                                <th class="ps-4">Sample ID / Patient</th>
+                                <th>Test Name</th>
+                                <th>Reference Lab</th>
+                                <th>Sent On</th>
+                                <th>Status</th>
+                                <th class="text-end pe-4">Tracking</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-bottom border-light">
+                                <td class="ps-4">
+                                    <div class="fw-bold">SAM-90112</div>
+                                    <div class="small text-muted">John Doe (H101-001)</div>
+                                </td>
+                                <td>
+                                    <div class="text-white fw-bold">BRCA1/2 Gene Testing</div>
+                                    <div class="small text-muted">Genomics</div>
+                                </td>
+                                <td>Metropolis</td>
+                                <td>25-Dec 11:30 AM</td>
+                                <td>
+                                    <span class="badge bg-info-subtle text-info px-3 rounded-pill">In Transit</span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <button class="btn btn-outline-warning btn-sm rounded-pill px-3">View
+                                        Portal</button>
+                                </td>
+                            </tr>
+                            <tr class="border-bottom border-light">
+                                <td class="ps-4">
+                                    <div class="fw-bold">SAM-88123</div>
+                                    <div class="small text-muted">Alice Smith (H101-002)</div>
+                                </td>
+                                <td>
+                                    <div class="text-white fw-bold">Complex Biopsy Analysis</div>
+                                    <div class="small text-muted">Histopathology</div>
+                                </td>
+                                <td>SRL Diagnostics</td>
+                                <td>24-Dec 09:15 AM</td>
+                                <td>
+                                    <span
+                                        class="badge bg-primary-subtle text-primary px-3 rounded-pill">Processing</span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <button class="btn btn-outline-warning btn-sm rounded-pill px-3">View
+                                        Portal</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

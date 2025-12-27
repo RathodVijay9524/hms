@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surgical Scheduler - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .surgery-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .surgery-card:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        .ot-badge {
+            background: rgba(99, 102, 241, 0.1);
+            color: #6366f1;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/sidebars/doctor_sidebar :: doctor_sidebar('doc-surgeries')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #6366f1;">
+                        <i class="fas fa-scalpel me-2"></i>Surgical Suite
+                    </h1>
+                    <p class="text-muted mb-0">Management of Operating Theatres and Procedure Logs</p>
+                </div>
+                <button class="btn btn-indigo px-4 rounded-pill">
+                    <i class="fas fa-plus me-2"></i>Schedule Surgery
+                </button>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="surgery-card p-4">
+                        <div class="text-muted small fw-bold text-uppercase mb-2">OTs In Use</div>
+                        <div class="display-6 fw-bold text-white">4 <small class="fs-6 text-muted">/ 6</small></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="surgery-card p-4">
+                        <div class="text-muted small fw-bold text-uppercase mb-2">Today's Procedures</div>
+                        <div class="display-6 fw-bold text-white">12</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="surgery-card p-4">
+                        <div class="text-muted small fw-bold text-uppercase mb-2">Avg Prep Time</div>
+                        <div class="display-6 fw-bold text-white">24 <small class="fs-6 text-muted">Mins</small></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule -->
+            <div class="surgery-card overflow-hidden">
+                <div
+                    class="card-header bg-transparent border-bottom border-light p-4 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">Live Surgery Timeline</h5>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-dark btn-sm rounded-pill px-3">Filter by OT</button>
+                        <button class="btn btn-dark btn-sm rounded-pill px-3">Export Log</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0 align-middle">
+                        <thead class="bg-light-subtle">
+                            <tr class="text-muted small text-uppercase ls-1">
+                                <th class="ps-4">Time / OT</th>
+                                <th>Patient Details</th>
+                                <th>Procedure Type</th>
+                                <th>Surgical Team</th>
+                                <th>Status</th>
+                                <th class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-bottom border-light">
+                                <td class="ps-4">
+                                    <div class="ot-badge mb-1">OT - 02</div>
+                                    <div class="small fw-bold">09:30 AM</div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">Mark Johnson</div>
+                                    <div class="small text-muted">UHID: H101-442</div>
+                                </td>
+                                <td>
+                                    <div class="badge bg-indigo-subtle text-indigo rounded-pill px-3 mb-1">Orthopedic
+                                    </div>
+                                    <div class="small text-white">Total Hip Replacement</div>
+                                </td>
+                                <td>
+                                    <div class="small text-white">Lead: Dr. Robert S.</div>
+                                    <div class="small text-muted">Anaest: Dr. Linda M.</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-success-subtle text-success px-3 rounded-pill">In
+                                        Progress</span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <button class="btn btn-outline-light btn-sm rounded-pill"><i
+                                            class="fas fa-external-link-alt me-1"></i>View Log</button>
+                                </td>
+                            </tr>
+                            <tr class="border-bottom border-light">
+                                <td class="ps-4">
+                                    <div class="ot-badge mb-1">OT - 04</div>
+                                    <div class="small fw-bold">11:15 AM</div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">Emma Davis</div>
+                                    <div class="small text-muted">UHID: H101-512</div>
+                                </td>
+                                <td>
+                                    <div class="badge bg-indigo-subtle text-indigo rounded-pill px-3 mb-1">Cardio</div>
+                                    <div class="small text-white">Angioplasty (3 Stents)</div>
+                                </td>
+                                <td>
+                                    <div class="small text-white">Lead: Dr. Sarah W.</div>
+                                    <div class="small text-muted">Anaest: Dr. Kevin P.</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-warning-subtle text-warning px-3 rounded-pill">Prep
+                                        Ready</span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <button class="btn btn-outline-light btn-sm rounded-pill"><i
+                                            class="fas fa-external-link-alt me-1"></i>View Log</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+</body>
+
+</html>

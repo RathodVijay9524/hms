@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Dashboard - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .inv-stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .inv-stat-card:hover {
+            transform: translateY(-5px);
+            border-color: #0d9488;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/sidebars/inventory_sidebar :: inventory_sidebar('inv-dash')}"></div>
+
+    <main class="main-content bg-inventory-dark min-vh-100">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="row mb-4 align-items-center">
+                <div class="col-md-6">
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #0d9488;">
+                        Supply Chain Command Center
+                    </h1>
+                    <p class="text-muted mb-0">Centralized Hospital Store & Logistics Overview</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <button class="btn btn-outline-teal rounded-pill px-4 me-2">
+                        <i class="fas fa-file-invoice me-2"></i>Quarterly Audit
+                    </button>
+                    <button class="btn btn-teal rounded-pill px-4" style="background: #0d9488; color: white;">
+                        <i class="fas fa-plus me-2"></i>Create PO
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="glass-card p-4 h-100">
+                        <div class="stat-icon bg-teal-500 bg-opacity-10 text-teal-400 mb-3">
+                            <i class="fas fa-boxes-packing"></i>
+                        </div>
+                        <div class="text-muted smaller fw-bold text-uppercase mb-1 ls-1">Total Stock Value</div>
+                        <h2 class="fw-bold mb-0 text-white" style="font-family: 'Outfit';">₹48.25L</h2>
+                        <div class="text-success small fw-bold mt-2"><i class="fas fa-trending-up me-1"></i>+4.2% Growth
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="glass-card p-4 h-100">
+                        <div class="stat-icon bg-orange-500 bg-opacity-10 text-orange-400 mb-3">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <div class="text-muted smaller fw-bold text-uppercase mb-1 ls-1">Pending Arrivals</div>
+                        <h2 class="fw-bold mb-0 text-white" style="font-family: 'Outfit';">12 Shipments</h2>
+                        <div class="text-muted small mt-2">Est. Value: ₹5.4L</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="glass-card p-4 h-100">
+                        <div class="stat-icon bg-red-500 bg-opacity-10 text-red-400 mb-3">
+                            <i class="fas fa-triangle-exclamation"></i>
+                        </div>
+                        <div class="text-muted smaller fw-bold text-uppercase mb-1 ls-1">Critical Low Stock</div>
+                        <h2 class="fw-bold mb-0 text-danger" style="font-family: 'Outfit';">88 Items</h2>
+                        <div class="text-danger small fw-bold mt-2">Immediate Action Needed</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="glass-card p-4 h-100">
+                        <div class="stat-icon bg-indigo-500 bg-opacity-10 text-indigo-400 mb-3">
+                            <i class="fas fa-truck-fast"></i>
+                        </div>
+                        <div class="text-muted smaller fw-bold text-uppercase mb-1 ls-1">Active Suppliers</div>
+                        <h2 class="fw-bold mb-0 text-white" style="font-family: 'Outfit';">42 Vendors</h2>
+                        <div class="text-success small fw-bold mt-2">98% Fulfillment Rate</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts & Lists -->
+            <div class="row g-4 mb-4">
+                <!-- Stock Flow Chart -->
+                <div class="col-lg-8">
+                    <div class="glass-card p-4 h-100 shadow-lg">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold text-white mb-0" style="font-family: 'Outfit';">Central Stock Valuation
+                                Trend</h5>
+                            <button class="btn btn-link text-teal-400 p-0 text-decoration-none smaller fw-bold">View
+                                Report <i class="fas fa-chevron-right ms-1"></i></button>
+                        </div>
+                        <div style="height: 350px;">
+                            <canvas id="stockTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Departmental Needs -->
+                <div class="col-lg-4">
+                    <div class="glass-card p-4 h-100 shadow-lg">
+                        <h5 class="fw-bold text-white mb-4" style="font-family: 'Outfit';">Departmental Requisitions
+                        </h5>
+                        <div class="list-group list-group-flush mb-4">
+                            <div class="list-group-item bg-transparent border-light px-0 py-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-4 bg-blue-500 bg-opacity-10 text-blue-400 p-2 me-3 d-flex align-items-center justify-content-center"
+                                            style="width: 44px; height: 44px;">
+                                            <i class="fas fa-pills"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-white smaller">Pharmacy Hub</div>
+                                            <div class="smaller text-muted">15 Items requested</div>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3 py-1 border border-danger border-opacity-20">Urgent</span>
+                                </div>
+                            </div>
+                            <div class="list-group-item bg-transparent border-light px-0 py-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-4 bg-amber-500 bg-opacity-10 text-amber-400 p-2 me-3 d-flex align-items-center justify-content-center"
+                                            style="width: 44px; height: 44px;">
+                                            <i class="fas fa-microscope"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-white smaller">Lab Diagnostics</div>
+                                            <div class="smaller text-muted">8 Items requested</div>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="badge bg-teal-500 bg-opacity-10 text-teal-400 rounded-pill px-3 py-1 border border-teal-500 border-opacity-20">Routine</span>
+                                </div>
+                            </div>
+                            <div class="list-group-item bg-transparent border-light px-0 py-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-4 bg-pink-500 bg-opacity-10 text-pink-400 p-2 me-3 d-flex align-items-center justify-content-center"
+                                            style="width: 44px; height: 44px;">
+                                            <i class="fas fa-user-nurse"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-white smaller">Nursing Wards</div>
+                                            <div class="smaller text-muted">22 Items requested</div>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="badge bg-orange-500 bg-opacity-10 text-orange-400 rounded-pill px-3 py-1 border border-orange-500 border-opacity-20">Pending</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-premium-teal w-100 rounded-pill py-2 fw-bold">Process All
+                            Requisitions</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+    <script>
+        const ctx = document.getElementById('stockTrendChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Stock Valuation (Lakhs)',
+                    data: [32, 35, 33, 40, 44, 48.25],
+                    borderColor: '#0d9488',
+                    backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#0d9488',
+                    pointBorderColor: '#fff',
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { color: '#94a3b8' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8' }
+                    }
+                }
+            }
+        });
+    </script>
+    <style>
+        .btn-teal {
+            background-color: #0d9488;
+            border-color: #0d9488;
+            color: white;
+        }
+
+        .btn-teal:hover {
+            background-color: #0f766e;
+            border-color: #0f766e;
+            color: white;
+        }
+
+        .btn-outline-teal {
+            color: #0d9488;
+            border-color: #0d9488;
+        }
+
+        .btn-outline-teal:hover {
+            background-color: #0d9488;
+            color: white;
+        }
+
+        .bg-teal-500 {
+            background-color: #0d9488;
+        }
+
+        .text-teal-400 {
+            color: #2dd4bf;
+        }
+
+        .bg-orange-500 {
+            background-color: #f59e0b;
+        }
+
+        .text-orange-400 {
+            color: #fbbf24;
+        }
+
+        .bg-blue-500 {
+            background-color: #3b82f6;
+        }
+
+        .text-blue-400 {
+            color: #60a5fa;
+        }
+
+        .bg-pink-500 {
+            background-color: #ec4899;
+        }
+
+        .text-pink-400 {
+            color: #f472b6;
+        }
+
+        .bg-red-500 {
+            background-color: #ef4444;
+        }
+
+        .text-red-400 {
+            color: #f87171;
+        }
+
+        .bg-indigo-500 {
+            background-color: #6366f1;
+        }
+
+        .text-indigo-400 {
+            color: #818cf8;
+        }
+    </style>
+</body>
+
+</html>

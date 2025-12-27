@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Intelligence - MedLab Pro MIS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .finance-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.5rem;
+            padding: 1.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .finance-card:hover {
+            border-color: #38bdf8;
+        }
+
+        .amount-display {
+            font-family: 'Outfit';
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/sidebars/analytics_sidebar :: analytics_sidebar('ana-finance')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #38bdf8;">Financial Intelligence</h1>
+                    <p class="text-muted mb-0">Revenue Cycle, Profitability & Billing Efficiency</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-info rounded-pill px-4">P&L Detailed Statement</button>
+                    <button class="btn btn-info rounded-pill px-4"
+                        style="background: #38bdf8; color: #0f172a; border: none; font-weight: 600;">Download Fiscal
+                        Summary</button>
+                </div>
+            </div>
+
+            <!-- Finance Metrics Grid -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-3">
+                    <div class="finance-card text-center">
+                        <div class="text-muted small fw-bold text-uppercase mb-2">Total Receivables</div>
+                        <div class="amount-display">₹42.50L</div>
+                        <div class="text-danger small fw-bold"><i class="fas fa-exclamation-circle me-1"></i>High
+                            Overdue</div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="finance-card text-center">
+                        <div class="text-muted small fw-bold text-uppercase mb-2">Revenue Leakage Est.</div>
+                        <div class="amount-display">1.2%</div>
+                        <div class="text-success small fw-bold"><i class="fas fa-check-circle me-1"></i>Below Threshold
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="finance-card text-center">
+                        <div class="text-muted small fw-bold text-uppercase mb-2">Avg Settlement TAT</div>
+                        <div class="amount-display">18 Days</div>
+                        <div class="text-success small fw-bold"><i class="fas fa-arrow-down me-1"></i>3 Days Improved
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="finance-card text-center">
+                        <div class="text-muted small fw-bold text-uppercase mb-2">Profit Margin</div>
+                        <div class="amount-display">24.5%</div>
+                        <div class="text-info small fw-bold">Stable Growth</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-7">
+                    <div class="finance-card">
+                        <h5 class="fw-bold mb-4">Departmental Revenue Heatmap</h5>
+                        <div style="height: 350px;">
+                            <canvas id="revenueHeatmap"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="finance-card">
+                        <h5 class="fw-bold mb-4">Billing Category Breakdown</h5>
+                        <div style="height: 350px;">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+    <script>
+        // Revenue Heatmap (Bar Chart for simulation since base Chart.js doesn't have native heatmap)
+        new Chart(document.getElementById('revenueHeatmap').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['OPD', 'Pharmacy', 'Pathology', 'Radiology', 'Surgery', 'In-Patient'],
+                datasets: [{
+                    label: 'Monthly Revenue (Lakhs)',
+                    data: [42, 35, 28, 15, 65, 52],
+                    backgroundColor: 'rgba(56, 189, 248, 0.4)',
+                    borderColor: '#38bdf8',
+                    borderWidth: 2,
+                    borderRadius: 10
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                    y: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+
+        // Category breakdown
+        new Chart(document.getElementById('categoryChart').getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: ['Insurance', 'Self Pay', 'Corporate', 'Government'],
+                datasets: [{
+                    data: [45, 30, 15, 10],
+                    backgroundColor: ['#38bdf8', '#10b981', '#fbbf24', '#f472b6'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 20 } } }
+            }
+        });
+    </script>
+</body>
+
+</html>

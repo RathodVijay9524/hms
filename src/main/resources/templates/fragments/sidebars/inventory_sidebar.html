@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head></head>
+
+<body>
+    <div th:fragment="inventory_sidebar(activeLink)" class="sidebar sidebar-inventory">
+        <!-- Inventory Header -->
+        <div class="mb-4 px-2">
+            <div class="d-flex align-items-center mb-3">
+                <div class="flex-shrink-0 rounded-3 p-2 me-3"
+                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(13, 148, 136, 0.1);">
+                    <i class="fas fa-warehouse fs-5" style="color: #0d9488;"></i>
+                </div>
+                <div>
+                    <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.6rem;">Hospital
+                        Store</small>
+                    <span class="fw-bold" style="font-family: 'Outfit';">Central Inventory</span>
+                </div>
+            </div>
+            <hr style="opacity: 0.1; margin: 0 -1rem;">
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="px-2">
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Stock
+                    Overview</small></div>
+
+            <a th:href="@{/inventory/dashboard}" class="sidebar-link"
+                th:classappend="${activeLink == 'inv-dash' ? 'active' : ''}">
+                <i class="fas fa-chart-pie"></i>
+                <span>Inventory Dashboard</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Supply
+                    Chain</small></div>
+
+            <a th:href="@{/inventory/procurement}" class="sidebar-link"
+                th:classappend="${activeLink == 'inv-proc' ? 'active' : ''}">
+                <i class="fas fa-file-contract"></i>
+                <span>Purchase Orders</span>
+            </a>
+
+            <a th:href="@{/inventory/grn}" class="sidebar-link"
+                th:classappend="${activeLink == 'inv-grn' ? 'active' : ''}">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Goods Received (GRN)</span>
+            </a>
+
+            <a th:href="@{/inventory/vendors}" class="sidebar-link"
+                th:classappend="${activeLink == 'inv-vendors' ? 'active' : ''}">
+                <i class="fas fa-truck-field"></i>
+                <span>Vendor Directory</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Internal
+                    Logistics</small></div>
+
+            <a th:href="@{/inventory/requisitions}" class="sidebar-link"
+                th:classappend="${activeLink == 'inv-req' ? 'active' : ''}">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Stock Requisitions</span>
+            </a>
+
+            <a th:href="@{/inventory/audits}" class="sidebar-link"
+                th:classappend="${activeLink == 'inv-audit' ? 'active' : ''}">
+                <i class="fas fa-barcode"></i>
+                <span>Stock Audits</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.65rem;">System</small></div>
+
+            <a th:href="@{/select-role}" class="sidebar-link">
+                <i class="fas fa-th-large"></i>
+                <span>Switch Portal</span>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

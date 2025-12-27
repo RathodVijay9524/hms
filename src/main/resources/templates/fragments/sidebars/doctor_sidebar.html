@@ -26,6 +26,12 @@
             <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
                     style="font-size: 0.7rem; letter-spacing: 0.05em;">Clinical Desktop</small></div>
 
+            <a th:href="@{/doctor/clinical-ai}" class="sidebar-link"
+                th:classappend="${activeLink == 'doc-ai' ? 'active' : ''}">
+                <i class="fas fa-brain"></i>
+                <span>AI Clinical Hub</span>
+            </a>
+
             <a th:href="@{/doctor/dashboard}" class="sidebar-link"
                 th:classappend="${activeLink == 'doc-dash' ? 'active' : ''}">
                 <i class="fas fa-columns"></i>
@@ -53,10 +59,22 @@
                 <span>In-Patient (IPD)</span>
             </a>
 
+            <a th:href="@{/doctor/surgeries}" class="sidebar-link"
+                th:classappend="${activeLink == 'doc-surgeries' ? 'active' : ''}">
+                <i class="fas fa-scalpel"></i>
+                <span>OT Schedule</span>
+            </a>
+
             <a th:href="@{/doctor/emr}" class="sidebar-link"
                 th:classappend="${activeLink == 'doc-emr' ? 'active' : ''}">
                 <i class="fas fa-file-medical"></i>
                 <span>EMR Records</span>
+            </a>
+
+            <a th:href="@{/doctor/consults}" class="sidebar-link"
+                th:classappend="${activeLink == 'doc-consults' ? 'active' : ''}">
+                <i class="fas fa-user-md-chat"></i>
+                <span>Internal Consults</span>
             </a>
 
             <a th:href="@{/doctor/prescriptions}" class="sidebar-link"
@@ -85,6 +103,15 @@
                 th:classappend="${activeLink == 'doc-schedules' ? 'active' : ''}">
                 <i class="fas fa-clock"></i>
                 <span>My Availability</span>
+            </a>
+
+            <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
+                    style="font-size: 0.7rem; letter-spacing: 0.05em;">Insights</small></div>
+
+            <a th:href="@{/doctor/analytics}" class="sidebar-link"
+                th:classappend="${activeLink == 'doc-analytics' ? 'active' : ''}">
+                <i class="fas fa-chart-line"></i>
+                <span>Performance Suite</span>
             </a>
 
             <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
