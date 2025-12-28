@@ -17,6 +17,63 @@
             document.documentElement.setAttribute('data-theme', savedTheme);
         })();
     </script>
+    <style>
+        .quick-action {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none !important;
+            transition: all 0.3s ease;
+            height: 100%;
+            text-align: center;
+        }
+
+        .quick-action:hover {
+            transform: translateY(-5px);
+            border-color: #f59e0b;
+            background: linear-gradient(145deg, var(--bg-secondary), rgba(245, 158, 11, 0.05));
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .quick-action i {
+            font-size: 1.5rem;
+            color: #f59e0b;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .quick-action:hover i {
+            transform: scale(1.1);
+        }
+
+        .quick-action .action-label {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .hub-link {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            text-decoration: none !important;
+            transition: all 0.3s ease;
+        }
+
+        .hub-link:hover {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.02);
+            transform: translateX(5px);
+        }
+    </style>
 </head>
 
 <body>
@@ -29,16 +86,17 @@
     <main class="main-content">
         <div class="container-fluid">
             <!-- Innovative Header -->
-            <div class="lab-header d-flex justify-content-between align-items-center mb-4 text-white">
+            <div class="lab-header d-flex justify-content-between align-items-center mb-4">
                 <div class="position-relative" style="z-index: 1;">
-                    <h2 class="fw-bold mb-1" style="font-family: 'Outfit';">Modern Laboratory</h2>
-                    <p class="mb-0 opacity-75 small text-white">Diagnostic Intelligence & Real-time Test Tracking</p>
+                    <h2 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">Modern Laboratory</h2>
+                    <p class="mb-0 text-muted small">Diagnostic Intelligence & Real-time Test Tracking</p>
                 </div>
                 <div class="d-none d-md-flex gap-3" style="z-index: 1;">
-                    <a th:href="@{/lab/orders}" class="btn btn-sm btn-outline-light px-3 rounded-pill shadow-sm">
+                    <a th:href="@{/lab/orders}" class="btn btn-sm btn-outline-secondary px-3 rounded-pill shadow-sm">
                         <i class="fas fa-clipboard-list me-2"></i>All Orders
                     </a>
-                    <button class="btn btn-sm btn-light text-theme fw-bold px-4 rounded-pill shadow-sm">
+                    <button class="btn btn-sm btn-amber px-4 rounded-pill shadow-sm"
+                        style="background: #f59e0b; color: white; border: none;">
                         <i class="fas fa-plus me-2"></i>New Order
                     </button>
                 </div>
@@ -106,39 +164,39 @@
                     <h6 class="text-muted smaller fw-bold text-uppercase ls-1 mb-3">Quick Actions</h6>
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
-                    <a th:href="@{/lab/orders}" class="quick-action d-block text-decoration-none">
+                    <a th:href="@{/lab/orders}" class="quick-action">
                         <i class="fas fa-plus-circle"></i>
-                        <div class="fw-bold small">New Order</div>
+                        <div class="action-label">New Order</div>
                     </a>
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
                     <div class="quick-action">
                         <i class="fas fa-vial"></i>
-                        <div class="fw-bold small">Collect Sample</div>
+                        <div class="action-label">Collect Sample</div>
                     </div>
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
                     <div class="quick-action">
                         <i class="fas fa-keyboard"></i>
-                        <div class="fw-bold small">Enter Results</div>
+                        <div class="action-label">Enter Results</div>
                     </div>
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
                     <div class="quick-action">
                         <i class="fas fa-file-medical"></i>
-                        <div class="fw-bold small">Generate Report</div>
+                        <div class="action-label">Generate Report</div>
                     </div>
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
-                    <a th:href="@{/lab/tests}" class="quick-action d-block text-decoration-none">
+                    <a th:href="@{/lab/tests}" class="quick-action">
                         <i class="fas fa-flask"></i>
-                        <div class="fw-bold small">Test Catalog</div>
+                        <div class="action-label">Test Catalog</div>
                     </a>
                 </div>
                 <div class="col-6 col-md-4 col-lg-2">
-                    <a th:href="@{/lab/patients}" class="quick-action d-block text-decoration-none">
+                    <a th:href="@{/lab/patients}" class="quick-action">
                         <i class="fas fa-search"></i>
-                        <div class="fw-bold small">Find Patient</div>
+                        <div class="action-label">Find Patient</div>
                     </a>
                 </div>
             </div>
@@ -176,8 +234,8 @@
                                         th:if="${order.status?.name() == 'PROCESSING'}">PROCESSING</span>
                                     <span class="badge bg-emerald-500 bg-opacity-10 text-emerald-500 rounded-pill px-3"
                                         th:if="${order.status?.name() == 'VERIFIED'}">COMPLETED</span>
-                                    <a th:href="@{/lab/orders}"
-                                        class="btn btn-sm btn-pink-theme rounded-pill px-3 ms-2">Process</a>
+                                    <a th:href="@{/lab/orders}" class="btn btn-sm btn-amber rounded-pill px-3 ms-2"
+                                        style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2);">Process</a>
                                 </div>
                             </div>
                         </th:block>
@@ -199,7 +257,8 @@
                                     <span class="badge bg-secondary bg-opacity-10 text-theme-muted">2 Tests</span>
                                     <span
                                         class="badge bg-amber-500 bg-opacity-10 text-amber-500 rounded-pill px-3">ORDERED</span>
-                                    <button class="btn btn-sm btn-pink-theme rounded-pill px-3 ms-2">Process</button>
+                                    <button class="btn btn-sm btn-amber rounded-pill px-3 ms-2"
+                                        style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2);">Process</button>
                                 </div>
                             </div>
                             <div class="order-row">
@@ -217,7 +276,8 @@
                                     <span class="badge bg-secondary bg-opacity-10 text-theme-muted">4 Tests</span>
                                     <span
                                         class="badge bg-blue-500 bg-opacity-10 text-blue-500 rounded-pill px-3">COLLECTED</span>
-                                    <button class="btn btn-sm btn-pink-theme rounded-pill px-3 ms-2">Process</button>
+                                    <button class="btn btn-sm btn-amber rounded-pill px-3 ms-2"
+                                        style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2);">Process</button>
                                 </div>
                             </div>
                             <div class="order-row">
@@ -235,7 +295,8 @@
                                     <span class="badge bg-secondary bg-opacity-10 text-theme-muted">1 Test</span>
                                     <span
                                         class="badge bg-emerald-500 bg-opacity-10 text-emerald-500 rounded-pill px-3">COMPLETED</span>
-                                    <button class="btn btn-sm btn-outline-pink rounded-pill px-3 ms-2">View
+                                    <button class="btn btn-sm btn-outline-amber rounded-pill px-3 ms-2"
+                                        style="color: #f59e0b; border-color: rgba(245, 158, 11, 0.3);">View
                                         Report</button>
                                 </div>
                             </div>
@@ -298,7 +359,8 @@
                         </div>
                     </div>
 
-                    <a th:href="@{/lab/orders}" class="btn btn-pink-theme w-100 mt-3 rounded-pill py-2">
+                    <a th:href="@{/lab/orders}" class="btn btn-amber w-100 mt-3 rounded-pill py-2"
+                        style="background: #f59e0b; color: white; border: none;">
                         <i class="fas fa-clipboard-list me-2"></i>Manage All Orders
                     </a>
                 </div>

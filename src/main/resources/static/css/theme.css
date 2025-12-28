@@ -5,8 +5,8 @@
 :root,
 [data-theme="dark"] {
     /* Hardcoded fallbacks for visibility */
-    background-color: #0f172a;
-    color: #f8fafc;
+    background-color: var(--bg-primary, #080c14);
+    color: var(--text-primary, #f8fafc);
 
     --primary-color: #10b981;
     --primary-dark: #059669;
@@ -93,6 +93,8 @@
     --card-bg: var(--bg-secondary);
     --input-bg: rgba(0, 0, 0, 0.03);
     --input-bg-focus: rgba(0, 0, 0, 0.05);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
 }
 
 /* Theme Toggle Button */
@@ -168,7 +170,15 @@
 .theme-toggle .icon-sun,
 .theme-toggle .icon-moon {
     position: absolute;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-toggle .icon-sun {
+    color: #f59e0b;
+}
+
+.theme-toggle .icon-moon {
+    color: #6366f1;
 }
 
 [data-theme="dark"] .theme-toggle .icon-sun {
