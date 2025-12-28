@@ -154,48 +154,47 @@
                     <div class="row g-4 mb-4">
                         <div class="col-md-2">
                             <label class="form-label">Title</label>
-                            <select class="form-select">
-                                <option>Mr.</option>
-                                <option>Ms.</option>
-                                <option>Mrs.</option>
-                                <option>Dr.</option>
+                            <select class="form-select" id="regTitle">
+                                <option value="Mr.">Mr.</option>
+                                <option value="Ms.">Ms.</option>
+                                <option value="Mrs.">Mrs.</option>
+                                <option value="Dr.">Dr.</option>
                             </select>
                         </div>
                         <div class="col-md-5">
                             <label class="form-label">First Name</label>
-                            <input type="text" class="form-control" placeholder="e.g. Tony">
+                            <input type="text" class="form-control" id="regFirstName" placeholder="e.g. Tony">
                         </div>
                         <div class="col-md-5">
                             <label class="form-label">Last Name</label>
-                            <input type="text" class="form-control" placeholder="e.g. Stark">
+                            <input type="text" class="form-control" id="regLastName" placeholder="e.g. Stark">
                         </div>
                     </div>
 
                     <div class="row g-4 mb-5">
                         <div class="col-md-4">
                             <label class="form-label">Date of Birth</label>
-                            <input type="date" class="form-control">
+                            <input type="date" class="form-control" id="regDob">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Gender</label>
-                            <select class="form-select">
-                                <option>Male</option>
-                                <option>Female</option>
-                                <option>Other</option>
-                                <option>Prefer not to say</option>
+                            <select class="form-select" id="regGender">
+                                <option value="MALE">Male</option>
+                                <option value="FEMALE">Female</option>
+                                <option value="OTHER">Other</option>
                             </select>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Blood Group</label>
-                            <select class="form-select">
-                                <option>A+</option>
-                                <option>B+</option>
-                                <option>O+</option>
-                                <option>AB+</option>
-                                <option>A-</option>
-                                <option>B-</option>
-                                <option>O-</option>
-                                <option>AB-</option>
+                            <select class="form-select" id="regBloodGroup">
+                                <option value="A+">A+</option>
+                                <option value="B+">B+</option>
+                                <option value="O+">O+</option>
+                                <option value="AB+">AB+</option>
+                                <option value="A-">A-</option>
+                                <option value="B-">B-</option>
+                                <option value="O-">O-</option>
+                                <option value="AB-">AB-</option>
                             </select>
                         </div>
                     </div>
@@ -211,16 +210,16 @@
                             <label class="form-label">Primary Mobile</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-primary border-0 text-white">+91</span>
-                                <input type="text" class="form-control" placeholder="9876543210">
+                                <input type="text" class="form-control" id="regPhone" placeholder="9876543210">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Email Address</label>
-                            <input type="email" class="form-control" placeholder="tony@stark.com">
+                            <input type="email" class="form-control" id="regEmail" placeholder="tony@stark.com">
                         </div>
                         <div class="col-md-12">
                             <label class="form-label">Residential Address</label>
-                            <textarea class="form-control" rows="2"
+                            <textarea class="form-control" id="regAddress" rows="2"
                                 placeholder="Street, Building, Apartment..."></textarea>
                         </div>
                     </div>
@@ -229,10 +228,11 @@
                         class="d-flex justify-content-between align-items-center pt-4 border-top border-secondary-subtle">
                         <span class="text-muted small">Fields marked with * are mandatory</span>
                         <div class="d-flex gap-2">
-                            <button type="button"
+                            <button type="button" onclick="location.href='/reception/patients'"
                                 class="btn btn-link text-muted text-decoration-none px-4">Cancel</button>
-                            <button type="button" class="btn text-white fw-bold px-5 rounded-pill"
-                                style="background: #a855f7;">Next Step</button>
+                            <button type="button" id="submitBtn" onclick="registerPatient()"
+                                class="btn text-white fw-bold px-5 rounded-pill" style="background: #a855f7;">Register
+                                Patient</button>
                         </div>
                     </div>
                 </form>
@@ -242,6 +242,57 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        async function registerPatient() {
+            const btn = document.getElementById('submitBtn');
+            const firstName = document.getElementById('regFirstName').value;
+            const lastName = document.getElementById('regLastName').value;
+
+            if (!firstName || !lastName || !document.getElementById('regPhone').value) {
+                alert('Please fill First Name, Last Name and Phone Number');
+                return;
+            }
+
+            const data = {
+                title: document.getElementById('regTitle').value,
+                name: firstName + ' ' + lastName,
+                email: document.getElementById('regEmail').value,
+                phone: document.getElementById('regPhone').value,
+                gender: document.getElementById('regGender').value,
+                bloodGroup: document.getElementById('regBloodGroup').value,
+                dateOfBirth: document.getElementById('regDob').value,
+                address: document.getElementById('regAddress').value
+            };
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Registering...';
+
+            try {
+                // Using the specific lab patient creation URI for now as it's the main one
+                const response = await fetch('/api/lab/patients', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const saved = await response.json();
+                    alert('Patient registered successfully! UHID: ' + saved.uhid);
+                    window.location.href = '/reception/patients';
+                } else {
+                    const error = await response.text();
+                    alert('Error: ' + error);
+                    btn.disabled = false;
+                    btn.innerHTML = 'Register Patient';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Connection error. Please try again.');
+                btn.disabled = false;
+                btn.innerHTML = 'Register Patient';
+            }
+        }
+    </script>
 </body>
 
 </html>

@@ -167,14 +167,25 @@
             </tr>
         </thead>
         <tbody>
-            <tr th:each="res : ${results}">
-                <td th:text="${res.parameterName}">Hemoglobin</td>
-                <td th:text="${res.resultValue}">14.5</td>
-                <td th:text="${res.unit}">g/dL</td>
-                <td>
-                    <span th:each="range : ${res.referenceRanges}" th:text="${range}">13.0 - 17.0</span>
-                </td>
-            </tr>
+            <th:block th:each="res, status : ${results}">
+                <tr th:if="${status.first || res.testName != results[status.index - 1].testName}">
+                    <th colspan="4"
+                        style="background: #f8f9fa; border-top: 2px solid #dee2e6; color: #2c3e50; padding: 8px 10px; font-weight: bold; text-align: left;">
+                        <span th:text="${res.testName}">Test Name</span>
+                        <span style="float: right; font-weight: normal; font-size: 11px; color: #6c757d;">
+                            Price: ₹<span th:text="${res.testPrice}">0.00</span>
+                        </span>
+                    </th>
+                </tr>
+                <tr>
+                    <td th:text="${res.parameterName}">Hemoglobin</td>
+                    <td th:text="${res.resultValue}">14.5</td>
+                    <td th:text="${res.unit}">g/dL</td>
+                    <td>
+                        <span th:each="range : ${res.referenceRanges}" th:text="${range}">13.0 - 17.0</span>
+                    </td>
+                </tr>
+            </th:block>
             <tr th:if="${#lists.isEmpty(results)}">
                 <td colspan="4" style="text-align: center; color: #7f8c8d; font-style: italic; padding: 20px;">
                     Results are pending or have not been entered for this order.

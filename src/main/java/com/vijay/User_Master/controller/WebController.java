@@ -1,5 +1,6 @@
 package com.vijay.User_Master.controller;
 
+import com.vijay.User_Master.service.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,13 +13,14 @@ import java.util.Map;
 @lombok.RequiredArgsConstructor
 public class WebController {
 
-    private final com.vijay.User_Master.service.LabTestService labTestService;
-    private final com.vijay.User_Master.service.PatientService patientService;
-    private final com.vijay.User_Master.service.LabOrderService labOrderService;
-    private final com.vijay.User_Master.service.DepartmentService departmentService;
-    private final com.vijay.User_Master.service.DoctorProfileService doctorProfileService;
-    private final com.vijay.User_Master.service.BillingService billingService;
-    private final com.vijay.User_Master.service.UserService userService;
+    private final LabTestService labTestService;
+    private final PatientService patientService;
+    private final LabOrderService labOrderService;
+    private final DepartmentService departmentService;
+    private final DoctorProfileService doctorProfileService;
+    private final BillingService billingService;
+    private final UserService userService;
+    private final ReceptionService receptionService;
 
     @GetMapping("/login")
     public String login() {
@@ -71,11 +73,15 @@ public class WebController {
     }
     @GetMapping("/reception/dashboard")
     public String receptionDashboard(Model model) {
-        // Placeholder stats for Reception
-        model.addAttribute("todayReg", 24);
-        model.addAttribute("pendingTokens", 15);
-        model.addAttribute("appointments", 47);
-        model.addAttribute("avgWaitTime", "12 min");
+        com.vijay.User_Master.dto.reception.ReceptionStatsDTO stats = receptionService.getDashboardStats();
+        model.addAttribute("todayReg", stats.getTodayRegistrations());
+        model.addAttribute("pendingTokens", stats.getPendingTokens());
+        model.addAttribute("appointmentsCount", stats.getTotalAppointments());
+        model.addAttribute("avgWaitTime", stats.getAvgWaitTime());
+        
+        model.addAttribute("todayTokens", receptionService.getTodayTokens());
+        model.addAttribute("upcomingAppointments", receptionService.getTodayAppointments());
+        
         return "reception/dashboard";
     }
 
@@ -86,21 +92,27 @@ public class WebController {
 
     @GetMapping("/reception/patients")
     public String receptionPatients(Model model) {
+        model.addAttribute("patients", receptionService.getAllPatients());
         return "reception/patients";
     }
 
     @GetMapping("/reception/tokens")
     public String receptionTokens(Model model) {
+        model.addAttribute("tokens", receptionService.getTodayTokens());
+        model.addAttribute("departments", departmentService.getAllDepartments());
+        model.addAttribute("doctors", doctorProfileService.getAllDoctorProfiles());
         return "reception/tokens";
     }
 
     @GetMapping("/reception/appointments")
     public String receptionAppointments(Model model) {
+        model.addAttribute("appointments", receptionService.getTodayAppointments());
         return "reception/appointments";
     }
 
     @GetMapping("/reception/book")
     public String receptionBook(Model model) {
+        model.addAttribute("departments", departmentService.getAllDepartments());
         return "reception/book";
     }
 
@@ -111,11 +123,14 @@ public class WebController {
 
     @GetMapping("/reception/enquiry")
     public String receptionEnquiry(Model model) {
+        model.addAttribute("enquiries", receptionService.getAllEnquiries());
         return "reception/enquiry";
     }
 
     @GetMapping("/reception/visitors")
     public String receptionVisitors(Model model) {
+        model.addAttribute("visitors", receptionService.getAllVisitorLogs());
+        model.addAttribute("stats", receptionService.getDashboardStats());
         return "reception/visitors";
     }
 

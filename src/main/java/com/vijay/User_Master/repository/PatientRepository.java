@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, Long> {
     Page<Patient> findByOwnerId(Long ownerId, Pageable pageable);
+    java.util.List<Patient> findByOwnerId(Long ownerId);
     Optional<Patient> findByIdAndOwnerId(Long id, Long ownerId);
     Optional<Patient> findByPhoneAndOwnerId(String phone, Long ownerId);
     

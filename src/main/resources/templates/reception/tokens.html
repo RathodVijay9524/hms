@@ -154,39 +154,55 @@
                                 <th>Patient Details</th>
                                 <th>Department</th>
                                 <th>Doctor</th>
-                                <th>Wait Time</th>
+                                <th>Issued At</th>
                                 <th class="text-end">Status</th>
+                                <th class="text-end">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <tr th:each="token : ${tokens}">
                                 <td>
-                                    <div class="fw-bold text-white fs-5">#M-16</div>
+                                    <div class="fw-bold text-white fs-5" th:text="${token.tokenNumber}">#M-16</div>
                                 </td>
                                 <td>
-                                    <div class="fw-bold">Bruce Banner</div>
-                                    <div class="small text-muted">UHID-2024-0091</div>
+                                    <div class="fw-bold" th:text="${token.patientName ?: 'Guest'}">Bruce Banner</div>
+                                    <div class="small text-muted" th:text="${token.phone}">UHID-2024-0091</div>
                                 </td>
-                                <td>General Medicine</td>
-                                <td>Dr. Jane Foster</td>
-                                <td><span class="text-warning">18 min</span></td>
-                                <td class="text-end"><span
-                                        class="badge bg-warning-subtle text-warning rounded-pill px-3">Waiting</span>
+                                <td th:text="${token.departmentName}">General Medicine</td>
+                                <td th:text="${token.doctorName ?: 'Not Assigned'}">Dr. Jane Foster</td>
+                                <td><span class="text-theme-muted" th:text="${token.tokenDate}">Just now</span></td>
+                                <td class="text-end">
+                                    <span class="badge rounded-pill px-3" th:classappend="${token.status.name() == 'WAITING' ? 'bg-amber-500 bg-opacity-10 text-amber-400' : 
+                                                       token.status.name() == 'CALLED' ? 'bg-blue-500 bg-opacity-10 text-blue-400' : 
+                                                       'bg-emerald-500 bg-opacity-10 text-emerald-400'}"
+                                        th:text="${token.status}">Waiting</span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-icon border-0" data-bs-toggle="dropdown">
+                                            <i class="fas fa-ellipsis-v text-theme"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-color-theme">
+                                            <li><a class="dropdown-item" href="#"
+                                                    th:onclick="'updateTokenStatus(' + ${token.id} + ', \'CALLED\')'">Call
+                                                    Patient</a></li>
+                                            <li><a class="dropdown-item" href="#"
+                                                    th:onclick="'updateTokenStatus(' + ${token.id} + ', \'COMPLETED\')'">Complete</a>
+                                            </li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li><a class="dropdown-item text-danger" href="#"
+                                                    th:onclick="'updateTokenStatus(' + ${token.id} + ', \'CANCELLED\')'">Cancel</a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>
-                                    <div class="fw-bold text-white fs-5">#P-09</div>
-                                </td>
-                                <td>
-                                    <div class="fw-bold">Peter Parker</div>
-                                    <div class="small text-muted">UHID-2024-0812</div>
-                                </td>
-                                <td>Paediatrics</td>
-                                <td>Dr. Otto Octavius</td>
-                                <td><span class="text-success">5 min</span></td>
-                                <td class="text-end"><span
-                                        class="badge bg-primary-subtle text-primary rounded-pill px-3">Calling...</span>
+                            <tr th:if="${#lists.isEmpty(tokens)}">
+                                <td colspan="7" class="text-center py-5 text-theme-muted">
+                                    <i class="fas fa-ticket-alt opacity-25 fa-3x mb-3"></i>
+                                    <p>No tokens issued today.</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -196,8 +212,169 @@
         </div>
     </main>
 
+    <!-- Issue Token Modal -->
+    <div class="modal fade" id="issueTokenModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card border-color-theme shadow-2xl">
+                <div class="modal-header border-color-theme bg-opacity-50">
+                    <h5 class="modal-title fw-bold" style="font-family: 'Outfit';">Issue New Token</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="tokenForm">
+                        <div class="mb-3">
+                            <label class="small fw-bold text-theme mb-2">Patient Search (Optional)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-color-theme"><i
+                                        class="fas fa-search text-theme-muted"></i></span>
+                                <input type="text" id="patientSearch"
+                                    class="form-control border-color-theme border-start-0"
+                                    placeholder="Type name, phone or UHID...">
+                            </div>
+                            <div id="patientResults" class="list-group mt-2 shadow-sm d-none"></div>
+                        </div>
+
+                        <input type="hidden" id="tokenPatientId">
+
+                        <div class="mb-3">
+                            <label class="small fw-bold text-theme mb-2">Patient Name</label>
+                            <input type="text" id="tokenPatientName" class="form-control border-color-theme" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="small fw-bold text-theme mb-2">Phone Number</label>
+                            <input type="text" id="tokenPhone" class="form-control border-color-theme">
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-theme mb-2">Department</label>
+                                <select id="tokenDeptId" class="form-select border-color-theme" required>
+                                    <option value="">Select Dept</option>
+                                    <option th:each="dept : ${departments}" th:value="${dept.id}"
+                                        th:text="${dept.name}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-theme mb-2">Doctor</label>
+                                <select id="tokenDocId" class="form-select border-color-theme">
+                                    <option value="">Select Doctor</option>
+                                    <option th:each="doc : ${doctors}" th:value="${doc.id}" th:text="${doc.name}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-color-theme">
+                    <button type="button" class="btn btn-link text-theme-muted text-decoration-none"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-purple-theme px-4 rounded-pill" onclick="submitToken()">Issue
+                        Token</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        // Patient Search Logic
+        const patientSearch = document.getElementById('patientSearch');
+        const patientResults = document.getElementById('patientResults');
+        const tokenPatientId = document.getElementById('tokenPatientId');
+        const tokenPatientName = document.getElementById('tokenPatientName');
+        const tokenPhone = document.getElementById('tokenPhone');
+
+        patientSearch.addEventListener('input', async (e) => {
+            const query = e.target.value;
+            if (query.length < 2) {
+                patientResults.classList.add('d-none');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/reception/patients/search?query=${query}`);
+                const patients = await response.json();
+
+                patientResults.innerHTML = '';
+                if (patients.length > 0) {
+                    patients.forEach(p => {
+                        const div = document.createElement('div');
+                        div.className = 'list-group-item list-group-item-action cursor-pointer';
+                        div.innerHTML = `
+                            <div class="fw-bold">${p.name}</div>
+                            <div class="small text-muted">UHID: ${p.uhid || 'N/A'} • Phone: ${p.phone || 'N/A'}</div>
+                        `;
+                        div.onclick = () => {
+                            tokenPatientId.value = p.id;
+                            tokenPatientName.value = p.name;
+                            tokenPhone.value = p.phone || '';
+                            patientResults.classList.add('d-none');
+                            patientSearch.value = p.name;
+                        };
+                        patientResults.appendChild(div);
+                    });
+                    patientResults.classList.remove('d-none');
+                } else {
+                    patientResults.classList.add('d-none');
+                }
+            } catch (error) {
+                console.error('Error searching patients:', error);
+            }
+        });
+
+        // Hide results when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!patientSearch.contains(e.target)) {
+                patientResults.classList.add('d-none');
+            }
+        });
+
+        async function submitToken() {
+            const data = {
+                patientId: tokenPatientId.value || null,
+                patientName: tokenPatientName.value,
+                phone: tokenPhone.value,
+                departmentId: document.getElementById('tokenDeptId').value,
+                doctorId: document.getElementById('tokenDocId').value || null
+            };
+
+            if (!data.patientName || !data.departmentId) {
+                alert('Please fill at least Patient Name and Department');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/reception/tokens', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Error issuing token');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function updateTokenStatus(id, status) {
+            try {
+                const response = await fetch(`/api/reception/tokens/${id}/status?status=${status}`, {
+                    method: 'PUT'
+                });
+                if (response.ok) {
+                    location.reload();
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+        }
+    </script>
 </body>
 
 </html>

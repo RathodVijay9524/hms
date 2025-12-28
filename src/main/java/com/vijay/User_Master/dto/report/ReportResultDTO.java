@@ -12,6 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReportResultDTO {
+    private String testName;
+    private Double testPrice;
     private String parameterName;
     private String resultValue;
     private String unit;

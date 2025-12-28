@@ -54,9 +54,9 @@
                                 <i class="fas fa-users"></i>
                             </div>
                             <div>
-                                <div class="text-theme-muted smaller fw-bold text-uppercase mb-1 ls-1">Today's Patients
+                                <div class="text-theme-muted smaller fw-bold text-uppercase mb-1 ls-1">Today's Reg.
                                 </div>
-                                <div class="h3 fw-bold mb-0 text-theme">45</div>
+                                <div class="h3 fw-bold mb-0 text-theme" th:text="${todayReg}">0</div>
                             </div>
                         </div>
                     </div>
@@ -68,8 +68,9 @@
                                 <i class="fas fa-clock"></i>
                             </div>
                             <div>
-                                <div class="text-theme-muted smaller fw-bold text-uppercase mb-1 ls-1">In Queue</div>
-                                <div class="h3 fw-bold mb-0 text-amber-400">12</div>
+                                <div class="text-theme-muted smaller fw-bold text-uppercase mb-1 ls-1">Pending Tokens
+                                </div>
+                                <div class="h3 fw-bold mb-0 text-amber-400" th:text="${pendingTokens}">0</div>
                             </div>
                         </div>
                     </div>
@@ -83,7 +84,7 @@
                             <div>
                                 <div class="text-theme-muted smaller fw-bold text-uppercase mb-1 ls-1">Appointments
                                 </div>
-                                <div class="h3 fw-bold mb-0 text-theme">28</div>
+                                <div class="h3 fw-bold mb-0 text-theme" th:text="${appointmentsCount}">0</div>
                             </div>
                         </div>
                     </div>
@@ -95,9 +96,9 @@
                                 <i class="fas fa-user-plus"></i>
                             </div>
                             <div>
-                                <div class="text-theme-muted smaller fw-bold text-uppercase mb-1 ls-1">New Registrations
+                                <div class="text-theme-muted smaller fw-bold text-uppercase mb-1 ls-1">Avg Wait Time
                                 </div>
-                                <div class="h3 fw-bold mb-0 text-emerald-400">8</div>
+                                <div class="h3 fw-bold mb-0 text-emerald-400" th:text="${avgWaitTime}">0 min</div>
                             </div>
                         </div>
                     </div>
@@ -157,80 +158,33 @@
                     </div>
 
                     <div class="glass-card p-0 overflow-hidden shadow-lg">
-                        <div
+                        <div th:each="token : ${todayTokens}"
                             class="p-3 border-bottom border-color-theme d-flex justify-content-between align-items-center hover-bg-opacity-5 transition-all">
                             <div class="d-flex align-items-center gap-3">
                                 <span class="badge bg-purple-500 text-white rounded-pill px-3 py-2 fw-bold"
-                                    style="min-width: 70px;">T-015</span>
+                                    style="min-width: 70px;" th:text="${token.tokenNumber}">T-015</span>
                                 <div>
-                                    <div class="fw-bold text-theme">Rajesh Kumar</div>
-                                    <div class="small text-theme-muted">Dr. Verma • General Medicine</div>
+                                    <div class="fw-bold text-theme" th:text="${token.patientName ?: 'Guest'}">Rajesh
+                                        Kumar</div>
+                                    <div class="small text-theme-muted"
+                                        th:text="${(token.doctorName ?: 'No Doctor') + ' • ' + (token.departmentName ?: 'No Dept')}">
+                                        Dr. Verma • General Medicine</div>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center gap-2">
                                 <span
-                                    class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small">10:30
-                                    AM</span>
-                                <span class="badge bg-blue-500 bg-opacity-10 text-blue-400 rounded-pill px-3">IN
-                                    CONSULTATION</span>
+                                    class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small"
+                                    th:text="${token.tokenDate}">10:30 AM</span>
+                                <span class="badge rounded-pill px-3" th:classappend="${token.status.name() == 'WAITING' ? 'bg-amber-500 bg-opacity-10 text-amber-400' : 
+                                                   token.status.name() == 'CALLED' ? 'bg-blue-500 bg-opacity-10 text-blue-400' : 
+                                                   'bg-emerald-500 bg-opacity-10 text-emerald-400'}"
+                                    th:text="${token.status}">WAITING</span>
                             </div>
                         </div>
 
-                        <div
-                            class="p-3 border-bottom border-color-theme d-flex justify-content-between align-items-center hover-bg-opacity-5 transition-all">
-                            <div class="d-flex align-items-center gap-3">
-                                <span class="badge bg-purple-500 text-white rounded-pill px-3 py-2 fw-bold"
-                                    style="min-width: 70px;">T-016</span>
-                                <div>
-                                    <div class="fw-bold text-theme">Priya Sharma</div>
-                                    <div class="small text-theme-muted">Dr. Patel • Cardiology</div>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center gap-2">
-                                <span
-                                    class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small">10:45
-                                    AM</span>
-                                <span
-                                    class="badge bg-amber-500 bg-opacity-10 text-amber-400 rounded-pill px-3">WAITING</span>
-                            </div>
-                        </div>
-
-                        <div
-                            class="p-3 border-bottom border-color-theme d-flex justify-content-between align-items-center hover-bg-opacity-5 transition-all">
-                            <div class="d-flex align-items-center gap-3">
-                                <span class="badge bg-purple-500 text-white rounded-pill px-3 py-2 fw-bold"
-                                    style="min-width: 70px;">T-017</span>
-                                <div>
-                                    <div class="fw-bold text-theme">Amit Singh</div>
-                                    <div class="small text-theme-muted">Dr. Gupta • Orthopedics</div>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center gap-2">
-                                <span
-                                    class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small">11:00
-                                    AM</span>
-                                <span
-                                    class="badge bg-amber-500 bg-opacity-10 text-amber-400 rounded-pill px-3">WAITING</span>
-                            </div>
-                        </div>
-
-                        <div
-                            class="p-3 d-flex justify-content-between align-items-center hover-bg-opacity-5 transition-all">
-                            <div class="d-flex align-items-center gap-3">
-                                <span class="badge bg-purple-500 text-white rounded-pill px-3 py-2 fw-bold"
-                                    style="min-width: 70px;">T-018</span>
-                                <div>
-                                    <div class="fw-bold text-theme">Sunita Devi</div>
-                                    <div class="small text-theme-muted">Dr. Sharma • Dermatology</div>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center gap-2">
-                                <span
-                                    class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small">11:15
-                                    AM</span>
-                                <span
-                                    class="badge bg-amber-500 bg-opacity-10 text-amber-400 rounded-pill px-3">WAITING</span>
-                            </div>
+                        <div th:if="${#lists.isEmpty(todayTokens)}" class="p-5 text-center text-theme-muted">
+                            <i class="fas fa-ticket-alt opacity-25 fa-3x mb-3"></i>
+                            <p>No tokens issued today yet.</p>
                         </div>
                     </div>
                 </div>
@@ -240,58 +194,38 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="section-title mb-0 text-theme" style="font-family: 'Outfit';">Upcoming Appointments
                         </h5>
-                        <span class="badge bg-purple-500 bg-opacity-10 text-purple-400 rounded-pill px-3">28
-                            Today</span>
+                        <span class="badge bg-purple-500 bg-opacity-10 text-purple-400 rounded-pill px-3"
+                            th:text="${appointmentsCount + ' Today'}">28 Today</span>
                     </div>
 
-                    <div class="p-3 mb-3 glass-card shadow-sm hover-bg-opacity-5 transition-all">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <div>
-                                <div class="fw-bold text-theme">Meera Joshi</div>
-                                <div class="small text-theme-muted">UHID: 2024-0892</div>
+                    <div class="appointment-list" style="max-height: 400px; overflow-y: auto;">
+                        <div th:each="apt : ${upcomingAppointments}"
+                            class="p-3 mb-3 glass-card shadow-sm hover-bg-opacity-5 transition-all">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <div class="fw-bold text-theme" th:text="${apt.patient.name}">Meera Joshi</div>
+                                    <div class="small text-theme-muted" th:text="${'UHID: ' + apt.patient.uhid}">UHID:
+                                        2024-0892</div>
+                                </div>
+                                <span
+                                    class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small"
+                                    th:text="${apt.appointmentTime}">11:30 AM</span>
                             </div>
-                            <span
-                                class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small">11:30
-                                AM</span>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="small text-theme-muted">
+                                    <i class="fas fa-user-md me-1"></i> <span th:text="${apt.doctor.name}">Dr.
+                                        Verma</span>
+                                </span>
+                                <button class="btn btn-sm btn-outline-pink rounded-pill px-3"
+                                    th:if="${apt.status.name() == 'BOOKED'}">Check In</button>
+                                <span class="badge bg-emerald-500 bg-opacity-10 text-emerald-400 rounded-pill px-3"
+                                    th:if="${apt.status.name() == 'CHECKED_IN'}">CHECKED IN</span>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="small text-theme-muted"><i class="fas fa-user-md me-1"></i> Dr. Verma •
-                                General</span>
-                            <button class="btn btn-sm btn-outline-pink rounded-pill px-3">Check In</button>
-                        </div>
-                    </div>
 
-                    <div class="p-3 mb-3 glass-card shadow-sm hover-bg-opacity-5 transition-all">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <div>
-                                <div class="fw-bold text-theme">Rahul Kapoor</div>
-                                <div class="small text-theme-muted">UHID: 2024-0893</div>
-                            </div>
-                            <span
-                                class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small">12:00
-                                PM</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="small text-theme-muted"><i class="fas fa-user-md me-1"></i> Dr. Patel •
-                                Cardio</span>
-                            <button class="btn btn-sm btn-outline-pink rounded-pill px-3">Check In</button>
-                        </div>
-                    </div>
-
-                    <div class="p-3 mb-3 glass-card shadow-sm hover-bg-opacity-5 transition-all">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <div>
-                                <div class="fw-bold text-theme">Anita Rao</div>
-                                <div class="small text-theme-muted">UHID: 2024-0894</div>
-                            </div>
-                            <span
-                                class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small">12:30
-                                PM</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="small text-theme-muted"><i class="fas fa-user-md me-1"></i> Dr. Gupta •
-                                Ortho</span>
-                            <button class="btn btn-sm btn-outline-pink rounded-pill px-3">Check In</button>
+                        <div th:if="${#lists.isEmpty(upcomingAppointments)}" class="p-5 text-center text-theme-muted">
+                            <i class="fas fa-calendar-times opacity-25 fa-3x mb-3"></i>
+                            <p>No more appointments today.</p>
                         </div>
                     </div>
 

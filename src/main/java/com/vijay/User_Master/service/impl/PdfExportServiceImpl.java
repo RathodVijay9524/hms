@@ -52,6 +52,8 @@ public class PdfExportServiceImpl implements PdfExportService {
                     .collect(java.util.stream.Collectors.toList());
 
             return new com.vijay.User_Master.dto.report.ReportResultDTO(
+                    r.getParameter().getLabTest().getName(),
+                    r.getParameter().getLabTest().getBasePrice(),
                     r.getParameter().getName(),
                     r.getResultValue(),
                     r.getParameter().getUnit(),

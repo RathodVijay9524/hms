@@ -24,5 +24,8 @@ public class PatientDTO {
     private String emergencyContactRelationship;
     private String emergencyContactPhone;
     private String emergencyContactAlternatePhone;
+    private String title;
+    private String bloodGroup;
     private Integer age;
+    private String createdDate;
 }

@@ -600,7 +600,7 @@
                         <div class="text-center py-4">
                             <i class="fas fa-exclamation-triangle text-warning mb-3 fa-2x opacity-50"></i>
                             <div class="text-theme-muted mb-2">No parameters defined for this test.</div>
-                            <a href="/lab/tests" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                            <a href="/lab/tests?edit=${test.id}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3">
                                 <i class="fas fa-cog me-1"></i> Configure Parameters
                             </a>
                         </div>
@@ -698,7 +698,7 @@
                                     // Group results by test name or just show all for this test
                                     // Simplified: show parameter results in a list
                                     const testResults = results.filter(r => test.parameters.some(p => p.id == r.parameterId));
-                                    resultsText = testResults.map(tr => `${tr.parameterName}: ${tr.resultValue}`).join('<br>');
+                                    resultsText = testResults.map(tr => `<div class="mb-1"><span class="fw-bold">${tr.parameterName}:</span> ${tr.resultValue} <small class="text-muted">${tr.unit || ''}</small></div>`).join('');
                                 }
 
                                 testsBody.innerHTML += `

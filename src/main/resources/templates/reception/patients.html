@@ -89,6 +89,8 @@
             transition: all 0.2s;
             border: 1px solid var(--border-color);
             color: var(--text-muted);
+            background: transparent;
+            cursor: pointer;
         }
 
         .action-btn:hover {
@@ -128,15 +130,9 @@
                 <div class="d-flex flex-wrap gap-3 align-items-center">
                     <div class="search-container flex-grow-1">
                         <i class="fas fa-search search-icon"></i>
-                        <input type="text" class="search-input" placeholder="Search by name, UHID, or mobile number...">
+                        <input type="text" id="patientSearchInput" class="search-input"
+                            placeholder="Search by name, UHID, or mobile number...">
                     </div>
-                    <select class="form-select rounded-pill bg-primary border-0 text-white py-2 px-3"
-                        style="width: auto;">
-                        <option>All Types</option>
-                        <option>OPD Patients</option>
-                        <option>IPD Patients</option>
-                        <option>Emergency</option>
-                    </select>
                 </div>
             </div>
 
@@ -155,58 +151,52 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><span class="uhid-badge">UHID-2024-0012</span></td>
+                            <tr th:each="p : ${patients}" class="patient-row">
+                                <td><span class="uhid-badge" th:text="${p.uhid}">UHID-2024-0012</span></td>
                                 <td>
-                                    <div class="fw-bold">Wanda Maximoff</div>
-                                    <div class="small text-muted">Created: 15-Dec-2025</div>
+                                    <div class="fw-bold text-theme patient-name" th:text="${p.name}">Wanda Maximoff
+                                    </div>
+                                    <div class="small text-theme-muted" th:text="${'Created: ' + p.createdDate}">
+                                        Created: 15-Dec-2025</div>
                                 </td>
                                 <td>
-                                    <div>+91 98765 43210</div>
-                                    <div class="small text-muted">wanda@avengers.com</div>
+                                    <div class="text-theme patient-phone" th:text="${p.phone}">+91 98765 43210</div>
+                                    <div class="small text-theme-muted" th:text="${p.email}">wanda@avengers.com</div>
                                 </td>
                                 <td>
-                                    <div>Female, 28y</div>
-                                    <div class="small text-muted">Blood: O+</div>
+                                    <div class="text-theme" th:text="${p.gender + ', ' + p.age + 'y'}">Female, 28y</div>
+                                    <div class="small text-theme-muted" th:text="${'Blood: ' + p.bloodGroup}">Blood: O+
+                                    </div>
                                 </td>
-                                <td><span class="badge bg-success-subtle text-success rounded-pill px-3">Active</span>
+                                <td><span
+                                        class="badge bg-emerald-500 bg-opacity-10 text-emerald-400 rounded-pill px-3">Active</span>
                                 </td>
                                 <td class="text-end">
                                     <div class="d-flex justify-content-end gap-2">
-                                        <a href="#" class="action-btn" title="Edit Profile"><i
-                                                class="fas fa-edit"></i></a>
-                                        <a href="#" class="action-btn" title="Book Appointment"><i
-                                                class="fas fa-calendar-plus"></i></a>
-                                        <a href="#" class="action-btn" title="View History"><i
-                                                class="fas fa-history"></i></a>
+                                        <button class="action-btn" title="Edit Profile" th:data-id="${p.id}"
+                                            th:data-title="${p.title}" th:data-name="${p.name}"
+                                            th:data-phone="${p.phone}" th:data-email="${p.email}"
+                                            th:data-gender="${p.gender}" th:data-dob="${p.dateOfBirth}"
+                                            th:data-address="${p.address}" th:data-bloodgroup="${p.bloodGroup}"
+                                            onclick="openEdit(this)">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn" title="Book Appointment" th:data-id="${p.id}"
+                                            th:data-name="${p.name}" th:data-uhid="${p.uhid}"
+                                            onclick="openAppointment(this)">
+                                            <i class="fas fa-calendar-plus"></i>
+                                        </button>
+                                        <button class="action-btn" title="View History" th:data-id="${p.id}"
+                                            onclick="viewHistory(this)">
+                                            <i class="fas fa-history"></i>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td><span class="uhid-badge">UHID-2024-0015</span></td>
-                                <td>
-                                    <div class="fw-bold">Stephen Strange</div>
-                                    <div class="small text-muted">Created: 20-Dec-2025</div>
-                                </td>
-                                <td>
-                                    <div>+91 91234 56789</div>
-                                    <div class="small text-muted">dr.strange@sanctum.com</div>
-                                </td>
-                                <td>
-                                    <div>Male, 42y</div>
-                                    <div class="small text-muted">Blood: A-</div>
-                                </td>
-                                <td><span class="badge bg-info-subtle text-info rounded-pill px-3">In-Surgery</span>
-                                </td>
-                                <td class="text-end">
-                                    <div class="d-flex justify-content-end gap-2">
-                                        <a href="#" class="action-btn" title="Edit Profile"><i
-                                                class="fas fa-edit"></i></a>
-                                        <a href="#" class="action-btn" title="Book Appointment"><i
-                                                class="fas fa-calendar-plus"></i></a>
-                                        <a href="#" class="action-btn" title="View History"><i
-                                                class="fas fa-history"></i></a>
-                                    </div>
+                            <tr th:if="${#lists.isEmpty(patients)}">
+                                <td colspan="6" class="text-center py-5 text-theme-muted">
+                                    <i class="fas fa-user-injured opacity-25 fa-3x mb-3"></i>
+                                    <p>No patient records found.</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -216,8 +206,518 @@
         </div>
     </main>
 
+    <!-- Edit Patient Modal -->
+    <div class="modal fade" id="editPatientModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-white border-secondary shadow-lg" style="border-radius: 1.5rem;">
+                <div class="modal-header border-secondary p-4">
+                    <h5 class="modal-title fw-bold" style="font-family: 'Outfit';"><i
+                            class="fas fa-user-edit me-2 text-primary"></i>Edit Patient Profile</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="editPatientForm">
+                        <input type="hidden" id="editPatientId">
+                        <div class="row g-4">
+                            <div class="col-md-2">
+                                <label class="form-label small text-muted">Title</label>
+                                <select class="form-select bg-primary bg-opacity-10 border-0 text-white" id="editTitle">
+                                    <option value="Mr.">Mr.</option>
+                                    <option value="Ms.">Ms.</option>
+                                    <option value="Mrs.">Mrs.</option>
+                                    <option value="Dr.">Dr.</option>
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label small text-muted">Full Name</label>
+                                <input type="text" class="form-control bg-primary bg-opacity-10 border-0 text-white"
+                                    id="editName">
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label small text-muted">Phone Number</label>
+                                <input type="text" class="form-control bg-primary bg-opacity-10 border-0 text-white"
+                                    id="editPhone">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted">Email Address</label>
+                                <input type="email" class="form-control bg-primary bg-opacity-10 border-0 text-white"
+                                    id="editEmail">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small text-muted">Gender</label>
+                                <select class="form-select bg-primary bg-opacity-10 border-0 text-white"
+                                    id="editGender">
+                                    <option value="MALE">Male</option>
+                                    <option value="FEMALE">Female</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small text-muted">Blood Group</label>
+                                <select class="form-select bg-primary bg-opacity-10 border-0 text-white"
+                                    id="editBloodGroup">
+                                    <option value="A+">A+</option>
+                                    <option value="B+">B+</option>
+                                    <option value="O+">O+</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B-">B-</option>
+                                    <option value="O-">O-</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted">Date of Birth</label>
+                                <input type="date" class="form-control bg-primary bg-opacity-10 border-0 text-white"
+                                    id="editDob">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label small text-muted">Address</label>
+                                <textarea class="form-control bg-primary bg-opacity-10 border-0 text-white"
+                                    id="editAddress" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-secondary p-4">
+                    <button type="button" class="btn btn-link text-muted text-decoration-none"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" onclick="updatePatient()" id="updatePatientBtn"
+                        class="btn btn-primary px-5 rounded-pill fw-bold">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Book Appointment Modal -->
+    <div class="modal fade" id="appointmentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white border-secondary shadow-lg" style="border-radius: 1.5rem;">
+                <div class="modal-header border-secondary p-4">
+                    <h5 class="modal-title fw-bold" style="font-family: 'Outfit';"><i
+                            class="fas fa-calendar-plus me-2 text-info"></i>Book Appointment</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-4 p-3 bg-primary bg-opacity-10 rounded-3 border border-primary border-opacity-25">
+                        <div class="small text-primary fw-bold mb-1"><i class="fas fa-id-card me-1"></i> Patient Details
+                        </div>
+                        <div class="fw-bold fs-5" id="apptPatientInfo">Select a patient</div>
+                    </div>
+
+                    <form id="appointmentForm">
+                        <input type="hidden" id="apptPatientId">
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Department</label>
+                            <select class="form-select bg-primary bg-opacity-10 border-0 text-white" id="apptDept"
+                                onchange="loadDoctors()">
+                                <option value="">Select Department</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Doctor</label>
+                            <select class="form-select bg-primary bg-opacity-10 border-0 text-white" id="apptDoctor"
+                                onchange="loadSlots()">
+                                <option value="">Select Doctor</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Appointment Date</label>
+                            <input type="date" class="form-control bg-primary bg-opacity-10 border-0 text-white"
+                                id="apptDate" th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                                onchange="loadSlots()">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Available Slots</label>
+                            <div id="slotsContainer"
+                                class="d-flex flex-wrap gap-2 p-3 bg-black bg-opacity-25 rounded-3 min-vh-10"
+                                style="min-height: 80px;">
+                                <div class="small text-muted w-100 text-center py-3">Select doctor and date to see slots
+                                </div>
+                            </div>
+                            <input type="hidden" id="selectedSlotId">
+                        </div>
+                        <div class="mb-0">
+                            <label class="form-label small text-muted">Reason for Visit</label>
+                            <textarea class="form-control bg-primary bg-opacity-10 border-0 text-white" id="apptReason"
+                                rows="2" placeholder="e.g. Regular Checkup"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-secondary p-4">
+                    <button type="button" class="btn btn-link text-muted text-decoration-none"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" onclick="submitAppointment()" id="confirmApptBtn"
+                        class="btn btn-info px-5 rounded-pill text-white fw-bold">Confirm Booking</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Offcanvas -->
+    <div class="offcanvas offcanvas-end bg-dark text-white border-secondary" tabindex="-1" id="historyOffcanvas"
+        style="width: 550px;">
+        <div class="offcanvas-header border-bottom border-secondary p-4">
+            <h5 class="offcanvas-title fw-bold" style="font-family: 'Outfit';">
+                <i class="fas fa-history me-2 text-warning"></i>Medical History
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body p-4">
+            <div id="historyContent">
+                <!-- Content loaded via AJAX -->
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        // Global variables
+        let editModal, appointmentModal, historyOffcanvas;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            editModal = new bootstrap.Modal(document.getElementById('editPatientModal'));
+            appointmentModal = new bootstrap.Modal(document.getElementById('appointmentModal'));
+            historyOffcanvas = new bootstrap.Offcanvas(document.getElementById('historyOffcanvas'));
+
+            loadDepartments();
+        });
+
+        document.getElementById('patientSearchInput').addEventListener('input', function (e) {
+            const query = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('.patient-row');
+
+            rows.forEach(row => {
+                const nameNode = row.querySelector('.patient-name');
+                const phoneNode = row.querySelector('.patient-phone');
+                const uhidNode = row.querySelector('.uhid-badge');
+
+                if (!nameNode) return;
+
+                const name = nameNode.textContent.toLowerCase();
+                const phone = phoneNode ? phoneNode.textContent.toLowerCase() : '';
+                const uhid = uhidNode ? uhidNode.textContent.toLowerCase() : '';
+
+                if (name.includes(query) || phone.includes(query) || uhid.includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        function openEdit(btn) {
+            const id = btn.getAttribute('data-id');
+
+            document.getElementById('editPatientId').value = id;
+            document.getElementById('editTitle').value = btn.getAttribute('data-title') || 'Mr.';
+            document.getElementById('editName').value = btn.getAttribute('data-name');
+            document.getElementById('editPhone').value = btn.getAttribute('data-phone');
+            document.getElementById('editEmail').value = btn.getAttribute('data-email');
+            document.getElementById('editGender').value = btn.getAttribute('data-gender') || 'MALE';
+            document.getElementById('editDob').value = btn.getAttribute('data-dob');
+            document.getElementById('editAddress').value = btn.getAttribute('data-address');
+            document.getElementById('editBloodGroup').value = btn.getAttribute('data-bloodgroup') || 'A+';
+
+            editModal.show();
+        }
+
+        async function updatePatient() {
+            const id = document.getElementById('editPatientId').value;
+            const data = {
+                title: document.getElementById('editTitle').value,
+                name: document.getElementById('editName').value,
+                phone: document.getElementById('editPhone').value,
+                email: document.getElementById('editEmail').value,
+                gender: document.getElementById('editGender').value,
+                dateOfBirth: document.getElementById('editDob').value,
+                address: document.getElementById('editAddress').value,
+                bloodGroup: document.getElementById('editBloodGroup').value
+            };
+
+            const btn = document.getElementById('updatePatientBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            try {
+                const response = await fetch(`/api/lab/patients/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to update patient details');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Save Changes';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                btn.disabled = false;
+                btn.innerHTML = 'Save Changes';
+            }
+        }
+
+        // --- Appointment Logic ---
+        function openAppointment(btn) {
+            const id = btn.getAttribute('data-id');
+            const name = btn.getAttribute('data-name');
+            const uhid = btn.getAttribute('data-uhid');
+
+            document.getElementById('apptPatientId').value = id;
+            document.getElementById('apptPatientInfo').textContent = `${name} (${uhid})`;
+
+            // Reset slots
+            document.getElementById('slotsContainer').innerHTML = '<div class="small text-muted w-100 text-center py-3">Select doctor and date to see slots</div>';
+            document.getElementById('selectedSlotId').value = '';
+
+            appointmentModal.show();
+        }
+
+        async function loadDepartments() {
+            try {
+                const response = await fetch('/api/masters/departments');
+                const depts = await response.json();
+                const select = document.getElementById('apptDept');
+                select.innerHTML = '<option value="">Select Department</option>';
+                depts.forEach(d => {
+                    select.innerHTML += `<option value="${d.id}">${d.name}</option>`;
+                });
+            } catch (error) {
+                console.error('Error loading departments:', error);
+            }
+        }
+
+        async function loadDoctors() {
+            const deptId = document.getElementById('apptDept').value;
+            const select = document.getElementById('apptDoctor');
+            select.innerHTML = '<option value="">Select Doctor</option>';
+
+            if (!deptId) return;
+
+            try {
+                const response = await fetch('/api/masters/doctors');
+                const doctors = await response.json();
+
+                const filtered = doctors.filter(d => !deptId || d.departmentId == deptId);
+
+                filtered.forEach(d => {
+                    select.innerHTML += `<option value="${d.id}">${d.title || ''} ${d.name}</option>`;
+                });
+
+                if (filtered.length === 0 && doctors.length > 0) {
+                    doctors.forEach(d => {
+                        select.innerHTML += `<option value="${d.id}">${d.title || ''} ${d.name}</option>`;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading doctors:', error);
+            }
+        }
+
+        async function loadSlots() {
+            const doctorId = document.getElementById('apptDoctor').value;
+            const date = document.getElementById('apptDate').value;
+            const container = document.getElementById('slotsContainer');
+
+            if (!doctorId || !date) return;
+
+            container.innerHTML = '<div class="w-100 text-center py-3"><div class="spinner-border spinner-border-sm text-info"></div><span class="ms-2 small text-muted">Checking availability...</span></div>';
+
+            try {
+                const response = await fetch(`/api/scheduling/slots?doctorId=${doctorId}&date=${date}`);
+                const slots = await response.json();
+
+                container.innerHTML = '';
+                if (!slots || slots.length === 0) {
+                    container.innerHTML = '<div class="alert alert-warning w-100 small m-0 py-2">No active schedule found for this doctor on this date.</div>';
+                    return;
+                }
+
+                slots.forEach(slot => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = `btn btn-sm ${slot.available ? 'btn-outline-info' : 'btn-secondary disabled opacity-25'} py-1 px-3 rounded-pill`;
+                    btn.textContent = slot.startTime;
+                    if (slot.available) {
+                        btn.onclick = () => selectSlot(btn, slot.id);
+                    }
+                    container.appendChild(btn);
+                });
+            } catch (error) {
+                console.error('Error loading slots:', error);
+                container.innerHTML = '<div class="alert alert-danger w-100 small m-0 py-2">Error connecting to scheduling service.</div>';
+            }
+        }
+
+        function selectSlot(btn, id) {
+            document.querySelectorAll('#slotsContainer .btn').forEach(b => b.classList.remove('btn-info', 'text-white'));
+            btn.classList.add('btn-info', 'text-white');
+            document.getElementById('selectedSlotId').value = id;
+        }
+
+        async function submitAppointment() {
+            const patientId = document.getElementById('apptPatientId').value;
+            const doctorId = document.getElementById('apptDoctor').value;
+            const slotId = document.getElementById('selectedSlotId').value;
+            const reason = document.getElementById('apptReason').value;
+
+            if (!slotId) {
+                alert('Please select an available time slot');
+                return;
+            }
+
+            const data = {
+                patientId: patientId,
+                doctorId: doctorId,
+                slotId: slotId,
+                reasonForVisit: reason
+            };
+
+            const btn = document.getElementById('confirmApptBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Booking...';
+
+            try {
+                const response = await fetch('/api/appointments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('Appointment booked successfully!');
+                    appointmentModal.hide();
+                } else {
+                    const err = await response.text();
+                    alert('Booking failed: ' + err);
+                }
+            } catch (error) {
+                console.error('Error booking appointment:', error);
+                alert('Network error during booking.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Confirm Booking';
+            }
+        }
+
+        // --- History Logic ---
+        async function viewHistory(btn) {
+            const id = btn.getAttribute('data-id');
+            const container = document.getElementById('historyContent');
+            container.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
+                    <p class="mt-3 text-muted">Retrieving comprehensive medical history...</p>
+                </div>`;
+            historyOffcanvas.show();
+
+            try {
+                const [historyRes, vitalsRes] = await Promise.all([
+                    fetch(`/api/emr/patients/${id}/history`),
+                    fetch(`/api/emr/patients/${id}/vitals/recent`)
+                ]);
+
+                const history = historyRes.ok ? await historyRes.json() : null;
+                const vitals = vitalsRes.ok ? await vitalsRes.json() : [];
+
+                let html = '';
+
+                // Vitals Section
+                html += `
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <h6 class="fw-bold mb-0 text-info" style="font-family: 'Outfit';">Recent Vital Signs</h6>
+                            <div class="flex-grow-1 ms-3 border-bottom border-secondary border-opacity-50"></div>
+                        </div>`;
+
+                if (vitals.length > 0) {
+                    vitals.forEach(v => {
+                        html += `
+                            <div class="patient-card p-3 mb-3" style="background: rgba(168, 85, 247, 0.05);">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-primary bg-opacity-25 text-primary rounded-pill"><i class="far fa-clock me-1"></i> ${new Date(v.recordedOn).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                                    <span class="small text-muted">BP: <span class="text-white fw-bold">${v.bloodPressure || '-'}</span></span>
+                                </div>
+                                <div class="row g-2 text-center">
+                                    <div class="col-4">
+                                        <div class="p-2 rounded bg-black bg-opacity-25">
+                                            <div class="text-muted small">Heart Rate</div>
+                                            <div class="fw-bold text-danger">${v.heartRate || '--'} <small>bpm</small></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="p-2 rounded bg-black bg-opacity-25">
+                                            <div class="text-muted small">Temp</div>
+                                            <div class="fw-bold text-warning">${v.temperature || '--'} <small>°C</small></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="p-2 rounded bg-black bg-opacity-25">
+                                            <div class="text-muted small">SpO2</div>
+                                            <div class="fw-bold text-success">${v.spo2 || '--'} <small>%</small></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    html += '<div class="text-center py-4 text-muted small border border-secondary border-dashed rounded-3"><i class="fas fa-heartbeat fa-2x opacity-25 mb-2"></i><br>No vitals recorded in recent visits</div>';
+                }
+                html += '</div>';
+
+                // Medical History Section
+                html += `
+                    <div>
+                        <div class="d-flex align-items-center mb-3">
+                            <h6 class="fw-bold mb-0 text-info" style="font-family: 'Outfit';">Clinical Summary</h6>
+                            <div class="flex-grow-1 ms-3 border-bottom border-secondary border-opacity-50"></div>
+                        </div>`;
+
+                if (history) {
+                    html += `
+                        <div class="patient-card p-4">
+                            <div class="mb-3">
+                                <label class="small text-muted d-block mb-1">ALLERGIES</label>
+                                <span class="${history.allergies ? 'text-danger fw-bold' : 'text-success'}">${history.allergies || 'No known allergies'}</span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="small text-muted d-block mb-1">CHRONIC CONDITIONS</label>
+                                <div class="text-white">${history.chronicIlness || 'None reported'}</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="small text-muted d-block mb-1">PAST SURGERIES</label>
+                                <div class="text-white">${history.pastSurgeries || 'None reported'}</div>
+                            </div>
+                            <div class="mb-0">
+                                <label class="small text-muted d-block mb-1">CURRENT MEDICATIONS</label>
+                                <div class="text-white">${history.currentMedications || 'None reported'}</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    html += '<div class="text-center py-4 text-muted small border border-secondary border-dashed rounded-3"><i class="fas fa-file-medical fa-2x opacity-25 mb-2"></i><br>No clinical summary profile created yet</div>';
+                }
+                html += '</div>';
+
+                container.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading history:', error);
+                container.innerHTML = `
+                    <div class="alert alert-danger d-flex align-items-center" role="alert">
+                        <i class="fas fa-exclamation-triangle me-3 fa-2x"></i>
+                        <div>
+                            <strong>Service Interruption</strong><br>
+                            Could not synchronize with EMR records. Please try again later.
+                        </div>
+                    </div>`;
+            }
+        }
+    </script>
 </body>
 
 </html>

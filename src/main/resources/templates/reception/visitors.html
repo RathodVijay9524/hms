@@ -117,7 +117,8 @@
                 </div>
                 <div class="d-flex gap-2">
                     <button class="btn btn-outline-secondary rounded-pill px-4">Daily Report</button>
-                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #a855f7;">
+                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #a855f7;"
+                        data-bs-toggle="modal" data-bs-target="#newVisitorModal">
                         <i class="fas fa-id-badge me-2"></i>New Visitor Pass
                     </button>
                 </div>
@@ -126,33 +127,33 @@
             <!-- Stats Bar -->
             <div class="row g-4 mb-4">
                 <div class="col-md-3">
-                    <div class="visitor-card p-3 text-center">
-                        <small class="text-muted d-block">Current In-Premise</small>
-                        <h3 class="fw-bold mb-0">28</h3>
+                    <div class="visitor-card p-3 text-center border-emerald-500 border-opacity-20 shadow-sm">
+                        <small class="text-muted d-block fw-bold text-uppercase ls-1 smaller mb-1">In-Premise</small>
+                        <h3 class="fw-bold mb-0 text-emerald-400" th:text="${stats.inPremiseVisitors}">28</h3>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="visitor-card p-3 text-center">
-                        <small class="text-muted d-block">Total Today</small>
-                        <h3 class="fw-bold mb-0 text-primary">147</h3>
+                    <div class="visitor-card p-3 text-center border-purple-500 border-opacity-20 shadow-sm">
+                        <small class="text-muted d-block fw-bold text-uppercase ls-1 smaller mb-1">Total
+                            Visitors</small>
+                        <h3 class="fw-bold mb-0 text-purple-400" th:text="${#lists.size(visitors)}">147</h3>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="visitor-card p-3 text-center">
-                        <small class="text-muted d-block">Overstay Alerts</small>
-                        <h3 class="fw-bold mb-0 text-danger">02</h3>
+                    <div class="visitor-card p-3 text-center border-blue-500 border-opacity-20 shadow-sm">
+                        <small class="text-muted d-block fw-bold text-uppercase ls-1 smaller mb-1">Appointments</small>
+                        <h3 class="fw-bold mb-0 text-blue-400" th:text="${stats.totalAppointments}">47</h3>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="visitor-card p-3 text-center">
-                        <small class="text-muted d-block">Avg Time (min)</small>
-                        <h3 class="fw-bold mb-0 text-success">45</h3>
+                    <div class="visitor-card p-3 text-center border-amber-500 border-opacity-20 shadow-sm">
+                        <small class="text-muted d-block fw-bold text-uppercase ls-1 smaller mb-1">New Reg.</small>
+                        <h3 class="fw-bold mb-0 text-amber-400" th:text="${stats.todayRegistrations}">8</h3>
                     </div>
                 </div>
             </div>
 
-            <!-- Log List -->
-            <div class="visitor-card overflow-hidden">
+            <div class="visitor-card overflow-hidden shadow-lg border-color-theme">
                 <div class="table-responsive">
                     <table class="table log-table mb-0">
                         <thead>
@@ -160,41 +161,43 @@
                                 <th>Pass #</th>
                                 <th>Visitor Name</th>
                                 <th>Purpose / Meeting With</th>
-                                <th>Entry Time</th>
+                                <th>Check In</th>
                                 <th>Status</th>
                                 <th class="text-end">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><span class="pass-badge">VP-1024</span></td>
+                            <tr th:each="v : ${visitors}">
+                                <td><span class="pass-badge" th:text="${'VP-' + (1000 + v.id)}">VP-1024</span></td>
                                 <td>
-                                    <div class="fw-bold">Natasha Romanoff</div>
-                                    <div class="small text-muted">+91 99887 76655</div>
+                                    <div class="fw-bold text-theme" th:text="${v.visitorName}">Natasha Romanoff</div>
+                                    <div class="small text-theme-muted" th:text="${v.phone}">+91 99887 76655</div>
                                 </td>
                                 <td>
-                                    <div class="small fw-bold">Patient Visit (IPD)</div>
-                                    <div class="small text-muted">Ward 302 • Clint Barton</div>
+                                    <div class="small fw-bold text-theme" th:text="${v.purpose}">Patient Visit (IPD)
+                                    </div>
+                                    <div class="small text-theme-muted" th:text="${v.whomToMeet}">Ward 302 • Clint
+                                        Barton</div>
                                 </td>
-                                <td><span class="time-badge">05:12 PM</span></td>
-                                <td><span class="status-badge status-in">In Premise</span></td>
+                                <td><span class="time-badge" th:text="${v.checkInTime}">05:12 PM</span></td>
+                                <td>
+                                    <span class="status-badge"
+                                        th:classappend="${v.checkOutTime == null ? 'status-in' : 'status-out'}"
+                                        th:text="${v.checkOutTime == null ? 'In Premise' : 'Checked Out'}">In
+                                        Premise</span>
+                                </td>
                                 <td class="text-end">
-                                    <button class="btn-check-out">Check Out</button>
+                                    <button th:if="${v.checkOutTime == null}" class="btn-check-out"
+                                        th:onclick="'checkOut(' + ${v.id} + ')'">Check Out</button>
+                                    <span th:if="${v.checkOutTime != null}" class="small text-theme-muted"
+                                        th:text="${'Out: ' + v.checkOutTime}">Out: 05:05 PM</span>
                                 </td>
                             </tr>
-                            <tr>
-                                <td><span class="pass-badge">VP-1022</span></td>
-                                <td>
-                                    <div class="fw-bold">Sam Wilson</div>
-                                    <div class="small text-muted">+91 98989 89898</div>
+                            <tr th:if="${#lists.isEmpty(visitors)}">
+                                <td colspan="6" class="text-center py-5 text-theme-muted">
+                                    <i class="fas fa-users-slash opacity-25 fa-3x mb-3"></i>
+                                    <p>No visitors logged today.</p>
                                 </td>
-                                <td>
-                                    <div class="small fw-bold">Medical Rep</div>
-                                    <div class="small text-muted">Dr. Steven Strange</div>
-                                </td>
-                                <td><span class="time-badge">04:30 PM</span></td>
-                                <td><span class="status-badge status-out">Checked Out</span></td>
-                                <td class="text-end text-muted small">Out: 05:05 PM</td>
                             </tr>
                         </tbody>
                     </table>
@@ -203,8 +206,107 @@
         </div>
     </main>
 
+    <!-- New Visitor Modal -->
+    <div class="modal fade" id="newVisitorModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card border-color-theme shadow-2xl">
+                <div class="modal-header border-color-theme bg-opacity-50">
+                    <h5 class="modal-title fw-bold" style="font-family: 'Outfit';">New Visitor Pass</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="visitorForm">
+                        <div class="mb-3">
+                            <label class="small fw-bold text-theme mb-2">Visitor Name</label>
+                            <input type="text" id="visName" class="form-control border-color-theme" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="small fw-bold text-theme mb-2">Phone Number</label>
+                            <input type="text" id="visPhone" class="form-control border-color-theme" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-theme mb-2">ID Proof Type</label>
+                                <select id="visIdType" class="form-select border-color-theme">
+                                    <option value="Aadhar">Aadhar Card</option>
+                                    <option value="PAN">PAN Card</option>
+                                    <option value="Driving License">DL</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-theme mb-2">ID Number</label>
+                                <input type="text" id="visIdNum" class="form-control border-color-theme">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="small fw-bold text-theme mb-2">Purpose of Visit</label>
+                            <input type="text" id="visPurpose" class="form-control border-color-theme" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="small fw-bold text-theme mb-2">Whom to Meet</label>
+                            <input type="text" id="visWhom" class="form-control border-color-theme">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-color-theme">
+                    <button type="button" class="btn btn-link text-theme-muted text-decoration-none"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-purple-theme px-4 rounded-pill" onclick="submitVisitor()">Check
+                        In</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        async function submitVisitor() {
+            const data = {
+                visitorName: document.getElementById('visName').value,
+                phone: document.getElementById('visPhone').value,
+                idProofType: document.getElementById('visIdType').value,
+                idProofNumber: document.getElementById('visIdNum').value,
+                purpose: document.getElementById('visPurpose').value,
+                whomToMeet: document.getElementById('visWhom').value
+            };
+
+            if (!data.visitorName || !data.phone || !data.purpose) {
+                alert('Please fill Visitor Name, Phone and Purpose');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/reception/visitors/check-in', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Error checking in visitor');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function checkOut(id) {
+            try {
+                const response = await fetch(`/api/reception/visitors/${id}/check-out`, {
+                    method: 'PUT'
+                });
+                if (response.ok) {
+                    location.reload();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    </script>
 </body>
 
 </html>

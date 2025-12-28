@@ -61,6 +61,14 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
+    public java.util.List<PatientDTO> getAllPatients() {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        return patientRepository.findByOwnerId(ownerId).stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
+
+    @Override
     @Transactional
     public PatientDTO updatePatient(Long id, PatientDTO patientDTO) {
         Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
@@ -68,8 +76,10 @@ public class PatientServiceImpl implements PatientService {
                 .orElseThrow(() -> new ResourceNotFoundException("Patient", "id", id));
 
         patient.setName(patientDTO.getName());
+        patient.setTitle(patientDTO.getTitle());
         patient.setEmail(patientDTO.getEmail());
         patient.setPhone(patientDTO.getPhone());
+        patient.setBloodGroup(patientDTO.getBloodGroup());
         patient.setDateOfBirth(patientDTO.getDateOfBirth());
         patient.setGender(patientDTO.getGender());
         patient.setAddress(patientDTO.getAddress());
@@ -107,6 +117,10 @@ public class PatientServiceImpl implements PatientService {
         PatientDTO dto = modelMapper.map(patient, PatientDTO.class);
         if (patient.getDateOfBirth() != null) {
             dto.setAge(java.time.Period.between(patient.getDateOfBirth(), java.time.LocalDate.now()).getYears());
+        }
+        if (patient.getCreatedOn() != null) {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MMM-yyyy");
+            dto.setCreatedDate(sdf.format(patient.getCreatedOn()));
         }
         return dto;
     }

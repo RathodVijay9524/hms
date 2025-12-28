@@ -20,9 +20,13 @@ public class Patient extends BaseModel {
     @Column(nullable = false)
     private String name;
 
+    private String title;
+
     private String email;
 
     private String phone;
+
+    private String bloodGroup;
 
     private LocalDate dateOfBirth;
 

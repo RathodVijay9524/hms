@@ -11,4 +11,5 @@ public interface PatientService {
     void deletePatient(Long id);
     long getPatientCount();
     PatientDTO findByUhid(String uhid);
+    java.util.List<PatientDTO> getAllPatients();
 }
