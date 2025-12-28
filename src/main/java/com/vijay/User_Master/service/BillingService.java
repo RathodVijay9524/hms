@@ -16,6 +16,7 @@ public interface BillingService {
 
     // Bill Generation
     BillResponse generateBillFromAppointment(Long appointmentId);
+    BillResponse generateBillFromVisit(Long visitId);
     BillResponse getBillById(Long id);
     BillResponse getBillByNumber(String billNumber);
     List<BillResponse> getPatientBills(Long patientId);

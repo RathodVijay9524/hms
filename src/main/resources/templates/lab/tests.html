@@ -277,9 +277,22 @@
                             <label class="form-label">Description</label>
                             <textarea id="testDescription" class="form-control" rows="3"></textarea>
                         </div>
-                        <div class="form-check mb-3">
+                        <div class="form-check mb-4">
                             <input class="form-check-input" type="checkbox" id="testActive" checked>
                             <label class="form-check-label" for="testActive">Active</label>
+                        </div>
+
+                        <hr class="opacity-10">
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-primary mb-0"><i class="fas fa-list-ul me-2"></i>Test Parameters</h6>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addParameterRow()">
+                                <i class="fas fa-plus me-1"></i> Add Parameter
+                            </button>
+                        </div>
+
+                        <div id="parametersList" class="mb-3">
+                            <!-- Parameter rows added here -->
                         </div>
                     </form>
                 </div>
@@ -297,8 +310,38 @@
         const testModal = new bootstrap.Modal(document.getElementById('testModal'));
         const testForm = document.getElementById('testForm');
 
+        function addParameterRow(data = {}) {
+            const container = document.getElementById('parametersList');
+            const rowId = 'param_' + Date.now() + Math.random().toString(36).substr(2, 5);
+            const row = document.createElement('div');
+            row.className = 'parameter-row bg-tertiary p-2 rounded mb-2 border border-color';
+            row.id = rowId;
+            row.innerHTML = `
+                <div class="row g-2 align-items-center">
+                    <div class="col-md-5">
+                        <input type="text" class="form-control form-control-sm param-name" placeholder="Name (e.g. Hb)" value="${data.name || ''}" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control form-control-sm param-unit" placeholder="Unit" value="${data.unit || ''}">
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <button type="button" class="btn btn-sm btn-icon delete m-0" onclick="removeParameterRow('${rowId}')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(row);
+        }
+
+        function removeParameterRow(rowId) {
+            const row = document.getElementById(rowId);
+            if (row) row.remove();
+        }
+
         function editTest(id) {
             document.getElementById('modalTitle').innerText = 'Edit Lab Test';
+            document.getElementById('parametersList').innerHTML = '';
             fetch(`/api/lab/tests/${id}`)
                 .then(response => response.json())
                 .then(test => {
@@ -309,6 +352,11 @@
                     document.getElementById('testCategory').value = test.category;
                     document.getElementById('testDescription').value = test.description || '';
                     document.getElementById('testActive').checked = test.active;
+
+                    if (test.parameters && test.parameters.length > 0) {
+                        test.parameters.forEach(p => addParameterRow(p));
+                    }
+
                     testModal.show();
                 });
         }
@@ -328,13 +376,27 @@
 
         function saveTest() {
             const id = document.getElementById('testId').value;
+
+            // Collect parameters
+            const parameters = [];
+            document.querySelectorAll('.parameter-row').forEach(row => {
+                const name = row.querySelector('.param-name').value;
+                if (name) {
+                    parameters.push({
+                        name: name,
+                        unit: row.querySelector('.param-unit').value
+                    });
+                }
+            });
+
             const testData = {
                 name: document.getElementById('testName').value,
                 code: document.getElementById('testCode').value,
                 basePrice: document.getElementById('testPrice').value,
                 category: document.getElementById('testCategory').value,
                 description: document.getElementById('testDescription').value,
-                active: document.getElementById('testActive').checked
+                active: document.getElementById('testActive').checked,
+                parameters: parameters
             };
 
             const method = id ? 'PUT' : 'POST';
@@ -357,6 +419,7 @@
         document.getElementById('testModal').addEventListener('hidden.bs.modal', function () {
             testForm.reset();
             document.getElementById('testId').value = '';
+            document.getElementById('parametersList').innerHTML = '';
             document.getElementById('modalTitle').innerText = 'Add New Lab Test';
         });
 

@@ -78,8 +78,36 @@ public class LabTestServiceImpl implements LabTestService {
         labTest.setBasePrice(labTestDTO.getBasePrice());
         labTest.setActive(labTestDTO.isActive());
 
-        // Note: For simplicity, update parameters/reference ranges might need a more complex merge logic.
-        // For now, we update the basic test details.
+        // Update parameters: Clear existing and add new
+        if (labTest.getParameters() != null) {
+            labTest.getParameters().clear();
+        } else {
+            labTest.setParameters(new java.util.ArrayList<>());
+        }
+
+        if (labTestDTO.getParameters() != null) {
+            labTestDTO.getParameters().forEach(paramDTO -> {
+                LabParameter param = LabParameter.builder()
+                        .name(paramDTO.getName())
+                        .unit(paramDTO.getUnit())
+                        .method(paramDTO.getMethod())
+                        .labTest(labTest)
+                        .build();
+                
+                if (paramDTO.getReferenceRanges() != null) {
+                    List<LabReferenceRange> ranges = paramDTO.getReferenceRanges().stream()
+                            .map(rangeDTO -> LabReferenceRange.builder()
+                                    .gender(rangeDTO.getGender())
+                                    .lowerLimit(rangeDTO.getLowerLimit())
+                                    .upperLimit(rangeDTO.getUpperLimit())
+                                    .parameter(param)
+                                    .build())
+                            .collect(Collectors.toList());
+                    param.setReferenceRanges(ranges);
+                }
+                labTest.getParameters().add(param);
+            });
+        }
 
         LabTest updatedTest = labTestRepository.save(labTest);
         return modelMapper.map(updatedTest, LabTestDTO.class);

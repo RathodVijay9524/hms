@@ -5,6 +5,7 @@ import com.vijay.User_Master.dto.emr.*;
 import com.vijay.User_Master.entity.*;
 import com.vijay.User_Master.exceptions.ResourceNotFoundException;
 import com.vijay.User_Master.repository.*;
+import com.vijay.User_Master.service.BillingService;
 import com.vijay.User_Master.service.PatientEMRService;
 import com.vijay.User_Master.service.VisitLifecycleService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class PatientEMRServiceImpl implements PatientEMRService {
     private final PatientRepository patientRepository;
     private final UserRepository userRepository;
     private final VisitLifecycleService visitLifecycleService;
+    private final BillingService billingService;
     private final com.vijay.User_Master.service.EMRAuditService emrAuditService;
     private final ModelMapper modelMapper;
 
@@ -297,6 +299,16 @@ public class PatientEMRServiceImpl implements PatientEMRService {
         
         String closedBy = CommonUtils.getLoggedInUser().getName();
         DoctorVisit updated = visitLifecycleService.closeVisit(visitId, closedBy);
+        
+        // Automated Charging for Consultation
+        try {
+            billingService.generateBillFromVisit(visitId);
+        } catch (Exception e) {
+            // Log error but don't fail the visit closure
+            // In a production system, you might want to retry or enqueue this
+            System.err.println("Failed to generate automated bill: " + e.getMessage());
+        }
+
         return mapToDTO(updated);
     }
 

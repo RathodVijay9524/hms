@@ -301,6 +301,59 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        async function loadDashboardStats() {
+            try {
+                const response = await fetch('/api/billing/bills');
+                const result = await response.json();
+
+                if (result.status === 'success' && result.data) {
+                    const bills = result.data;
+
+                    // Calculate stats
+                    const totalRevenue = bills
+                        .filter(b => b.status === 'PAID')
+                        .reduce((sum, b) => sum + parseFloat(b.netAmount || 0), 0);
+
+                    const pendingDues = bills
+                        .filter(b => b.status === 'GENERATED' || b.status === 'DRAFT' || b.status === 'PARTIALLY_PAID')
+                        .reduce((sum, b) => sum + (parseFloat(b.netAmount || 0) - parseFloat(b.paidAmount || 0)), 0);
+
+                    const todayBills = bills.filter(b => {
+                        const createdDate = new Date(b.createdOn);
+                        const today = new Date();
+                        return createdDate.toDateString() === today.toDateString();
+                    }).length;
+
+                    const todayCollected = bills
+                        .filter(b => {
+                            const createdDate = new Date(b.createdOn);
+                            const today = new Date();
+                            return createdDate.toDateString() === today.toDateString() && b.status === 'PAID';
+                        })
+                        .reduce((sum, b) => sum + parseFloat(b.paidAmount || 0), 0);
+
+                    // Update stats display
+                    document.querySelector('.insight-value.text-emerald-400').textContent =
+                        `₹${(totalRevenue / 100000).toFixed(1)}L`;
+                    document.querySelector('.insight-value.text-amber-400').textContent =
+                        `₹${(pendingDues / 100000).toFixed(1)}L`;
+                    document.querySelectorAll('.insight-value.text-theme')[0].textContent = todayBills;
+                    document.querySelector('.insight-value.text-blue-400').textContent =
+                        `₹${(todayCollected / 100000).toFixed(1)}L`;
+
+                    // Load recent bills (last 4)
+                    const recentBills = bills.slice(0, 4);
+                    // Recent bills section is static for now - you can enhance it later
+                }
+            } catch (err) {
+                console.error('Failed to load dashboard stats:', err);
+            }
+        }
+
+        // Load stats on page load
+        document.addEventListener('DOMContentLoaded', loadDashboardStats);
+    </script>
 </body>
 
 </html>

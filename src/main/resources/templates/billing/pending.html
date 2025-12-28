@@ -79,51 +79,11 @@
                                 <th class="pe-4 text-end">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="pendingTableBody">
+                            <!-- Pending bills will be loaded dynamically -->
                             <tr>
-                                <td>
-                                    <div class="fw-bold">Bucky Barnes</div>
-                                    <div class="small text-muted">UHID-2024-0921 • Bed B-202</div>
-                                </td>
-                                <td>
-                                    <div class="fw-bold">Major Surgery</div>
-                                    <div class="small text-muted">Post-Op Recovery</div>
-                                </td>
-                                <td>
-                                    <div>27-Dec-2025</div>
-                                    <div class="small text-muted">Discharge Advised</div>
-                                </td>
-                                <td>
-                                    <div class="fw-bold text-theme" style="font-family: 'Outfit';">₹ 85,400.00</div>
-                                </td>
-                                <td><span
-                                        class="badge bg-red-500 bg-opacity-10 text-red-500 rounded-pill px-3">CRITICAL</span>
-                                </td>
-                                <td class="pe-4 text-end">
-                                    <button class="btn btn-sm btn-pink-theme rounded-pill px-3">Generate Bill</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="fw-bold">Natasha Romanoff</div>
-                                    <div class="small text-muted">UHID-2024-0112</div>
-                                </td>
-                                <td>
-                                    <div class="fw-bold">Specialist Consultation</div>
-                                    <div class="small text-muted">Cardiology</div>
-                                </td>
-                                <td>
-                                    <div>27-Dec-2025</div>
-                                    <div class="small text-muted">Finished 1h ago</div>
-                                </td>
-                                <td>
-                                    <div class="fw-bold text-theme" style="font-family: 'Outfit';">₹ 1,500.00</div>
-                                </td>
-                                <td><span
-                                        class="badge bg-amber-500 bg-opacity-10 text-amber-500 rounded-pill px-3">MEDIUM</span>
-                                </td>
-                                <td class="pe-4 text-end">
-                                    <button class="btn btn-sm btn-pink-theme rounded-pill px-3">Generate Bill</button>
+                                <td colspan="6" class="text-center text-theme-muted py-4">
+                                    <i class="fas fa-spinner fa-spin me-2"></i> Loading pending bills...
                                 </td>
                             </tr>
                         </tbody>
@@ -135,6 +95,99 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        // Load pending bills (DRAFT and GENERATED statuses)
+        async function loadPendingBills() {
+            try {
+                const response = await fetch('/api/billing/bills');
+                const result = await response.json();
+
+                if (result.status === 'success' && result.data) {
+                    // Filter for DRAFT and GENERATED bills only
+                    const pendingBills = result.data.filter(bill =>
+                        bill.status === 'DRAFT' || bill.status === 'GENERATED'
+                    );
+
+                    const tbody = document.getElementById('pendingTableBody');
+
+                    if (pendingBills.length === 0) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="6" class="text-center text-theme-muted py-5">
+                                    <i class="fas fa-check-circle fa-3x mb-3 opacity-25"></i>
+                                    <div>No pending bills - All caught up!</div>
+                                </td>
+                            </tr>`;
+                        return;
+                    }
+
+                    tbody.innerHTML = pendingBills.map(bill => {
+                        const createdDate = new Date(bill.createdOn);
+                        const serviceType = bill.items && bill.items.length > 0 ? bill.items[0].itemName : 'General Service';
+                        const daysSince = Math.floor((new Date() - createdDate) / (1000 * 60 * 60 * 24));
+                        const urgency = daysSince > 2 ? 'CRITICAL' : daysSince > 1 ? 'MEDIUM' : 'LOW';
+                        const urgencyBadge = getUrgencyBadge(urgency);
+
+                        return `
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">${bill.patientName}</div>
+                                    <div class="small text-muted">${bill.patientUhid}</div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">${serviceType}</div>
+                                    <div class="small text-muted">${bill.status === 'DRAFT' ? 'Draft' : 'Generated'}</div>
+                                </td>
+                                <td>
+                                    <div>${createdDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
+                                    <div class="small text-muted">${daysSince === 0 ? 'Today' : daysSince === 1 ? 'Yesterday' : daysSince + ' days ago'}</div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-theme" style="font-family: 'Outfit';">₹ ${parseFloat(bill.netAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                                </td>
+                                <td>${urgencyBadge}</td>
+                                <td class="pe-4 text-end">
+                                    <button class="btn btn-sm btn-pink-theme rounded-pill px-3" onclick="finalizeBill(${bill.id})">Finalize Bill</button>
+                                </td>
+                            </tr>`;
+                    }).join('');
+                } else {
+                    showError();
+                }
+            } catch (error) {
+                console.error('Error loading pending bills:', error);
+                showError();
+            }
+        }
+
+        function getUrgencyBadge(urgency) {
+            const urgencyMap = {
+                'CRITICAL': '<span class="badge bg-red-500 bg-opacity-10 text-red-500 rounded-pill px-3">CRITICAL</span>',
+                'MEDIUM': '<span class="badge bg-amber-500 bg-opacity-10 text-amber-500 rounded-pill px-3">MEDIUM</span>',
+                'LOW': '<span class="badge bg-emerald-500 bg-opacity-10 text-emerald-500 rounded-pill px-3">LOW</span>'
+            };
+            return urgencyMap[urgency] || urgencyMap['LOW'];
+        }
+
+        function showError() {
+            document.getElementById('pendingTableBody').innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center text-danger py-5">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                        <div>Error loading pending bills. Please refresh the page.</div>
+                    </td>
+                </tr>`;
+        }
+
+        function finalizeBill(billId) {
+            // Navigate to bill details or finalization page
+            window.location.href = '/billing/invoices?billId=' + billId;
+            // TODO: Implement bill finalization workflow
+        }
+
+        // Load pending bills on page load
+        document.addEventListener('DOMContentLoaded', loadPendingBills);
+    </script>
 </body>
 
 </html>

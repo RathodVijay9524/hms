@@ -187,15 +187,15 @@
     <div class="section">
         <div class="section-header">Clinical Presentation</div>
         <div class="soap-box">
-            <div class="soap-label">SYMPTOMS & COMPLAINTS:</div>
+            <div class="soap-label">SYMPTOMS &amp; COMPLAINTS:</div>
             <div class="soap-content"
-                th:text="${visit.symptoms != null && !visit.symptoms.isEmpty() ? visit.symptoms : 'None recorded'}">
+                th:text="${visit.symptoms != null and !visit.symptoms.isEmpty() ? visit.symptoms : 'None recorded'}">
                 Fever, Cough</div>
         </div>
         <div class="soap-box">
             <div class="soap-label">PROVISIONAL DIAGNOSIS:</div>
             <div class="soap-content"><strong><span
-                        th:text="${visit.diagnosis != null && !visit.diagnosis.isEmpty() ? visit.diagnosis : 'Awaiting results'}">Viral
+                        th:text="${visit.diagnosis != null and !visit.diagnosis.isEmpty() ? visit.diagnosis : 'Awaiting results'}">Viral
                         Fever</span></strong></div>
         </div>
     </div>

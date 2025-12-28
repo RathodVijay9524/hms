@@ -580,27 +580,48 @@
             const container = document.getElementById('testResultsContainer');
             container.innerHTML = '';
 
+            if (!order.tests || order.tests.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No tests found in this order.</div>';
+                return;
+            }
+
             order.tests.forEach(test => {
                 let testHtml = `
                     <div class="card bg-secondary border-color mb-3">
-                        <div class="card-header bg-tertiary"><strong>${test.name}</strong></div>
+                        <div class="card-header bg-tertiary d-flex justify-content-between align-items-center">
+                            <strong>${test.name}</strong>
+                            <span class="badge bg-primary bg-opacity-10 text-primary small p-1 px-2 rounded-pill">${test.code}</span>
+                        </div>
                         <div class="card-body">
                 `;
 
-                test.parameters.forEach(param => {
+                if (!test.parameters || test.parameters.length === 0) {
                     testHtml += `
-                        <div class="row mb-3 align-items-center">
-                            <div class="col-md-4"><label class="small">${param.name} (${param.unit})</label></div>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control form-control-sm result-input" 
-                                    data-param-id="${param.id}" placeholder="Enter result">
-                            </div>
-                            <div class="col-md-4 text-muted small">
-                                Ref: ${param.referenceRanges.map(r => r.lowerLimit + '-' + r.upperLimit + ' (' + r.gender + ')').join(', ')}
-                            </div>
+                        <div class="text-center py-4">
+                            <i class="fas fa-exclamation-triangle text-warning mb-3 fa-2x opacity-50"></i>
+                            <div class="text-theme-muted mb-2">No parameters defined for this test.</div>
+                            <a href="/lab/tests" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                <i class="fas fa-cog me-1"></i> Configure Parameters
+                            </a>
                         </div>
                     `;
-                });
+                } else {
+                    test.parameters.forEach(param => {
+                        testHtml += `
+                            <div class="row mb-3 align-items-center">
+                                <div class="col-md-5">
+                                    <label class="small fw-bold text-theme">${param.name} 
+                                        <span class="text-muted fw-normal">(${param.unit || '-'})</span>
+                                    </label>
+                                </div>
+                                <div class="col-md-7">
+                                    <input type="text" class="form-control form-control-sm result-input" 
+                                        data-param-id="${param.id}" placeholder="Enter result value">
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
 
                 testHtml += `</div></div>`;
                 container.innerHTML += testHtml;

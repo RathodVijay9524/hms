@@ -27,6 +27,7 @@ public class BillingServiceImpl implements BillingService {
     private final PaymentRepository paymentRepository;
     private final AppointmentRepository appointmentRepository;
     private final PatientRepository patientRepository;
+    private final DoctorVisitRepository doctorVisitRepository;
     private final UserRepository userRepository;
     private final ModelMapper mapper;
 
@@ -126,6 +127,60 @@ public class BillingServiceImpl implements BillingService {
         
         calculateItemTotals(item);
         bill.getItems().add(item);
+        recalculateBill(bill);
+
+        Bill saved = billRepository.save(bill);
+        return convertToResponse(saved);
+    }
+
+    @Override
+    @Transactional
+    public BillResponse generateBillFromVisit(Long visitId) {
+        DoctorVisit visit = doctorVisitRepository.findById(visitId)
+                .orElseThrow(() -> new ResourceNotFoundException("DoctorVisit", "id", visitId));
+
+        // Find Consultation Charge for this doctor/hospital
+        List<ChargeItem> consultationCharges = chargeItemRepository.findByCategoryAndOwnerId("CONSULTATION", getOwnerId());
+        if (consultationCharges.isEmpty()) {
+            log.warn("No consultation charge configured in Charge Master. Skipping automated bill.");
+            return null;
+        }
+        ChargeItem consultation = consultationCharges.get(0);
+
+        // Generate Bill Number
+        String dateStr = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        LocalDateTime startOfDay = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime endOfDay = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+        
+        long count = billRepository.countByOwnerIdAndCreatedOnBetween(getOwnerId(), startOfDay, endOfDay) + 1;
+        String billNumber = String.format("INV-%s-%03d", dateStr, count);
+
+        Bill bill = Bill.builder()
+                .billNumber(billNumber)
+                .patient(visit.getPatient())
+                .appointment(visit.getAppointment())
+                .status(Bill.BillStatus.DRAFT)
+                .totalAmount(0.0)
+                .taxAmount(0.0)
+                .discountAmount(0.0)
+                .netAmount(0.0)
+                .paidAmount(0.0)
+                .balanceAmount(0.0)
+                .owner(getOwner())
+                .build();
+
+        // Add Line Item
+        BillItem item = BillItem.builder()
+                .bill(bill)
+                .itemName(consultation.getName())
+                .quantity(1)
+                .unitPrice(consultation.getBaseAmount())
+                .taxPercent(consultation.getTaxPercent())
+                .owner(getOwner())
+                .build();
+        
+        calculateItemTotals(item);
+        bill.setItems(new java.util.ArrayList<>(List.of(item)));
         recalculateBill(bill);
 
         Bill saved = billRepository.save(bill);
