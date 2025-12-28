@@ -107,6 +107,7 @@ public class WebController {
     @GetMapping("/reception/appointments")
     public String receptionAppointments(Model model) {
         model.addAttribute("appointments", receptionService.getTodayAppointments());
+        model.addAttribute("stats", receptionService.getDashboardStats());
         return "reception/appointments";
     }
 

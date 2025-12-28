@@ -34,13 +34,22 @@ public class ReceptionServiceImpl implements ReceptionService {
 
     @Override
     public ReceptionStatsDTO getDashboardStats() {
-        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
-        LocalDate today = LocalDate.now();
+        return getStatsByDate(LocalDate.now());
+    }
 
+    @Override
+    public ReceptionStatsDTO getStatsByDate(LocalDate date) {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        
         long todayReg = patientRepository.countByOwnerId(ownerId); // Simple count for now
-        long pendingTokens = queueTokenRepository.findByOwnerIdAndTokenDate(ownerId, today).stream()
+        long pendingTokens = queueTokenRepository.findByOwnerIdAndTokenDate(ownerId, date).stream()
                 .filter(t -> t.getStatus() == QueueToken.TokenStatus.WAITING).count();
-        long appointments = appointmentRepository.findByAppointmentDateAndOwnerId(today, ownerId).size();
+        
+        List<Appointment> appts = appointmentRepository.findByAppointmentDateAndOwnerId(date, ownerId);
+        long appointments = appts.size();
+        long checkedIn = appts.stream().filter(a -> a.getStatus() == Appointment.AppointmentStatus.CHECKED_IN).count();
+        long noShow = appts.stream().filter(a -> a.getStatus() == Appointment.AppointmentStatus.NO_SHOW).count();
+
         long inPremise = visitorLogRepository.findByOwnerId(ownerId).stream()
                 .filter(v -> v.getCheckOutTime() == null).count();
 
@@ -48,6 +57,9 @@ public class ReceptionServiceImpl implements ReceptionService {
                 .todayRegistrations(todayReg)
                 .pendingTokens(pendingTokens)
                 .totalAppointments(appointments)
+                .expectedTodayCount(appointments)
+                .checkedInCount(checkedIn)
+                .noShowCount(noShow)
                 .inPremiseVisitors(inPremise)
                 .avgWaitTime("15 min") // Mocked for now
                 .build();
@@ -168,8 +180,8 @@ public class ReceptionServiceImpl implements ReceptionService {
 
     @Override
     public Object searchPatients(String query) {
-        // Simple search for now, could be improved with custom queries
-        return patientRepository.findAll().stream()
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        return patientRepository.findByOwnerId(ownerId).stream()
                 .filter(p -> p.getName().toLowerCase().contains(query.toLowerCase()) || 
                              (p.getUhid() != null && p.getUhid().contains(query)) ||
                              (p.getPhone() != null && p.getPhone().contains(query)))
@@ -183,8 +195,34 @@ public class ReceptionServiceImpl implements ReceptionService {
     }
 
     @Override
-    public List<Appointment> getTodayAppointments() {
+    public List<com.vijay.User_Master.dto.AppointmentResponse> getTodayAppointments() {
+        return getAppointmentsByDate(LocalDate.now());
+    }
+
+    @Override
+    public List<com.vijay.User_Master.dto.AppointmentResponse> getAppointmentsByDate(LocalDate date) {
         Long ownerId = com.vijay.User_Master.Helper.CommonUtils.getLoggedInUser().getOwnerId();
-        return appointmentRepository.findByAppointmentDateAndOwnerId(LocalDate.now(), ownerId);
+        return appointmentRepository.findByAppointmentDateAndOwnerId(date, ownerId).stream()
+                .map(this::convertToAppointmentResponse)
+                .collect(Collectors.toList());
+    }
+
+    private com.vijay.User_Master.dto.AppointmentResponse convertToAppointmentResponse(Appointment appointment) {
+        com.vijay.User_Master.dto.AppointmentResponse response = modelMapper.map(appointment, com.vijay.User_Master.dto.AppointmentResponse.class);
+        response.setPatientId(appointment.getPatient().getId());
+        response.setPatientName(appointment.getPatient().getName());
+        response.setPatientUhid(appointment.getPatient().getUhid());
+        response.setDoctorId(appointment.getDoctor().getId());
+        response.setDoctorName(appointment.getDoctor().getUser().getName());
+        if (appointment.getDoctor().getDepartment() != null) {
+            response.setDepartmentName(appointment.getDoctor().getDepartment().getName());
+        }
+        if (appointment.getSlot() != null) {
+            response.setSlotId(appointment.getSlot().getId());
+        }
+        if (appointment.getVisit() != null) {
+            response.setVisitId(appointment.getVisit().getId());
+        }
+        return response;
     }
 }

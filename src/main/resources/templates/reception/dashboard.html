@@ -192,40 +192,17 @@
                 <!-- Today's Appointments -->
                 <div class="col-lg-5">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="section-title mb-0 text-theme" style="font-family: 'Outfit';">Upcoming Appointments
-                        </h5>
-                        <span class="badge bg-purple-500 bg-opacity-10 text-purple-400 rounded-pill px-3"
-                            th:text="${appointmentsCount + ' Today'}">28 Today</span>
+                        <h5 class="section-title mb-0 text-theme" style="font-family: 'Outfit';">Appointments</h5>
+                        <input type="date" id="appointmentDateFilter"
+                            class="form-control form-control-sm w-auto rounded-pill bg-dark text-white border-secondary"
+                            onchange="loadDateWiseAppointments(this.value)">
                     </div>
 
-                    <div class="appointment-list" style="max-height: 400px; overflow-y: auto;">
-                        <div th:each="apt : ${upcomingAppointments}"
-                            class="p-3 mb-3 glass-card shadow-sm hover-bg-opacity-5 transition-all">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <div>
-                                    <div class="fw-bold text-theme" th:text="${apt.patient.name}">Meera Joshi</div>
-                                    <div class="small text-theme-muted" th:text="${'UHID: ' + apt.patient.uhid}">UHID:
-                                        2024-0892</div>
-                                </div>
-                                <span
-                                    class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small"
-                                    th:text="${apt.appointmentTime}">11:30 AM</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="small text-theme-muted">
-                                    <i class="fas fa-user-md me-1"></i> <span th:text="${apt.doctor.name}">Dr.
-                                        Verma</span>
-                                </span>
-                                <button class="btn btn-sm btn-outline-pink rounded-pill px-3"
-                                    th:if="${apt.status.name() == 'BOOKED'}">Check In</button>
-                                <span class="badge bg-emerald-500 bg-opacity-10 text-emerald-400 rounded-pill px-3"
-                                    th:if="${apt.status.name() == 'CHECKED_IN'}">CHECKED IN</span>
-                            </div>
-                        </div>
-
-                        <div th:if="${#lists.isEmpty(upcomingAppointments)}" class="p-5 text-center text-theme-muted">
-                            <i class="fas fa-calendar-times opacity-25 fa-3x mb-3"></i>
-                            <p>No more appointments today.</p>
+                    <div class="appointment-list" id="appointmentsContainer"
+                        style="max-height: 400px; overflow-y: auto;">
+                        <div class="p-5 text-center text-theme-muted">
+                            <div class="spinner-border spinner-border-sm text-purple-400 mb-2"></div>
+                            <p>Loading appointments...</p>
                         </div>
                     </div>
 
@@ -239,6 +216,90 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('appointmentDateFilter').value = today;
+            loadDateWiseAppointments(today);
+        });
+
+        async function loadDateWiseAppointments(date) {
+            const container = document.getElementById('appointmentsContainer');
+            container.innerHTML = `
+                <div class="p-5 text-center text-theme-muted">
+                    <div class="spinner-border spinner-border-sm text-purple-400 mb-2"></div>
+                    <p>Loading appointments...</p>
+                </div>`;
+
+            try {
+                const response = await fetch(`/api/reception/appointments?date=${date}`);
+                const appointments = await response.json();
+
+                container.innerHTML = '';
+
+                if (appointments.length === 0) {
+                    container.innerHTML = `
+                        <div class="p-5 text-center text-theme-muted">
+                            <i class="fas fa-calendar-times opacity-25 fa-3x mb-3"></i>
+                            <p>No appointments for this date.</p>
+                        </div>`;
+                    return;
+                }
+
+                appointments.forEach(apt => {
+                    const card = document.createElement('div');
+                    card.className = 'p-3 mb-3 glass-card shadow-sm hover-bg-opacity-5 transition-all';
+
+                    const isCheckedIn = apt.status === 'CHECKED_IN';
+                    const statusBadge = isCheckedIn ?
+                        '<span class="badge bg-emerald-500 bg-opacity-10 text-emerald-400 rounded-pill px-3">CHECKED IN</span>' :
+                        `<button class="btn btn-sm btn-outline-pink rounded-pill px-3" onclick="checkInAppointment(${apt.id})">Check In</button>`;
+
+                    card.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <div class="fw-bold text-theme">${apt.patientName}</div>
+                                <div class="small text-theme-muted">UHID: ${apt.patientUhid}</div>
+                            </div>
+                            <span class="badge bg-purple-500 bg-opacity-10 text-purple-400 px-3 py-2 rounded-3 small">
+                                ${apt.appointmentTime.substring(0, 5)}
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="small text-theme-muted">
+                                <i class="fas fa-user-md me-1"></i> <span>Dr. ${apt.doctorName}</span>
+                            </span>
+                            ${statusBadge}
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+                container.innerHTML = '<p class="text-danger p-4 text-center">Failed to load appointments.</p>';
+            }
+        }
+
+        async function checkInAppointment(id) {
+            if (!confirm('Mark patient as Checked-In?')) return;
+
+            try {
+                const response = await fetch(`/api/appointments/${id}/status?status=CHECKED_IN`, {
+                    method: 'PATCH'
+                });
+
+                if (response.ok) {
+                    const date = document.getElementById('appointmentDateFilter').value;
+                    loadDateWiseAppointments(date);
+                } else {
+                    alert('Failed to check in patient');
+                }
+            } catch (error) {
+                console.error('Error checking in:', error);
+                alert('Network error during check-in');
+            }
+        }
+    </script>
 </body>
 
 </html>

@@ -98,8 +98,10 @@
                     <p class="text-muted mb-0">Schedule a consultation slot for a patient with available doctors</p>
                 </div>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary rounded-pill px-4">Clear Form</button>
-                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #a855f7;">
+                    <button class="btn btn-outline-secondary rounded-pill px-4" onclick="location.reload()">Clear
+                        Form</button>
+                    <button class="btn text-white fw-bold px-4 rounded-pill" style="background: #a855f7;"
+                        onclick="confirmBooking()">
                         <i class="fas fa-check-circle me-2"></i>Confirm Booking
                     </button>
                 </div>
@@ -111,11 +113,15 @@
                     <div class="row g-4 mb-5">
                         <div class="col-md-6">
                             <label class="form-label">Search Patient (Name/UHID)</label>
-                            <input type="text" class="select-search" placeholder="e.g. Wanda Maximoff">
+                            <input type="text" id="apptPatientQuery" class="select-search"
+                                placeholder="Type to search..." autocomplete="off">
+                            <div id="patientResults" class="list-group position-absolute shadow-sm"
+                                style="z-index: 1000; display: none; width: 400px;"></div>
+                            <input type="hidden" id="apptPatientId">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Appointment Date</label>
-                            <input type="date" class="select-search" value="2025-12-27">
+                            <input type="date" id="apptDate" class="select-search" onchange="loadSlots()">
                         </div>
                     </div>
 
@@ -126,19 +132,16 @@
                     <div class="row g-4 mb-5">
                         <div class="col-md-6">
                             <label class="form-label">Department</label>
-                            <select class="select-search">
-                                <option>General Medicine</option>
-                                <option>Neurology</option>
-                                <option>Cardiology</option>
-                                <option>Dental</option>
+                            <select id="apptDeptId" class="select-search" onchange="loadDoctors(this.value)">
+                                <option value="">Select Department</option>
+                                <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}">
+                                </option>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Doctor</label>
-                            <select class="select-search">
-                                <option>Dr. Stephen Strange</option>
-                                <option>Dr. Jane Foster</option>
-                                <option>Dr. Otto Octavius</option>
+                            <select id="apptDoctor" class="select-search" onchange="loadSlots()">
+                                <option value="">Select Doctor</option>
                             </select>
                         </div>
                     </div>
@@ -147,39 +150,19 @@
                         <i class="fas fa-clock me-2"></i>Available Slots
                     </div>
 
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <div class="slot-btn">09:00 AM</div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="slot-btn">09:30 AM</div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="slot-btn disabled">10:00 AM</div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="slot-btn">10:30 AM</div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="slot-btn active">11:00 AM</div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="slot-btn">11:30 AM</div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="slot-btn disabled">12:00 PM</div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="slot-btn">12:30 PM</div>
+                    <div class="row g-3" id="slotsContainer">
+                        <div class="col-12 text-center py-4 text-theme-muted">
+                            <i class="fas fa-info-circle me-2"></i>Please select Date and Doctor to view available slots
                         </div>
                     </div>
+                    <input type="hidden" id="selectedSlotId">
 
                     <div class="mt-5 p-4 rounded-4"
                         style="background: rgba(168, 85, 247, 0.05); border: 1px dashed rgba(168, 85, 247, 0.2);">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h6 class="fw-bold mb-1">Booking Preview</h6>
-                                <p class="small text-muted mb-0">Patient: Wanda Maximoff • Slot: 11:00 AM (Today)</p>
+                                <p class="small text-muted mb-0" id="bookingPreviewText">Patient: ... • Slot: ...</p>
                             </div>
                             <div class="text-end">
                                 <span class="badge bg-purple-subtle text-purple" style="color: #a855f7;">Registration
@@ -194,6 +177,184 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('apptDate').value = today;
+            document.getElementById('apptDate').min = today;
+            setupPatientSearch();
+        });
+
+        function setupPatientSearch() {
+            const input = document.getElementById('apptPatientQuery');
+            const results = document.getElementById('patientResults');
+            let timeout = null;
+
+            input.oninput = () => {
+                clearTimeout(timeout);
+                const query = input.value.trim();
+                if (query.length < 3) {
+                    results.style.display = 'none';
+                    return;
+                }
+
+                timeout = setTimeout(async () => {
+                    try {
+                        const response = await fetch(`/api/reception/patients/search?query=${query}`);
+                        const patients = await response.json();
+
+                        results.innerHTML = '';
+                        if (patients.length === 0) {
+                            results.innerHTML = '<div class="list-group-item bg-dark text-muted">No patients found</div>';
+                        } else {
+                            patients.forEach(p => {
+                                const item = document.createElement('a');
+                                item.className = 'list-group-item list-group-item-action bg-dark text-white border-secondary';
+                                item.innerHTML = `
+                                    <div class="fw-bold">${p.name}</div>
+                                    <small class="text-purple-400">UHID: ${p.uhid} | ${p.phone}</small>
+                                `;
+                                item.onclick = () => {
+                                    document.getElementById('apptPatientId').value = p.id;
+                                    input.value = p.name;
+                                    results.style.display = 'none';
+                                    updateBookingPreview(p.name);
+                                };
+                                results.appendChild(item);
+                            });
+                        }
+                        results.style.display = 'block';
+                    } catch (error) {
+                        console.error('Error searching patients:', error);
+                    }
+                }, 300);
+            };
+
+            document.addEventListener('click', (e) => {
+                if (e.target !== input) results.style.display = 'none';
+            });
+        }
+
+        async function loadDoctors(deptId) {
+            const select = document.getElementById('apptDoctor');
+            select.innerHTML = '<option value="">Loading...</option>';
+
+            if (!deptId) {
+                select.innerHTML = '<option value="">Select Doctor</option>';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/masters/doctors');
+                const doctors = await response.json();
+                const filtered = doctors.filter(d => d.departmentId == deptId);
+
+                select.innerHTML = '<option value="">Select Doctor</option>';
+                filtered.forEach(d => {
+                    const opt = document.createElement('option');
+                    opt.value = d.id;
+                    opt.textContent = d.doctorName;
+                    select.appendChild(opt);
+                });
+            } catch (error) {
+                console.error('Error loading doctors:', error);
+            }
+        }
+
+        async function loadSlots() {
+            const doctorId = document.getElementById('apptDoctor').value;
+            const date = document.getElementById('apptDate').value;
+            const container = document.getElementById('slotsContainer');
+
+            if (!doctorId || !date) return;
+
+            container.innerHTML = '<div class="col-12 text-center py-4"><div class="spinner-border spinner-border-sm text-purple-400"></div></div>';
+
+            try {
+                const response = await fetch(`/api/scheduling/slots?doctorId=${doctorId}&date=${date}`);
+                const result = await response.json();
+                const slots = result.data || [];
+
+                container.innerHTML = '';
+                if (slots.length === 0) {
+                    container.innerHTML = '<div class="col-12 text-center py-4 text-theme-muted">No slots available for this date</div>';
+                    return;
+                }
+
+                slots.forEach(slot => {
+                    const col = document.createElement('div');
+                    col.className = 'col-md-3';
+
+                    const btn = document.createElement('div');
+                    btn.className = `slot-btn ${slot.available ? '' : 'disabled'}`;
+                    btn.textContent = slot.startTime.substring(0, 5);
+
+                    if (slot.available) {
+                        btn.onclick = () => selectSlot(btn, slot.id, slot.startTime);
+                    }
+
+                    col.appendChild(btn);
+                    container.appendChild(col);
+                });
+            } catch (error) {
+                console.error('Error loading slots:', error);
+            }
+        }
+
+        function selectSlot(btn, id, time) {
+            document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('selectedSlotId').value = id;
+            updateBookingPreview(null, time);
+        }
+
+        function updateBookingPreview(patientName, slotTime) {
+            const preview = document.getElementById('bookingPreviewText');
+            const name = patientName || document.getElementById('apptPatientQuery').value || '...';
+            const time = slotTime || '...';
+            preview.textContent = `Patient: ${name} • Slot: ${time.substring(0, 5)} (${document.getElementById('apptDate').value})`;
+        }
+
+        async function confirmBooking() {
+            const patientId = document.getElementById('apptPatientId').value;
+            const doctorId = document.getElementById('apptDoctor').value;
+            const slotId = document.getElementById('selectedSlotId').value;
+            const date = document.getElementById('apptDate').value;
+
+            if (!patientId || !doctorId || !slotId) {
+                alert('Please select Patient, Doctor, and a Time Slot');
+                return;
+            }
+
+            const request = {
+                patientId: patientId,
+                doctorId: doctorId,
+                slotId: slotId,
+                appointmentDate: date,
+                status: 'BOOKED',
+                reasonForVisit: 'General Consultation'
+            };
+
+            try {
+                const response = await fetch('/api/appointments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(request)
+                });
+
+                if (response.ok) {
+                    alert('Appointment booked successfully!');
+                    window.location.href = '/reception/appointments';
+                } else {
+                    const err = await response.json();
+                    alert('Booking failed: ' + (err.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error booking:', error);
+                alert('Network error during booking');
+            }
+        }
+    </script>
 </body>
 
 </html>

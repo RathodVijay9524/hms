@@ -59,10 +59,10 @@ public class AppointmentServiceImpl implements AppointmentService {
             throw new BadApiRequestException("Time slot is no longer available.");
         }
 
-        // Generate Appointment Number: APT-YYYYMMDD-SEQ
-        String dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        long count = appointmentRepository.countByAppointmentDate(LocalDate.now()) + 1;
-        String appointmentNumber = String.format("APT-%s-%03d", dateStr, count);
+        // Generate Appointment Number: APT-{ownerId}-{YYYYMMDD}-{SEQ}
+        String apptDateStr = slot.getDate().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        long count = appointmentRepository.countByAppointmentDateAndOwnerId(slot.getDate(), owner.getId()) + 1;
+        String appointmentNumber = String.format("APT-%d-%s-%03d", owner.getId(), apptDateStr, count);
 
         Appointment appointment = Appointment.builder()
                 .appointmentNumber(appointmentNumber)

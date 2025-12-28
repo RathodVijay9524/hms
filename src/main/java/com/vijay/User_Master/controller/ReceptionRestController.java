@@ -71,4 +71,18 @@ public class ReceptionRestController {
     public ResponseEntity<Object> searchPatients(@RequestParam String query) {
         return ResponseEntity.ok(receptionService.searchPatients(query));
     }
+
+    @GetMapping("/appointments")
+    public ResponseEntity<List<com.vijay.User_Master.dto.AppointmentResponse>> getAppointments(
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate date) {
+        if (date == null) date = java.time.LocalDate.now();
+        return ResponseEntity.ok(receptionService.getAppointmentsByDate(date));
+    }
+
+    @GetMapping("/appointment-stats")
+    public ResponseEntity<com.vijay.User_Master.dto.reception.ReceptionStatsDTO> getAppointmentStats(
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate date) {
+        if (date == null) date = java.time.LocalDate.now();
+        return ResponseEntity.ok(receptionService.getStatsByDate(date));
+    }
 }

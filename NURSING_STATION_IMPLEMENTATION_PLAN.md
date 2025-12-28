@@ -20,6 +20,13 @@ This document outlines the comprehensive implementation plan for the Nursing Sta
    - ✅ `/nurse/alerts` - Critical alerts feed
    - ✅ Nurse sidebar navigation
 
+2. **Nursing Portal Navigation (Ward + Shift concept in UI copy)**
+   - The templates indicate ward-scoped workflows (example copy: "Ward-C", "Shift A", "Next 2 Hours")
+   - This plan assumes an **Enter Portal** step where the nurse selects:
+     - Ward (e.g., Ward-C)
+     - Shift (A/B/C)
+     - Optional: Assignment group / nurse team
+
 2. **Backend Infrastructure**
    - ✅ `WebController` with placeholder endpoints returning static templates
    - ✅ `PatientEMRService` - Vital signs CRUD operations
@@ -68,6 +75,278 @@ This document outlines the comprehensive implementation plan for the Nursing Sta
 
 ---
 
+## 🚪 Enter Portal (Ward + Shift) — Required Backend Behavior
+
+### Goal
+Provide a single entry step that sets the nursing context for all subsequent pages (dashboard, vitals, medications, tasks, handover, alerts).
+
+### Recommended Approach
+
+1. **UI flow**
+   - Nurse selects `wardId` and `shift`.
+   - Backend stores the selection in one of the following ways:
+     - **Preferred (stateless):** frontend passes `wardId` + `shift` as query params to APIs.
+     - **Alternative (stateful):** store in session (only if you are using server-side sessions for nurse portal).
+
+2. **Minimal endpoints**
+   - `GET /api/nursing/wards` (list wards)
+   - `POST /api/nursing/context` (optional; store ward+shift in session)
+
+3. **Data scoping rule**
+All nursing APIs must be scoped by:
+   - `ownerId` (multi-tenant)
+   - `wardId` (ward context)
+   - `shift` where relevant (tasks/handover)
+
+---
+
+## 🏥 SaaS Tenant Isolation (Business/Hospital Data Separation) — Must Follow Lab Portal Pattern
+
+### Tenant Key
+This application is SaaS-style with per-hospital isolation. The tenant boundary is the **Business Owner**:
+
+- Tenant identifier: `ownerId`
+- Derived from authenticated principal: `CommonUtils.getLoggedInUser().getOwnerId()`
+- Stored on records as DB column: `owner_id` (via `@ManyToOne private User owner;`)
+
+### Required Rules (same as LabOrder/Patient)
+
+1. **Every new Nursing entity must store tenant**
+   - Add:
+     - `@ManyToOne(fetch = FetchType.LAZY)`
+     - `@JoinColumn(name = "owner_id", nullable = false)`
+     - `private User owner;`
+
+2. **Every repository must filter by tenant**
+   Use the same naming conventions used in `PatientRepository` and `LabOrderRepository`:
+   - `findByOwnerId(ownerId, ...)`
+   - `findByIdAndOwnerId(id, ownerId)`
+   - `countByOwnerIdAnd...(...)`
+
+3. **Every service method must enforce tenant**
+   - Always read tenant:
+     - `Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();`
+   - When creating new records:
+     - `User owner = userRepository.findById(ownerId)...`
+     - `entity.setOwner(owner);`
+   - When reading/updating/deleting:
+     - Only load records via `...AndOwnerId(...)`
+     - Never call plain `findById(...)` for tenant data
+
+### Practical Example (copy this style)
+
+- **Entity** (like `LabOrder` / `Patient`):
+  - `@JoinColumn(name = "owner_id", nullable = false) private User owner;`
+
+- **Repository** (like `LabOrderRepository`):
+  - `Optional<Entity> findByIdAndOwnerId(Long id, Long ownerId);`
+
+- **Service** (like `LabOrderServiceImpl`):
+  - `Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();`
+  - `repo.findByIdAndOwnerId(id, ownerId)`
+
+---
+
+## 🧩 Nursing Station Data Model (Tenant + Ward Scoped)
+
+This section defines what data is required to fully power the existing nurse templates:
+
+- `templates/nurse/dashboard.html`
+- `templates/nurse/vitals.html`
+- `templates/nurse/medications.html`
+- `templates/nurse/tasks.html`
+- `templates/nurse/handovers.html`
+- `templates/nurse/alerts.html`
+
+### ✅ Reuse Existing Entities Where Possible
+
+1. **Tenant / Hospital**
+   - Use existing `User` as tenant owner (`owner_id`).
+
+2. **Patients**
+   - Use existing `Patient` with `owner_id`.
+
+3. **Vitals**
+   - Use existing `VitalSign` (from EMR) if it already supports the required vitals fields.
+   - Nursing Station will treat vitals as ward-scoped; ward mapping is handled separately (see below).
+
+4. **Medication Orders**
+   - If `Prescription` is the canonical source of medication orders, reuse it for schedule generation.
+   - A separate “administration log” is still needed if you want MAR (Done/Due/Upcoming) per time-slot.
+
+### ➕ New Entities (Recommended) — All Must Include `owner_id`
+
+1. **Ward** (if not already present)
+   - Purpose: power ward selection in Enter Portal + ward patient list.
+   - Fields (minimum): `id`, `name`, `code`, `isActive`, `owner_id`
+
+2. **Bed** (if not already present)
+   - Purpose: show bed labels like `C-101` used by nurse UI.
+   - Fields (minimum): `id`, `ward_id`, `bedCode`, `isActive`, `owner_id`
+
+3. **Ward Admission / Bed Assignment** (if not already present)
+   - Purpose: determine which patients are currently in a ward and their bed.
+   - Fields (minimum): `id`, `patient_id`, `ward_id`, `bed_id`, `status(ACTIVE/DISCHARGED)`, `admittedAt`, `dischargedAt`, `owner_id`
+
+4. **MedicationAdministration (MAR Log)**
+   - Purpose: record that a scheduled dose was given (or not given) by nurse.
+   - Fields (minimum):
+     - `id`, `patient_id`, `prescription_id` (or medication order id)
+     - `scheduledAt` (or slot label + date)
+     - `administeredAt`, `administeredBy`
+     - `status(GIVEN/MISSED/HELD/REFUSED)`, `notes`, `owner_id`
+
+5. **NursingTask**
+   - Purpose: checklist tasks shown in `nurse/tasks.html`.
+   - Scope: `ward_id` + `shift` + `taskDate`.
+   - Fields (minimum):
+     - `id`, `ward_id`, `shift(A/B/C)`, `taskDate`
+     - `title`, `description`, `priority(HIGH/MEDIUM/LOW)`
+     - `status(PENDING/DONE)`, `assignedTo` (optional)
+     - `completedAt`, `completedBy`, `owner_id`
+
+6. **ShiftHandover**
+   - Purpose: outgoing shift summary in `nurse/handovers.html`.
+   - Scope: `ward_id` + `shift` + `handoverDate`.
+   - Fields (minimum): `id`, `ward_id`, `shift`, `handoverDate`, `notes`, `createdBy`, `createdAt`, `owner_id`
+
+7. **NursingAlert**
+   - Purpose: power `nurse/alerts.html` and dashboard “Critical Alerts”.
+   - Source: can be computed (from vitals/meds/tasks) or persisted.
+   - Persisted fields (minimum): `id`, `ward_id`, `patient_id(optional)`, `type`, `severity`, `message`, `status(OPEN/ACK/RESOLVED)`, `createdAt`, `ackBy`, `ackAt`, `owner_id`
+
+---
+
+## 🗃️ Repository Contract (Tenant-First Query Rules)
+
+For every nursing repository, follow these rules (copy Lab/Patient pattern):
+
+1. **No cross-tenant reads**
+   - Always use `findBy...AndOwnerId(...)` variants.
+
+2. **Ward scoped queries include wardId**
+   - `findByOwnerIdAndWardId(ownerId, wardId, ...)`
+
+3. **Shift scoped queries include shift**
+   - `findByOwnerIdAndWardIdAndShift(ownerId, wardId, shift, ...)`
+
+### Example method list (planning)
+
+- `WardRepository`
+  - `List<Ward> findByOwnerIdAndIsActiveTrue(Long ownerId);`
+
+- `BedRepository`
+  - `List<Bed> findByOwnerIdAndWardIdAndIsActiveTrue(Long ownerId, Long wardId);`
+
+- `WardAdmissionRepository`
+  - `List<WardAdmission> findByOwnerIdAndWardIdAndStatus(Long ownerId, Long wardId, Status status);`
+  - `Optional<WardAdmission> findByOwnerIdAndPatientIdAndStatus(Long ownerId, Long patientId, Status status);`
+  - `long countByOwnerIdAndWardIdAndStatus(Long ownerId, Long wardId, Status status);`
+
+- `MedicationAdministrationRepository`
+  - `List<MedicationAdministration> findByOwnerIdAndWardIdAndScheduledAtBetween(Long ownerId, Long wardId, LocalDateTime from, LocalDateTime to);`
+  - `Optional<MedicationAdministration> findByOwnerIdAndPrescriptionIdAndScheduledAt(Long ownerId, Long prescriptionId, LocalDateTime scheduledAt);`
+
+- `NursingTaskRepository`
+  - `List<NursingTask> findByOwnerIdAndWardIdAndShiftAndTaskDate(Long ownerId, Long wardId, String shift, LocalDate date);`
+  - `Optional<NursingTask> findByIdAndOwnerIdAndWardId(Long id, Long ownerId, Long wardId);`
+
+- `ShiftHandoverRepository`
+  - `Optional<ShiftHandover> findByOwnerIdAndWardIdAndShiftAndHandoverDate(Long ownerId, Long wardId, String shift, LocalDate date);`
+
+- `NursingAlertRepository`
+  - `List<NursingAlert> findByOwnerIdAndWardIdAndStatus(Long ownerId, Long wardId, Status status);`
+
+---
+
+## 📦 DTOs (What each page needs)
+
+DTOs should be designed to match the current UI layout.
+
+1. **NursingContextDTO**
+   - `wards[]` (id, name, code)
+   - `shifts[]` (A/B/C)
+   - optional: `defaultWardId`, `defaultShift`
+
+2. **NursingDashboardDTO**
+   - `wardPatientsCount`
+   - `medsDueCount` (window-based)
+   - `vitalsPendingCount` (time-based)
+   - `criticalAlertsCount`
+   - `patientWatchlist[]` (patientId, name, room/bed label, tag: Stable/Monitor/Critical, lastBP summary)
+   - `nextMedicationDoses[]` (time, patientName, bedLabel, drugSummary, actionState)
+
+3. **BatchVitalSignDTO**
+   - `wardId`
+   - `entries[]`:
+     - `patientId`, `bp`, `temperatureF`, `pulse`, `spo2`, `notes`
+
+4. **MedicationScheduleDTO (MAR)**
+   - `wardId`, `date`
+   - `patients[]` each with:
+     - patientId, name, uhid, age/sex, bedLabel
+     - `medications[]`:
+       - medicationId/prescriptionId, name, dose, route, frequency
+       - `slots[]` (time, status: DONE/DUE/UPCOMING/MISSED)
+
+5. **MedicationAdministrationDTO**
+   - `patientId`, `prescriptionId`, `scheduledAt`
+   - `status(GIVEN/MISSED/HELD/REFUSED)`, `notes`
+
+6. **NursingTaskDTO**
+   - `taskId`, `wardId`, `shift`, `taskDate`
+   - `title`, `priority`, `status`, `dueTime(optional)`
+   - `completedAt`, `completedByName(optional)`
+
+7. **ShiftHandoverDTO**
+   - `wardId`, `shift`, `date`
+   - `notes`
+   - optional computed sections: `pendingTasks`, `criticalAlerts`, `medsDue`, `abnormalVitals`
+
+8. **NursingAlertDTO**
+   - `alertId`, `wardId`, `patientId(optional)`
+   - `severity`, `type`, `message`, `createdAt`, `status`
+
+---
+
+## 🔌 API Payloads (Planning Examples)
+
+These examples are for clarity and do not mandate frontend implementation style.
+
+1. **Enter Portal Context**
+   - `GET /api/nursing/wards`
+   - `POST /api/nursing/context` (optional)
+     - `{ "wardId": 3, "shift": "A" }`
+
+2. **Dashboard**
+   - `GET /api/nursing/dashboard/stats?wardId=3&windowMinutes=120`
+     - returns `NursingDashboardDTO`
+
+3. **Vitals Batch**
+   - `GET /api/nursing/vitals/batch?wardId=3`
+   - `POST /api/nursing/vitals/batch?wardId=3`
+     - body: `BatchVitalSignDTO`
+
+4. **MAR / Medication Schedule**
+   - `GET /api/nursing/medications/schedule?wardId=3&date=2025-12-28`
+   - `POST /api/nursing/medications/administer?wardId=3`
+     - body: `MedicationAdministrationDTO`
+
+5. **Tasks**
+   - `GET /api/nursing/tasks?wardId=3&shift=A&date=2025-12-28`
+   - `POST /api/nursing/tasks?wardId=3&shift=A`
+     - body: `NursingTaskDTO`
+   - `PATCH /api/nursing/tasks/{taskId}/complete?wardId=3`
+
+6. **Handover**
+   - `GET /api/nursing/handover?wardId=3&shift=A&date=2025-12-28`
+   - `POST /api/nursing/handover?wardId=3&shift=A`
+     - body: `ShiftHandoverDTO`
+
+7. **Alerts**
+   - `GET /api/nursing/alerts?wardId=3&status=OPEN`
+   - `PATCH /api/nursing/alerts/{alertId}/acknowledge?wardId=3`
+
 ## 🏗️ Implementation Architecture
 
 ### Phase 1: Core Service Layer & DTOs
@@ -76,6 +355,7 @@ This document outlines the comprehensive implementation plan for the Nursing Sta
 1. **Create DTOs Package Structure**
    ```
    dto/nursing/
+   ├── NursingContextDTO.java
    ├── NursingDashboardDTO.java
    ├── NursingPatientDTO.java
    ├── MedicationScheduleDTO.java
@@ -89,34 +369,38 @@ This document outlines the comprehensive implementation plan for the Nursing Sta
 2. **Create NursingService Interface**
    ```java
    NursingService {
+       // Enter Portal / Context
+       NursingContextDTO getContextOptions();
+       void setContext(Long wardId, String shift);
+
        // Dashboard
-       NursingDashboardDTO getDashboardStats();
+       NursingDashboardDTO getDashboardStats(Long wardId);
        
        // Patients
-       List<NursingPatientDTO> getWardPatients();
-       NursingPatientDTO getPatientDetails(Long patientId);
+       List<NursingPatientDTO> getWardPatients(Long wardId);
+       NursingPatientDTO getPatientDetails(Long wardId, Long patientId);
        
        // Vitals
-       VitalSignDTO recordVitalSign(Long patientId, VitalSignDTO vitalSignDTO);
-       List<VitalSignDTO> recordBatchVitals(BatchVitalSignDTO batchDTO);
+       VitalSignDTO recordVitalSign(Long wardId, Long patientId, VitalSignDTO vitalSignDTO);
+       List<VitalSignDTO> recordBatchVitals(Long wardId, BatchVitalSignDTO batchDTO);
        
        // Medications
-       List<MedicationScheduleDTO> getMedicationSchedule();
-       MedicationScheduleDTO getPatientMedications(Long patientId);
-       MedicationAdministrationDTO administerMedication(Long patientId, Long medicationId, MedicationAdministrationDTO adminDTO);
+       List<MedicationScheduleDTO> getMedicationSchedule(Long wardId, Integer windowMinutes);
+       MedicationScheduleDTO getPatientMedications(Long wardId, Long patientId);
+       MedicationAdministrationDTO administerMedication(Long wardId, Long patientId, Long medicationId, MedicationAdministrationDTO adminDTO);
        
        // Tasks
-       List<NursingTaskDTO> getWardTasks();
-       NursingTaskDTO createTask(NursingTaskDTO taskDTO);
-       NursingTaskDTO completeTask(Long taskId);
+       List<NursingTaskDTO> getWardTasks(Long wardId, String shift);
+       NursingTaskDTO createTask(Long wardId, String shift, NursingTaskDTO taskDTO);
+       NursingTaskDTO completeTask(Long wardId, Long taskId);
        
        // Handover
-       ShiftHandoverDTO generateHandoverReport();
-       void saveHandover(ShiftHandoverDTO handoverDTO);
+       ShiftHandoverDTO generateHandoverReport(Long wardId, String shift);
+       void saveHandover(Long wardId, String shift, ShiftHandoverDTO handoverDTO);
        
        // Alerts
-       List<NursingAlertDTO> getActiveAlerts();
-       void acknowledgeAlert(Long alertId);
+       List<NursingAlertDTO> getActiveAlerts(Long wardId);
+       void acknowledgeAlert(Long wardId, Long alertId);
    }
    ```
 
@@ -132,19 +416,28 @@ This document outlines the comprehensive implementation plan for the Nursing Sta
    ```java
    @RestController
    @RequestMapping("/api/nursing")
-   - GET /api/nursing/dashboard/stats
-   - GET /api/nursing/patients
-   - GET /api/nursing/patients/{id}
-   - POST /api/nursing/vitals/batch
-   - GET /api/nursing/medications/schedule
-   - POST /api/nursing/medications/administrate
-   - GET /api/nursing/tasks
-   - POST /api/nursing/tasks
-   - PUT /api/nursing/tasks/{id}/complete
-   - GET /api/nursing/handover
-   - POST /api/nursing/handover
-   - GET /api/nursing/alerts
-   - PUT /api/nursing/alerts/{id}/acknowledge
+   - GET  /api/nursing/wards
+   - POST /api/nursing/context (optional, session-based)
+
+   - GET  /api/nursing/dashboard/stats?wardId=
+   - GET  /api/nursing/patients?wardId=
+   - GET  /api/nursing/patients/{id}?wardId=
+
+   - GET  /api/nursing/vitals/batch?wardId=
+   - POST /api/nursing/vitals/batch?wardId=
+
+   - GET  /api/nursing/medications/schedule?wardId=&windowMinutes=120
+   - POST /api/nursing/medications/administer?wardId=
+
+   - GET  /api/nursing/tasks?wardId=&shift=
+   - POST /api/nursing/tasks?wardId=&shift=
+   - PATCH /api/nursing/tasks/{id}/complete?wardId=
+
+   - GET  /api/nursing/handover?wardId=&shift=
+   - POST /api/nursing/handover?wardId=&shift=
+
+   - GET  /api/nursing/alerts?wardId=
+   - PATCH /api/nursing/alerts/{id}/acknowledge?wardId=
    ```
 
 ### Phase 3: Frontend Integration
@@ -262,7 +555,7 @@ This document outlines the comprehensive implementation plan for the Nursing Sta
    );
    ```
 
-3. **ShiftHandover** (Optional)
+3. **ShiftHandover** (Recommended)
    ```sql
    CREATE TABLE shift_handovers (
        id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -278,7 +571,14 @@ This document outlines the comprehensive implementation plan for the Nursing Sta
    );
    ```
 
-**Note:** For Phase 1-3, we can start without new entities and use existing ones. New entities can be added in Phase 4 if needed.
+4. **Ward / Bed / Admission Mapping** (Recommended if not already present)
+   - The nurse UI is explicitly ward-based (e.g., "Ward-C" and bed labels like "C-101").
+   - If you do not already have a proper IPD admission + bed assignment model, add minimal tables to support:
+     - active ward patients count
+     - patient list per ward
+     - bed/room labels in UI
+
+**Note:** If existing patient admission/ward/bed tables already exist, reuse them. Only introduce new entities when there is no existing model to represent ward membership.
 
 ---
 

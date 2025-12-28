@@ -205,14 +205,53 @@
                             <label class="form-label small text-muted text-uppercase fw-bold">Specific Date</label>
                             <input type="date" id="specificDate" class="form-control">
                         </div>
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label class="form-label small text-muted text-uppercase fw-bold">Start Time</label>
-                                <input type="time" id="startTime" class="form-control" required>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Start Time</label>
+                            <div class="d-flex gap-2">
+                                <select id="startHour" class="form-select" onchange="updateTimePreviews()">
+                                    <option th:each="h : ${#numbers.sequence(1, 12)}"
+                                        th:value="${#numbers.formatInteger(h, 2)}"
+                                        th:text="${#numbers.formatInteger(h, 2)}" th:selected="${h == 9}"></option>
+                                </select>
+                                <select id="startMin" class="form-select" onchange="updateTimePreviews()">
+                                    <option value="00">00</option>
+                                    <option value="15">15</option>
+                                    <option value="30">30</option>
+                                    <option value="45">45</option>
+                                </select>
+                                <div class="btn-group" role="group">
+                                    <input type="radio" class="btn-check" name="startAmPm" id="startAm" value="AM"
+                                        checked onchange="updateTimePreviews()">
+                                    <label class="btn btn-outline-indigo" for="startAm">AM</label>
+                                    <input type="radio" class="btn-check" name="startAmPm" id="startPm" value="PM"
+                                        onchange="updateTimePreviews()">
+                                    <label class="btn btn-outline-indigo" for="startPm">PM</label>
+                                </div>
                             </div>
-                            <div class="col">
-                                <label class="form-label small text-muted text-uppercase fw-bold">End Time</label>
-                                <input type="time" id="endTime" class="form-control" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small text-muted text-uppercase fw-bold">End Time</label>
+                            <div class="d-flex gap-2">
+                                <select id="endHour" class="form-select" onchange="updateTimePreviews()">
+                                    <option th:each="h : ${#numbers.sequence(1, 12)}"
+                                        th:value="${#numbers.formatInteger(h, 2)}"
+                                        th:text="${#numbers.formatInteger(h, 2)}" th:selected="${h == 6}"></option>
+                                </select>
+                                <select id="endMin" class="form-select" onchange="updateTimePreviews()">
+                                    <option value="00">00</option>
+                                    <option value="15">15</option>
+                                    <option value="30">30</option>
+                                    <option value="45">45</option>
+                                </select>
+                                <div class="btn-group" role="group">
+                                    <input type="radio" class="btn-check" name="endAmPm" id="endAm" value="AM"
+                                        onchange="updateTimePreviews()">
+                                    <label class="btn btn-outline-indigo" for="endAm">AM</label>
+                                    <input type="radio" class="btn-check" name="endAmPm" id="endPm" value="PM" checked
+                                        onchange="updateTimePreviews()">
+                                    <label class="btn btn-outline-indigo" for="endPm">PM</label>
+                                </div>
                             </div>
                         </div>
                         <div class="mb-4">
@@ -314,12 +353,39 @@
 
             // Set default for specific date to tomorrow too
             document.getElementById('specificDate').value = tomorrow.toISOString().split('T')[0];
+
+            updateTimePreviews();
         });
+
+        function getTime24(hourId, minId, amPmName) {
+            let hour = parseInt(document.getElementById(hourId).value);
+            const min = document.getElementById(minId).value;
+            const amPm = document.querySelector(`input[name="${amPmName}"]:checked`).value;
+
+            if (amPm === 'PM' && hour < 12) hour += 12;
+            if (amPm === 'AM' && hour === 12) hour = 0;
+
+            return `${hour.toString().padStart(2, '0')}:${min}`;
+        }
+
+        function updateTimePreviews() {
+            // No-op for now
+        }
 
         function toggleScheduleType() {
             const isWeekly = document.getElementById('typeWeekly').checked;
             document.getElementById('weeklyGroup').classList.toggle('d-none', !isWeekly);
             document.getElementById('specificGroup').classList.toggle('d-none', isWeekly);
+        }
+
+        function formatTime12(timeString) {
+            if (!timeString) return '';
+            const [hours, minutes] = timeString.split(':');
+            let h = parseInt(hours);
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12;
+            h = h ? h : 12; // the hour '0' should be '12'
+            return `${h.toString().padStart(2, '0')}:${minutes} ${ampm}`;
         }
 
         async function loadDoctors() {
@@ -343,6 +409,7 @@
             document.getElementById('scheduleForm').reset();
             document.getElementById('typeWeekly').checked = true;
             toggleScheduleType();
+            updateTimePreviews();
         }
 
         async function loadDoctorSchedules() {
@@ -378,10 +445,19 @@
                         `<span class="badge bg-info text-dark">${s.specificDate}</span>` :
                         `<strong>${s.dayOfWeek}</strong>`;
 
+                    const startTimeStr = s.startTime.substring(0, 5);
+                    const endTimeStr = s.endTime.substring(0, 5);
+
                     row.innerHTML = `
                         <td>${dayDisplay}</td>
-                        <td>${s.startTime.substring(0, 5)}</td>
-                        <td>${s.endTime.substring(0, 5)}</td>
+                        <td>
+                            <div class="fw-bold text-indigo">${formatTime12(startTimeStr)}</div>
+                            <small class="text-muted">${startTimeStr}</small>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-indigo">${formatTime12(endTimeStr)}</div>
+                            <small class="text-muted">${endTimeStr}</small>
+                        </td>
                         <td><span class="badge bg-secondary">${s.slotDuration} min</span></td>
                         <td>
                             <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="deleteSchedule(${s.id})">
@@ -398,11 +474,24 @@
 
         async function saveSchedule(e) {
             e.preventDefault();
-            const isWeekly = document.getElementById('typeWeekly').checked;
             const docId = document.getElementById('doctorId').value;
-            const startTime = document.getElementById('startTime').value;
-            const endTime = document.getElementById('endTime').value;
+            if (!docId) {
+                alert('⚠️ Please select a doctor first!');
+                return;
+            }
+
+            const isWeekly = document.getElementById('typeWeekly').checked;
+            const startTime = getTime24('startHour', 'startMin', 'startAmPm');
+            const endTime = getTime24('endHour', 'endMin', 'endAmPm');
             const slotDuration = parseInt(document.getElementById('slotDuration').value);
+
+            // Time Range Validation
+            const start = new Date(`1970-01-01T${startTime}`);
+            const end = new Date(`1970-01-01T${endTime}`);
+            if (end <= start) {
+                alert(`❌ Invalid Time Range!\n\nYour selected End Time (${formatTime12(endTime)}) is earlier than or equal to your Start Time (${formatTime12(startTime)}).\n\nPlease check your AM/PM selection.`);
+                return;
+            }
 
             let dayOfWeek = null;
             let specificDate = null;
@@ -468,8 +557,10 @@
             const doctorId = document.getElementById('doctorId').value;
             const date = document.getElementById('previewDate').value;
 
+            console.log('Preview Slots Called - Doctor ID:', doctorId, 'Date:', date);
+
             if (!doctorId || !date) {
-                alert('Please select doctor and date');
+                alert('⚠️ Please select doctor and date');
                 return;
             }
 
@@ -477,13 +568,27 @@
             container.innerHTML = '<div class="text-center w-100 py-4"><div class="spinner-border" style="color: #6366f1;"></div><p class="mt-2 text-muted">Generating slots...</p></div>';
 
             try {
-                const response = await fetch(`/api/scheduling/slots?doctorId=${doctorId}&date=${date}`);
+                const url = `/api/scheduling/slots?doctorId=${doctorId}&date=${date}`;
+                console.log('Fetching slots from:', url);
+
+                const response = await fetch(url);
+                console.log('Response status:', response.status);
+
                 const data = await response.json();
+                console.log('Response data:', data);
+
                 const slots = data.data || [];
+                console.log('Total slots found:', slots.length);
 
                 container.innerHTML = '';
                 if (slots.length === 0) {
-                    container.innerHTML = '<p class="text-muted w-100 text-center py-4">No slots available for this day. Ensure a schedule is configured for this day of the week.</p>';
+                    container.innerHTML = `
+                        <div class="text-center w-100 py-4">
+                            <i class="fas fa-calendar-times mb-3 opacity-25" style="font-size: 3rem;"></i>
+                            <p class="text-muted mb-1">No slots available for this day.</p>
+                            <small class="text-warning d-block">Make sure you have saved a schedule for this doctor on ${date}.</small>
+                            <small class="text-muted d-block mt-2">Check the "Current Weekly Schedule" table above to verify schedules exist.</small>
+                        </div>`;
                     return;
                 }
 
@@ -493,9 +598,16 @@
                     badge.textContent = slot.startTime.substring(0, 5);
                     container.appendChild(badge);
                 });
+
+                console.log('✅ Slots rendered successfully!');
             } catch (error) {
                 console.error('Error previewing slots:', error);
-                container.innerHTML = '<p class="text-danger w-100 text-center py-4">Error loading preview</p>';
+                container.innerHTML = `
+                    <p class="text-danger w-100 text-center py-4">
+                        <i class="fas fa-exclamation-triangle mb-2"></i><br>
+                        Error loading preview<br>
+                        <small>${error.message}</small>
+                    </p>`;
             }
         }
     </script>

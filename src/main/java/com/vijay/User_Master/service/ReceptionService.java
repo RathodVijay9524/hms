@@ -8,6 +8,7 @@ import java.util.List;
 public interface ReceptionService {
     // Stats
     ReceptionStatsDTO getDashboardStats();
+    ReceptionStatsDTO getStatsByDate(java.time.LocalDate date);
 
     // Enquiries
     EnquiryDTO createEnquiry(EnquiryDTO enquiryDTO);
@@ -29,5 +30,6 @@ public interface ReceptionService {
     List<PatientDTO> getAllPatients();
 
     // Appointments
-    List<Appointment> getTodayAppointments();
+    List<com.vijay.User_Master.dto.AppointmentResponse> getTodayAppointments();
+    List<com.vijay.User_Master.dto.AppointmentResponse> getAppointmentsByDate(java.time.LocalDate date);
 }

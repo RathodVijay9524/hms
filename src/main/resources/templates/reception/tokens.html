@@ -259,7 +259,7 @@
                                 <label class="small fw-bold text-theme mb-2">Doctor</label>
                                 <select id="tokenDocId" class="form-select border-color-theme">
                                     <option value="">Select Doctor</option>
-                                    <option th:each="doc : ${doctors}" th:value="${doc.id}" th:text="${doc.name}">
+                                    <option th:each="doc : ${doctors}" th:value="${doc.id}" th:text="${doc.doctorName}">
                                     </option>
                                 </select>
                             </div>

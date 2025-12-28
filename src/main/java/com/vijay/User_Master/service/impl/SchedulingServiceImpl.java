@@ -158,6 +158,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         TimeSlotResponse response = mapper.map(slot, TimeSlotResponse.class);
         response.setDoctorId(slot.getDoctor().getId());
         response.setDoctorName(slot.getDoctor().getUser().getName());
+        response.setAvailable(slot.getStatus() == TimeSlot.SlotStatus.AVAILABLE);
         return response;
     }
 }

@@ -17,4 +17,5 @@ public class TimeSlotResponse {
     private LocalTime startTime;
     private LocalTime endTime;
     private TimeSlot.SlotStatus status;
+    private boolean available;
 }

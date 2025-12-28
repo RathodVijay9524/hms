@@ -560,8 +560,8 @@
                     console.warn('🚫 No slots available for this doctor/date combination.');
                     container.innerHTML = `<div class="alert alert-warning w-100 small m-0 py-2">
                         <i class="fas fa-calendar-times me-2"></i>
-                        Doctor is not available on this date (${date}).
-                        Please choose another date or contact the doctor's office.
+                        Doctor is not available on this date (${date}).<br>
+                        <small class="mt-1 d-block opacity-75">Tip: Check if the doctor's schedule end time was set to 06:00 AM instead of 06:00 PM (18:00).</small>
                     </div>`;
                     return;
                 }
@@ -569,8 +569,9 @@
                 slots.forEach(slot => {
                     const btn = document.createElement('button');
                     btn.type = 'button';
+                    // Use the 'available' property from the DTO
                     btn.className = `btn btn-sm ${slot.available ? 'btn-outline-info' : 'btn-secondary disabled opacity-25'} py-1 px-3 rounded-pill`;
-                    btn.textContent = slot.startTime;
+                    btn.textContent = slot.startTime.substring(0, 5); // Show HH:mm
                     if (slot.available) {
                         btn.onclick = () => selectSlot(btn, slot.id);
                     }
