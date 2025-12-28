@@ -22,8 +22,10 @@ public class DoctorSchedule extends BaseModel {
     private DoctorProfile doctor;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private DayOfWeek dayOfWeek;
+
+    @Column(nullable = true)
+    private java.time.LocalDate specificDate;
 
     @Column(nullable = false)
     private LocalTime startTime;

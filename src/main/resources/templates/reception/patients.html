@@ -496,25 +496,39 @@
             const select = document.getElementById('apptDoctor');
             select.innerHTML = '<option value="">Select Doctor</option>';
 
-            if (!deptId) return;
+            console.log('🔍 loadDoctors triggered for department:', deptId);
+
+            if (!deptId) {
+                console.log('⚠️ No department selected, skipping doctor load.');
+                return;
+            }
 
             try {
                 const response = await fetch('/api/masters/doctors');
                 const doctors = await response.json();
+                console.log('📋 All Doctors from API:', doctors);
 
-                const filtered = doctors.filter(d => !deptId || d.departmentId == deptId);
+                // Filter doctors by the selected departmentId (using loose equality just in case of string/number)
+                const filtered = doctors.filter(d => d.departmentId == deptId);
+                console.log('✅ Filtered Doctors for Dept ' + deptId + ':', filtered);
+
+                if (filtered.length === 0) {
+                    console.warn('❗ No doctors found for this department profile.');
+                    select.innerHTML = '<option value="">No doctors in this department</option>';
+                    return;
+                }
 
                 filtered.forEach(d => {
-                    select.innerHTML += `<option value="${d.id}">${d.title || ''} ${d.name}</option>`;
+                    const option = document.createElement('option');
+                    option.value = d.id; // Correctly using the DoctorProfile ID
+                    option.textContent = d.doctorName; // Correctly using the doctorName field
+                    select.appendChild(option);
                 });
 
-                if (filtered.length === 0 && doctors.length > 0) {
-                    doctors.forEach(d => {
-                        select.innerHTML += `<option value="${d.id}">${d.title || ''} ${d.name}</option>`;
-                    });
-                }
+                console.log('🎯 Doctor dropdown populated with ' + filtered.length + ' doctors.');
             } catch (error) {
-                console.error('Error loading doctors:', error);
+                console.error('❌ Error loading doctors:', error);
+                alert('Could not load doctor list. Please check the console.');
             }
         }
 
@@ -523,17 +537,32 @@
             const date = document.getElementById('apptDate').value;
             const container = document.getElementById('slotsContainer');
 
-            if (!doctorId || !date) return;
+            console.log('📅 loadSlots triggered for Doctor:', doctorId, 'on Date:', date);
+
+            if (!doctorId || !date) {
+                console.log('⚠️ Selection incomplete, waiting for doctor and date.');
+                return;
+            }
 
             container.innerHTML = '<div class="w-100 text-center py-3"><div class="spinner-border spinner-border-sm text-info"></div><span class="ms-2 small text-muted">Checking availability...</span></div>';
 
             try {
-                const response = await fetch(`/api/scheduling/slots?doctorId=${doctorId}&date=${date}`);
-                const slots = await response.json();
+                const url = `/api/scheduling/slots?doctorId=${doctorId}&date=${date}`;
+                console.log('🌐 Fetching slots from:', url);
+
+                const response = await fetch(url);
+                const result = await response.json();
+                const slots = result.data || []; // Slot data is wrapped in 'data' field
+                console.log('⏰ Slots received:', slots);
 
                 container.innerHTML = '';
                 if (!slots || slots.length === 0) {
-                    container.innerHTML = '<div class="alert alert-warning w-100 small m-0 py-2">No active schedule found for this doctor on this date.</div>';
+                    console.warn('🚫 No slots available for this doctor/date combination.');
+                    container.innerHTML = `<div class="alert alert-warning w-100 small m-0 py-2">
+                        <i class="fas fa-calendar-times me-2"></i>
+                        Doctor is not available on this date (${date}).
+                        Please choose another date or contact the doctor's office.
+                    </div>`;
                     return;
                 }
 
@@ -547,8 +576,10 @@
                     }
                     container.appendChild(btn);
                 });
+
+                console.log('✅ Slots displayed successfully.');
             } catch (error) {
-                console.error('Error loading slots:', error);
+                console.error('❌ Error loading slots:', error);
                 container.innerHTML = '<div class="alert alert-danger w-100 small m-0 py-2">Error connecting to scheduling service.</div>';
             }
         }

@@ -82,34 +82,57 @@ public class SchedulingServiceImpl implements SchedulingService {
             return;
         }
 
-        String dayName = date.getDayOfWeek().name();
-        DoctorSchedule.DayOfWeek dayOfWeek = DoctorSchedule.DayOfWeek.valueOf(dayName);
-
-        List<DoctorSchedule> schedules = doctorScheduleRepository.findByDoctorIdAndDayOfWeekAndActiveTrue(doctorId, dayOfWeek);
+        // Try to find a schedule for this specific date first
+        List<DoctorSchedule> schedules = doctorScheduleRepository.findByDoctorIdAndSpecificDateAndActiveTrue(doctorId, date);
+        
+        // If no specific date schedule, fall back to weekly schedule
+        if (schedules.isEmpty()) {
+            String dayName = date.getDayOfWeek().name();
+            DoctorSchedule.DayOfWeek dayOfWeek = DoctorSchedule.DayOfWeek.valueOf(dayName);
+            schedules = doctorScheduleRepository.findByDoctorIdAndDayOfWeekAndSpecificDateIsNullAndActiveTrue(doctorId, dayOfWeek);
+            log.info("Using weekly schedule for {} (Day: {})", date, dayOfWeek);
+        } else {
+            log.info("Using specific date schedule for {}", date);
+        }
 
         if (schedules.isEmpty()) {
-            log.warn("No active schedule found for doctor ID: {} on {}", doctorId, dayOfWeek);
+            log.warn("No active schedule found for doctor ID: {} on {}", doctorId, date);
             return;
         }
 
         List<TimeSlot> slotsToSave = new ArrayList<>();
+        User owner = schedules.get(0).getOwner();
+        DoctorProfile doctor = schedules.get(0).getDoctor();
+
         for (DoctorSchedule schedule : schedules) {
+            log.info("Generating slots for schedule ID: {} ({} to {} with {} min duration)", 
+                schedule.getId(), schedule.getStartTime(), schedule.getEndTime(), schedule.getSlotDuration());
+            
             LocalTime current = schedule.getStartTime();
-            while (current.plusMinutes(schedule.getSlotDuration()).isBefore(schedule.getEndTime()) || 
-                   current.plusMinutes(schedule.getSlotDuration()).equals(schedule.getEndTime())) {
+            LocalTime endTime = schedule.getEndTime();
+            int duration = schedule.getSlotDuration();
+
+            if (endTime.isBefore(current)) {
+                log.error("Invalid schedule: End time {} is before Start time {}", endTime, current);
+                continue;
+            }
+
+            while (current.plusMinutes(duration).isBefore(endTime) || 
+                   current.plusMinutes(duration).equals(endTime)) {
                 
                 TimeSlot slot = TimeSlot.builder()
-                        .doctor(schedule.getDoctor())
+                        .doctor(doctor)
                         .date(date)
                         .startTime(current)
-                        .endTime(current.plusMinutes(schedule.getSlotDuration()))
+                        .endTime(current.plusMinutes(duration))
                         .status(TimeSlot.SlotStatus.AVAILABLE)
-                        .owner(schedule.getOwner())
+                        .owner(owner)
                         .build();
                 
                 slotsToSave.add(slot);
-                current = current.plusMinutes(schedule.getSlotDuration());
+                current = current.plusMinutes(duration);
             }
+            log.info("Total slots generated for this schedule: {}", slotsToSave.size());
         }
 
         if (!slotsToSave.isEmpty()) {

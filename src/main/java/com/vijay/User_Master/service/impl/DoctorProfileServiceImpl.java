@@ -57,7 +57,9 @@ public class DoctorProfileServiceImpl implements DoctorProfileService {
         DoctorProfile saved = doctorProfileRepository.save(profile);
         DoctorProfileDTO result = modelMapper.map(saved, DoctorProfileDTO.class);
         result.setDoctorName(doctorUser.getName());
+        result.setUserId(doctorUser.getId());
         result.setDepartmentName(department.getName());
+        result.setDepartmentId(department.getId());
         return result;
     }
 
@@ -69,6 +71,8 @@ public class DoctorProfileServiceImpl implements DoctorProfileService {
                     DoctorProfileDTO dto = modelMapper.map(p, DoctorProfileDTO.class);
                     dto.setDoctorName(p.getUser().getName());
                     dto.setDepartmentName(p.getDepartment().getName());
+                    dto.setUserId(p.getUser().getId());
+                    dto.setDepartmentId(p.getDepartment().getId());
                     return dto;
                 })
                 .collect(Collectors.toList());
@@ -82,7 +86,9 @@ public class DoctorProfileServiceImpl implements DoctorProfileService {
         
         DoctorProfileDTO dto = modelMapper.map(profile, DoctorProfileDTO.class);
         dto.setDoctorName(profile.getUser().getName());
+        dto.setUserId(profile.getUser().getId());
         dto.setDepartmentName(profile.getDepartment().getName());
+        dto.setDepartmentId(profile.getDepartment().getId());
         return dto;
     }
 

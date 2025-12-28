@@ -11,8 +11,16 @@ import java.time.LocalTime;
 public class DoctorScheduleRequest {
     private Long doctorId;
     private DoctorSchedule.DayOfWeek dayOfWeek;
-    private LocalTime startTime;
-    private LocalTime endTime;
+    
+    @com.fasterxml.jackson.annotation.JsonFormat(pattern = "yyyy-MM-dd")
+    private java.time.LocalDate specificDate;
+    
+    @com.fasterxml.jackson.annotation.JsonFormat(pattern = "HH:mm")
+    private java.time.LocalTime startTime;
+    
+    @com.fasterxml.jackson.annotation.JsonFormat(pattern = "HH:mm")
+    private java.time.LocalTime endTime;
+    
     private Integer slotDuration;
     private Boolean active;
 }

@@ -176,8 +176,22 @@
                             </select>
                         </div>
                         <div class="mb-3">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Schedule Type</label>
+                            <div class="d-flex gap-2">
+                                <input type="radio" class="btn-check" name="scheduleType" id="typeWeekly" value="weekly"
+                                    checked onchange="toggleScheduleType()">
+                                <label class="btn btn-outline-indigo btn-sm rounded-pill flex-grow-1"
+                                    for="typeWeekly">Weekly Repeat</label>
+
+                                <input type="radio" class="btn-check" name="scheduleType" id="typeSpecific"
+                                    value="specific" onchange="toggleScheduleType()">
+                                <label class="btn btn-outline-indigo btn-sm rounded-pill flex-grow-1"
+                                    for="typeSpecific">Specific Date</label>
+                            </div>
+                        </div>
+                        <div class="mb-3" id="weeklyGroup">
                             <label class="form-label small text-muted text-uppercase fw-bold">Day of Week</label>
-                            <select id="dayOfWeek" class="form-select" required>
+                            <select id="dayOfWeek" class="form-select">
                                 <option value="MONDAY">Monday</option>
                                 <option value="TUESDAY">Tuesday</option>
                                 <option value="WEDNESDAY">Wednesday</option>
@@ -186,6 +200,10 @@
                                 <option value="SATURDAY">Saturday</option>
                                 <option value="SUNDAY">Sunday</option>
                             </select>
+                        </div>
+                        <div class="mb-3 d-none" id="specificGroup">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Specific Date</label>
+                            <input type="date" id="specificDate" class="form-control">
                         </div>
                         <div class="row mb-3">
                             <div class="col">
@@ -207,9 +225,15 @@
                                 <option value="60">60 Minutes</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-indigo w-100 py-3 rounded-pill">
-                            <i class="fas fa-save me-2"></i>Save Schedule
-                        </button>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-indigo flex-grow-1 py-3 rounded-pill">
+                                <i class="fas fa-save me-2"></i>Save Schedule
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary px-4 rounded-pill"
+                                onclick="resetForm()">
+                                <i class="fas fa-undo"></i>
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -287,7 +311,16 @@
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             document.getElementById('previewDate').value = tomorrow.toISOString().split('T')[0];
+
+            // Set default for specific date to tomorrow too
+            document.getElementById('specificDate').value = tomorrow.toISOString().split('T')[0];
         });
+
+        function toggleScheduleType() {
+            const isWeekly = document.getElementById('typeWeekly').checked;
+            document.getElementById('weeklyGroup').classList.toggle('d-none', !isWeekly);
+            document.getElementById('specificGroup').classList.toggle('d-none', isWeekly);
+        }
 
         async function loadDoctors() {
             try {
@@ -304,6 +337,12 @@
             } catch (error) {
                 console.error('Error loading doctors:', error);
             }
+        }
+
+        function resetForm() {
+            document.getElementById('scheduleForm').reset();
+            document.getElementById('typeWeekly').checked = true;
+            toggleScheduleType();
         }
 
         async function loadDoctorSchedules() {
@@ -328,13 +367,19 @@
 
                 schedules.sort((a, b) => {
                     const days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
-                    return days.indexOf(a.dayOfWeek) - days.indexOf(b.dayOfWeek);
+                    const valA = a.specificDate || a.dayOfWeek;
+                    const valB = b.specificDate || b.dayOfWeek;
+                    return (days.indexOf(a.dayOfWeek) || 0) - (days.indexOf(b.dayOfWeek) || 0) || (valA < valB ? -1 : 1);
                 });
 
                 schedules.forEach(s => {
                     const row = document.createElement('tr');
+                    const dayDisplay = s.specificDate ?
+                        `<span class="badge bg-info text-dark">${s.specificDate}</span>` :
+                        `<strong>${s.dayOfWeek}</strong>`;
+
                     row.innerHTML = `
-                        <td><strong>${s.dayOfWeek}</strong></td>
+                        <td>${dayDisplay}</td>
                         <td>${s.startTime.substring(0, 5)}</td>
                         <td>${s.endTime.substring(0, 5)}</td>
                         <td><span class="badge bg-secondary">${s.slotDuration} min</span></td>
@@ -353,14 +398,37 @@
 
         async function saveSchedule(e) {
             e.preventDefault();
+            const isWeekly = document.getElementById('typeWeekly').checked;
+            const docId = document.getElementById('doctorId').value;
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+            const slotDuration = parseInt(document.getElementById('slotDuration').value);
+
+            let dayOfWeek = null;
+            let specificDate = null;
+
+            if (isWeekly) {
+                dayOfWeek = document.getElementById('dayOfWeek').value;
+            } else {
+                specificDate = document.getElementById('specificDate').value;
+                // Auto-calculate the day of week from the specific date to ensure DB constraints are met
+                const dateObj = new Date(specificDate);
+                const dayIndices = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+                dayOfWeek = dayIndices[dateObj.getDay()];
+                console.log('📅 Specific Date ' + specificDate + ' corresponds to: ' + dayOfWeek);
+            }
+
             const payload = {
-                doctorId: document.getElementById('doctorId').value,
-                dayOfWeek: document.getElementById('dayOfWeek').value,
-                startTime: document.getElementById('startTime').value,
-                endTime: document.getElementById('endTime').value,
-                slotDuration: parseInt(document.getElementById('slotDuration').value),
+                doctorId: docId,
+                dayOfWeek: dayOfWeek,
+                specificDate: specificDate,
+                startTime: startTime,
+                endTime: endTime,
+                slotDuration: slotDuration,
                 active: true
             };
+
+            console.log('📤 Sending Schedule Payload:', payload);
 
             try {
                 const response = await fetch('/api/scheduling/doctor-schedule', {
@@ -369,14 +437,20 @@
                     body: JSON.stringify(payload)
                 });
 
+                const result = await response.json();
+                console.log('📥 Server Response:', result);
+
                 if (response.ok) {
                     loadDoctorSchedules();
                     alert('Schedule saved successfully!');
                 } else {
-                    alert('Error saving schedule');
+                    const errorMsg = result.errorMessage || result.message || 'Error saving schedule';
+                    alert('Server Error: ' + errorMsg);
+                    console.error('Save failed:', result);
                 }
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Network Error:', error);
+                alert('Connection failure. Check if the server is running.');
             }
         }
 
