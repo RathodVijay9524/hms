@@ -10,4 +10,14 @@ public interface PdfExportService {
      * @return Byte array output stream containing the PDF data.
      */
     ByteArrayOutputStream generateLabReportPdf(Long orderId);
+
+    /**
+     * Generates a PDF prescription for a given doctor visit.
+     */
+    ByteArrayOutputStream generatePrescriptionPdf(Long visitId);
+
+    /**
+     * Generates a PDF visit summary for a given doctor visit.
+     */
+    ByteArrayOutputStream generateVisitSummaryPdf(Long visitId);
 }

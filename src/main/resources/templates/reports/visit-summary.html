@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Visit Summary</title>
+    <style>
+        body {
+            font-family: 'Helvetica', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .hospital-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1e40af;
+        }
+
+        .hospital-info {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .report-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #1e293b;
+            background: #f1f5f9;
+            padding: 10px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section-header {
+            font-size: 14px;
+            font-weight: bold;
+            border-left: 4px solid #3b82f6;
+            padding-left: 10px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            color: #1e3a8a;
+        }
+
+        .patient-box {
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: table;
+            width: 100%;
+            border-radius: 4px;
+        }
+
+        .info-row {
+            display: table-row;
+        }
+
+        .info-cell {
+            display: table-cell;
+            font-size: 13px;
+            padding: 4px 0;
+        }
+
+        .label {
+            font-weight: bold;
+            width: 120px;
+            color: #475569;
+        }
+
+        .grid {
+            display: table;
+            width: 100%;
+        }
+
+        .grid-row {
+            display: table-row;
+        }
+
+        .grid-cell {
+            display: table-cell;
+            width: 50%;
+            padding: 10px;
+            border: 1px solid #f1f5f9;
+            vertical-align: top;
+        }
+
+        .soap-box {
+            padding: 10px;
+            border: 1px solid #f1f5f9;
+            background: #fafafa;
+            margin-bottom: 5px;
+        }
+
+        .soap-label {
+            font-weight: bold;
+            font-size: 12px;
+            color: #3b82f6;
+            margin-bottom: 3px;
+        }
+
+        .soap-content {
+            font-size: 13px;
+            color: #334155;
+        }
+
+        .notes-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #334155;
+        }
+
+        .footer {
+            margin-top: 60px;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 20px;
+        }
+
+        .signature-box {
+            float: right;
+            width: 200px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .signature-line {
+            border-top: 1px solid #333;
+            margin-top: 35px;
+            padding-top: 5px;
+        }
+
+        .disclaimer {
+            font-size: 10px;
+            color: #94a3b8;
+            margin-top: 80px;
+            text-align: center;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="hospital-name" th:text="${hospitalName}">MedLab Pro Hospital</div>
+        <div class="hospital-info">
+            <span th:text="${hospitalAddress}">Address Details</span><br />
+            Phone: <span th:text="${hospitalPhone}">Phone Number</span>
+        </div>
+    </div>
+
+    <div class="report-title">OUTPATIENT CLINICAL SUMMARY</div>
+
+    <div class="patient-box">
+        <div class="info-row">
+            <div class="info-cell label">Patient:</div>
+            <div class="info-cell"><strong th:text="${visit.patient.name}">John Doe</strong></div>
+            <div class="info-cell label">Visit ID:</div>
+            <div class="info-cell" th:text="${visit.visitNumber}">VN-12345</div>
+        </div>
+        <div class="info-row">
+            <div class="info-cell label">Age/Gender:</div>
+            <div class="info-cell"
+                th:text="(${visit.patient.dateOfBirth != null ? T(java.time.Period).between(visit.patient.dateOfBirth, T(java.time.LocalDate).now()).getYears() : 'N/A'}) + 'Y / ' + ${visit.patient.gender}">
+                35Y / Male</div>
+            <div class="info-cell label">Visit Date:</div>
+            <div class="info-cell" th:text="${#temporals.format(visit.visitDate, 'dd, MMM yyyy HH:mm')}">28 Dec 2025
+            </div>
+        </div>
+        <div class="info-row">
+            <div class="info-cell label">Doctor:</div>
+            <div class="info-cell" th:text="'Dr. ' + ${visit.doctor.name}">Dr. Omprakash Vijay</div>
+            <div class="info-cell label">Type:</div>
+            <div class="info-cell" th:text="${visit.visitType}">OPD</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">Clinical Presentation</div>
+        <div class="soap-box">
+            <div class="soap-label">SYMPTOMS & COMPLAINTS:</div>
+            <div class="soap-content"
+                th:text="${visit.symptoms != null && !visit.symptoms.isEmpty() ? visit.symptoms : 'None recorded'}">
+                Fever, Cough</div>
+        </div>
+        <div class="soap-box">
+            <div class="soap-label">PROVISIONAL DIAGNOSIS:</div>
+            <div class="soap-content"><strong><span
+                        th:text="${visit.diagnosis != null && !visit.diagnosis.isEmpty() ? visit.diagnosis : 'Awaiting results'}">Viral
+                        Fever</span></strong></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">SOAP Assessment</div>
+        <div class="grid">
+            <div class="grid-row">
+                <div class="grid-cell">
+                    <div class="soap-label">SUBJECTIVE (S)</div>
+                    <div class="soap-content notes-text"
+                        th:text="${visit.subjectiveNotes != null ? visit.subjectiveNotes : '-'}">History of symptoms...
+                    </div>
+                </div>
+                <div class="grid-cell">
+                    <div class="soap-label">OBJECTIVE (O)</div>
+                    <div class="soap-content notes-text"
+                        th:text="${visit.objectiveNotes != null ? visit.objectiveNotes : '-'}">Physical exam findings...
+                    </div>
+                </div>
+            </div>
+            <div class="grid-row">
+                <div class="grid-cell">
+                    <div class="soap-label">ASSESSMENT (A)</div>
+                    <div class="soap-content notes-text"
+                        th:text="${visit.assessmentNotes != null ? visit.assessmentNotes : '-'}">Medical reasoning...
+                    </div>
+                </div>
+                <div class="grid-cell">
+                    <div class="soap-label">PLAN (P)</div>
+                    <div class="soap-content notes-text" th:text="${visit.planNotes != null ? visit.planNotes : '-'}">
+                        Treatment strategy...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="signature-box">
+            <div class="signature-line">
+                <strong th:text="'Dr. ' + ${visit.doctor.name}">Doctor Name</strong><br />
+                <span>Digitally Verified Summary</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="disclaimer">
+        * This summary is for information only. Full medical history and active prescriptions should be reviewed if
+        treatment is continuing.<br />
+        Generated on: <span
+            th:text="${#temporals.format(T(java.time.LocalDateTime).now(), 'dd-MMM-yyyy HH:mm')}">Date</span>
+    </div>
+</body>
+
+</html>

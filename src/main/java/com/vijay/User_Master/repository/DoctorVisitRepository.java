@@ -15,4 +15,7 @@ public interface DoctorVisitRepository extends JpaRepository<DoctorVisit, Long> 
     List<DoctorVisit> findByPatientIdAndOwnerIdOrderByVisitDateDesc(Long patientId, Long ownerId);
     Optional<DoctorVisit> findByIdAndOwnerId(Long id, Long ownerId);
     Page<DoctorVisit> findByDoctorIdAndOwnerId(Long doctorId, Long ownerId, Pageable pageable);
+    
+    @org.springframework.data.jpa.repository.Query("SELECT MAX(v.visitNumber) FROM DoctorVisit v WHERE v.visitNumber LIKE :pattern AND v.owner.id = :ownerId")
+    String findMaxVisitNumberByPattern(String pattern, Long ownerId);
 }

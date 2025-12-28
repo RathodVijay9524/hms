@@ -100,7 +100,8 @@
                 <div class="d-flex gap-2">
                     <div class="position-relative" style="width: 350px;">
                         <i class="fas fa-search search-icon"></i>
-                        <input type="text" class="search-emr" placeholder="Search by name, UHID, Mobile...">
+                        <input type="text" id="emrSearch" class="search-emr"
+                            placeholder="Search by name, UHID, Mobile..." onkeyup="filterEMR()">
                     </div>
                 </div>
             </div>
@@ -119,49 +120,30 @@
                                 <th class="text-end">Clinical Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
+                        <tbody id="emrTableBody">
+                            <tr th:each="patient : ${patientsPage.content}" class="patient-row">
                                 <td>
-                                    <div class="fw-bold fs-6">John Doe</div>
-                                    <div class="small text-muted">+91 98765 43210</div>
+                                    <div class="fw-bold fs-6" th:text="${patient.name}">John Doe</div>
+                                    <div class="small text-muted" th:text="${patient.phone}">+91 98765 43210</div>
                                 </td>
-                                <td><span class="fw-bold text-white">H101-001</span></td>
-                                <td>32y / Male</td>
-                                <td>25-Dec-2025</td>
-                                <td><span class="badge bg-success-subtle text-success px-3 rounded-pill">Active
-                                        OPD</span></td>
+                                <td><span class="fw-bold text-white" th:text="${patient.uhid}">H101-001</span></td>
+                                <td th:text="${patient.age + 'y / ' + patient.gender}">32y / Male</td>
+                                <td>-</td>
+                                <td><span class="badge bg-success-subtle text-success px-3 rounded-pill">Active</span>
+                                </td>
                                 <td class="text-end">
                                     <div class="d-flex justify-content-end gap-2">
-                                        <a href="#" class="action-icon" title="View History"><i
-                                                class="fas fa-history"></i></a>
-                                        <a href="#" class="action-icon" title="Write Note"><i
-                                                class="fas fa-edit"></i></a>
-                                        <a href="#" class="action-icon" title="Order Tests"><i
+                                        <a th:href="@{'/lab/patients/' + ${patient.id}}" class="action-icon"
+                                            title="View History"><i class="fas fa-history"></i></a>
+                                        <a th:href="@{'/lab/patients/' + ${patient.id}}" class="action-icon"
+                                            title="Write Note"><i class="fas fa-edit"></i></a>
+                                        <a th:href="@{/lab/orders}" class="action-icon" title="Order Tests"><i
                                                 class="fas fa-flask"></i></a>
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>
-                                    <div class="fw-bold fs-6">Alice Smith</div>
-                                    <div class="small text-muted">+91 91234 56789</div>
-                                </td>
-                                <td><span class="fw-bold text-white">H101-002</span></td>
-                                <td>28y / Female</td>
-                                <td>24-Dec-2025</td>
-                                <td><span
-                                        class="badge bg-primary-subtle text-primary px-3 rounded-pill">Tele-Consult</span>
-                                </td>
-                                <td class="text-end">
-                                    <div class="d-flex justify-content-end gap-2">
-                                        <a href="#" class="action-icon" title="View History"><i
-                                                class="fas fa-history"></i></a>
-                                        <a href="#" class="action-icon" title="Write Note"><i
-                                                class="fas fa-edit"></i></a>
-                                        <a href="#" class="action-icon" title="Order Tests"><i
-                                                class="fas fa-flask"></i></a>
-                                    </div>
-                                </td>
+                            <tr th:if="${patientsPage.empty}">
+                                <td colspan="6" class="text-center py-5 text-muted">No patient records found.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -170,6 +152,21 @@
         </div>
     </main>
 
+    <script>
+        function filterEMR() {
+            const query = document.getElementById('emrSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#emrTableBody .patient-row');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
 </body>

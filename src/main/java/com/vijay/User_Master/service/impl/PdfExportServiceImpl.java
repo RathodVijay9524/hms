@@ -2,11 +2,15 @@ package com.vijay.User_Master.service.impl;
 
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.vijay.User_Master.Helper.CommonUtils;
+import com.vijay.User_Master.entity.DoctorVisit;
 import com.vijay.User_Master.entity.LabOrder;
 import com.vijay.User_Master.entity.LabResult;
+import com.vijay.User_Master.entity.Prescription;
 import com.vijay.User_Master.exceptions.ResourceNotFoundException;
+import com.vijay.User_Master.repository.DoctorVisitRepository;
 import com.vijay.User_Master.repository.LabOrderRepository;
 import com.vijay.User_Master.repository.LabResultRepository;
+import com.vijay.User_Master.repository.PrescriptionRepository;
 import com.vijay.User_Master.service.PdfExportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +30,8 @@ public class PdfExportServiceImpl implements PdfExportService {
 
     private final LabOrderRepository labOrderRepository;
     private final LabResultRepository labResultRepository;
+    private final DoctorVisitRepository doctorVisitRepository;
+    private final PrescriptionRepository prescriptionRepository;
     private final TemplateEngine templateEngine;
 
     @Override
@@ -74,6 +80,55 @@ public class PdfExportServiceImpl implements PdfExportService {
             throw new RuntimeException("Could not generate PDF report", e);
         }
 
+        return target;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ByteArrayOutputStream generatePrescriptionPdf(Long visitId) {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        Prescription prescription = prescriptionRepository.findByVisitIdAndOwnerId(visitId, ownerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Prescription", "visitId", visitId));
+
+        Context context = new Context();
+        context.setVariable("prescription", prescription);
+        context.setVariable("hospitalName", prescription.getOwner().getName());
+        context.setVariable("hospitalAddress", prescription.getOwner().getAbout());
+        context.setVariable("hospitalPhone", prescription.getOwner().getPhoNo());
+
+        String htmlContent = templateEngine.process("reports/prescription-report", context);
+        return renderPdf(htmlContent);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ByteArrayOutputStream generateVisitSummaryPdf(Long visitId) {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        DoctorVisit visit = doctorVisitRepository.findByIdAndOwnerId(visitId, ownerId)
+                .orElseThrow(() -> new ResourceNotFoundException("DoctorVisit", "id", visitId));
+
+        Context context = new Context();
+        context.setVariable("visit", visit);
+        context.setVariable("hospitalName", visit.getOwner().getName());
+        context.setVariable("hospitalAddress", visit.getOwner().getAbout());
+        context.setVariable("hospitalPhone", visit.getOwner().getPhoNo());
+
+        String htmlContent = templateEngine.process("reports/visit-summary", context);
+        return renderPdf(htmlContent);
+    }
+
+    private ByteArrayOutputStream renderPdf(String htmlContent) {
+        ByteArrayOutputStream target = new ByteArrayOutputStream();
+        try {
+            PdfRendererBuilder builder = new PdfRendererBuilder();
+            builder.useFastMode();
+            builder.withHtmlContent(htmlContent, null);
+            builder.toStream(target);
+            builder.run();
+        } catch (Exception e) {
+            log.error("Error generating PDF", e);
+            throw new RuntimeException("Could not generate PDF report", e);
+        }
         return target;
     }
 }

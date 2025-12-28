@@ -251,12 +251,20 @@ public class WebController {
     }
 
     @GetMapping("/doctor/patients")
-    public String doctorPatients() {
+    public String doctorPatients(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
+        model.addAttribute("patientsPage", patientService.getAllPatients(page, size));
         return "doctor/emr";
     }
 
     @GetMapping("/doctor/emr")
-    public String doctorEmr() {
+    public String doctorEmr(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
+        model.addAttribute("patientsPage", patientService.getAllPatients(page, size));
         return "doctor/emr";
     }
 

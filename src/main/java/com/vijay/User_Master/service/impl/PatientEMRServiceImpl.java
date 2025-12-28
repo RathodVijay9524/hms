@@ -153,8 +153,35 @@ public class PatientEMRServiceImpl implements PatientEMRService {
         visit.setPatient(patient);
         visit.setDoctor(doctor);
         visit.setOwner(owner);
+        
+        // Generate unique Visit Number: VN-{ownerId}-{year}-{sequence}
+        if (visit.getVisitNumber() == null || visit.getVisitNumber().isEmpty()) {
+            String year = String.valueOf(java.time.LocalDate.now().getYear());
+            String pattern = String.format("VN%d-%s-%%", ownerId, year);
+            String maxVN = doctorVisitRepository.findMaxVisitNumberByPattern(pattern, ownerId);
+            int sequence = 1;
+            if (maxVN != null && !maxVN.isEmpty()) {
+                try {
+                    String sequencePart = maxVN.substring(maxVN.lastIndexOf('-') + 1);
+                    sequence = Integer.parseInt(sequencePart) + 1;
+                } catch (Exception e) {
+                    sequence = 1;
+                }
+            }
+            visit.setVisitNumber(String.format("VN%d-%s-%06d", ownerId, year, sequence));
+        }
+        
+        // Ensure default status if not provided to prevent nullable constraint violation
+        if (visit.getStatus() == null) {
+            visit.setStatus(VisitStatus.CREATED);
+        }
+        
         if (visit.getVisitDate() == null) {
             visit.setVisitDate(LocalDateTime.now());
+        }
+
+        if (visit.getSymptoms() == null) {
+            visit.setSymptoms("");
         }
 
         DoctorVisit saved = doctorVisitRepository.save(visit);

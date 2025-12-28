@@ -177,24 +177,31 @@
 
                         <!-- Prescriptions Tab -->
                         <div class="tab-pane fade" id="prescriptions">
-                            <div class="table-responsive">
-                                <table class="table" id="prescriptionsTable">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Doctor</th>
-                                            <th>Medications</th>
-                                            <th>Instructions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody><!-- JS Populated --></tbody>
-                                </table>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="text-muted text-uppercase mb-0 small fw-bold">Active Prescriptions</h6>
+                                <button class="btn btn-sm btn-primary-gradient"
+                                    onclick="openPrescriptionForLatestVisit()">
+                                    <i class="fas fa-plus me-1"></i> New Prescription
+                                </button>
                             </div>
+                            <table class="table" id="prescriptionsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Doctor</th>
+                                        <th>Medications</th>
+                                        <th>Instructions</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody><!-- JS Populated --></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Modals -->
@@ -209,20 +216,32 @@
                 <div class="modal-body">
                     <form id="vitalsForm">
                         <div class="row g-3">
-                            <div class="col-6"><label>Systolic BP</label><input type="number" id="sysBp"
-                                    class="form-control"></div>
-                            <div class="col-6"><label>Diastolic BP</label><input type="number" id="diaBp"
-                                    class="form-control"></div>
-                            <div class="col-6"><label>Heart Rate</label><input type="number" id="heartRate"
-                                    class="form-control"></div>
-                            <div class="col-6"><label>SpO2 (%)</label><input type="number" id="spo2"
-                                    class="form-control"></div>
-                            <div class="col-6"><label>Temp (°C)</label><input type="number" id="temp"
-                                    class="form-control" step="0.1"></div>
-                            <div class="col-6"><label>Weight (kg)</label><input type="number" id="weight"
-                                    class="form-control" step="0.1"></div>
-                            <div class="col-6"><label>Height (cm)</label><input type="number" id="height"
-                                    class="form-control" step="0.1"></div>
+                            <div class="col-6"><label>Systolic BP</label>
+                                <input type="number" id="sysBp" class="form-control"
+                                    oninput="checkVitalInput('BP_SYSTOLIC', this)">
+                            </div>
+                            <div class="col-6"><label>Diastolic BP</label>
+                                <input type="number" id="diaBp" class="form-control"
+                                    oninput="checkVitalInput('BP_DIASTOLIC', this)">
+                            </div>
+                            <div class="col-6"><label>Heart Rate</label>
+                                <input type="number" id="heartRate" class="form-control"
+                                    oninput="checkVitalInput('HEART_RATE', this)">
+                            </div>
+                            <div class="col-6"><label>SpO2 (%)</label>
+                                <input type="number" id="spo2" class="form-control"
+                                    oninput="checkVitalInput('OXYGEN', this)">
+                            </div>
+                            <div class="col-6"><label>Temp (°C)</label>
+                                <input type="number" id="temp" class="form-control" step="0.1"
+                                    oninput="checkVitalInput('TEMP', this)">
+                            </div>
+                            <div class="col-6"><label>Weight (kg)</label>
+                                <input type="number" id="weight" class="form-control" step="0.1">
+                            </div>
+                            <div class="col-6"><label>Height (cm)</label>
+                                <input type="number" id="height" class="form-control" step="0.1">
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -346,6 +365,41 @@
                                     placeholder="Treatment, medications, follow-up..."></textarea>
                             </div>
                         </div>
+
+                        <!-- Medications Section -->
+                        <div class="mt-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="fw-bold text-primary"><i class="fas fa-pills me-2"></i>Medications
+                                    (Rx)</label>
+                                <button type="button" class="btn btn-sm btn-outline-primary"
+                                    onclick="addVisitMedicationRow()">
+                                    <i class="fas fa-plus me-1"></i> Add Medication
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered" id="visitMedsTable">
+                                    <thead class="bg-light">
+                                        <tr class="small text-uppercase">
+                                            <th>Medicine</th>
+                                            <th style="width: 120px;">Dosage</th>
+                                            <th style="width: 120px;">Freq</th>
+                                            <th style="width: 120px;">Duration</th>
+                                            <th>Instructions</th>
+                                            <th style="width: 50px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="visitMedsTableBody">
+                                        <!-- Dynamic Rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mb-3">
+                                <label class="small text-muted">Pharmacist Notes</label>
+                                <textarea id="visitPharmacistNotes" class="form-control form-control-sm" rows="1"
+                                    placeholder="Special instructions for pharmacist..."></textarea>
+                            </div>
+                        </div>
+
                         <input type="hidden" id="visitNotes">
                     </form>
                 </div>
@@ -424,6 +478,15 @@
 
     <script th:inline="javascript">
         const patientId = /*[[${patient.id}]]*/ 1;
+        let patientAllergies = [];
+
+        const VITAL_THRESHOLDS = {
+            BP_SYSTOLIC: { min: 90, max: 150 },
+            BP_DIASTOLIC: { min: 60, max: 95 },
+            HEART_RATE: { min: 50, max: 110 },
+            TEMP: { min: 96.0, max: 100.4 },
+            OXYGEN: { min: 94, max: 100 }
+        };
 
         // Initial Loads
         document.addEventListener('DOMContentLoaded', () => {
@@ -431,6 +494,13 @@
             loadHistory();
             loadTimeline();
             loadSymptomSuggestions();
+
+            // Initialize medication rows when visit modal opens
+            const visitModal = document.getElementById('visitModal');
+            visitModal.addEventListener('show.bs.modal', function () {
+                document.getElementById('visitMedsTableBody').innerHTML = '';
+                addVisitMedicationRow();
+            });
         });
 
         // --- Symptom Management ---
@@ -533,11 +603,17 @@
                 .then(data => {
                     if (data.length > 0) {
                         const v = data[0];
+                        const sBpClass = getVitalStatus('BP_SYSTOLIC', v.systolicBP);
+                        const dBpClass = getVitalStatus('BP_DIASTOLIC', v.diastolicBP);
+                        const hrClass = getVitalStatus('HEART_RATE', v.heartRate);
+                        const tempClass = getVitalStatus('TEMP', v.temperature);
+                        const oxClass = getVitalStatus('OXYGEN', v.oxygenLevel);
+
                         document.getElementById('latestVitals').innerHTML = `
-                            <div class="d-flex justify-content-between mb-2"><span>BP</span> <strong>${v.bp}</strong></div>
-                            <div class="d-flex justify-content-between mb-2"><span>Heart Rate</span> <strong>${v.heartRate} bpm</strong></div>
-                            <div class="d-flex justify-content-between mb-2"><span>SpO2</span> <strong>${v.oxygenLevel}%</strong></div>
-                            <div class="d-flex justify-content-between mb-2"><span>Temp</span> <strong>${v.temperature}°C</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>BP</span> <strong class="${sBpClass || dBpClass}">${v.bp}</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>Heart Rate</span> <strong class="${hrClass}">${v.heartRate} bpm</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>SpO2</span> <strong class="${oxClass}">${v.oxygenLevel}%</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>Temp</span> <strong class="${tempClass}">${v.temperature}°C</strong></div>
                             <div class="d-flex justify-content-between mb-2"><span>Weight</span> <strong>${v.weight} kg</strong></div>
                             <div class="d-flex justify-content-between mb-2"><span>Height</span> <strong>${v.height} cm</strong></div>
                             ${v.bmi ? `
@@ -591,6 +667,8 @@
                     `;
                     // Populate edit form
                     document.getElementById('histAllergies').value = h.allergies || '';
+                    patientAllergies = h.allergies ? h.allergies.split(',').map(s => s.trim().toLowerCase()).filter(s => s !== '') : [];
+
                     document.getElementById('histConditions').value = h.chronicConditions || '';
                     document.getElementById('histSurgeries').value = h.pastSurgeries || '';
                     document.getElementById('histBlood').value = h.bloodGroup || '';
@@ -679,9 +757,13 @@
                                 ${visit.closedBy ? `<div class="small text-muted">Closed by ${visit.closedBy} on ${new Date(visit.closedAt).toLocaleString()}</div>` : ''}
                                 <div class="mt-2">
                                     ${actionButtons}
+                                    <button class="btn btn-sm btn-outline-info me-2" onclick="printVisitSummary(${visit.id})">
+                                        <i class="fas fa-file-alt me-1"></i> Summary
+                                    </button>
                                     ${!visit.hasPrescription && isEditable ?
-                                `<button class="btn btn-sm btn-outline-primary" onclick="openPrescriptionModal(${visit.id})"><i class="fas fa-prescription me-1"></i> Add Prescription</button>`
-                                : visit.hasPrescription ? `<span class="badge bg-success"><i class="fas fa-check me-1"></i> Prescription Given</span>` : ''}
+                                `<button class="btn btn-sm btn-outline-primary me-2" onclick="openPrescriptionModal(${visit.id})"><i class="fas fa-prescription me-1"></i> Add Rx</button>`
+                                : visit.hasPrescription ?
+                                    `<button class="btn btn-sm btn-success me-2" onclick="printPrescription(${visit.id})"><i class="fas fa-print me-1"></i> Print Rx</button>` : ''}
                                 </div>
                             </div>
                         `;
@@ -719,6 +801,23 @@
                 planNotes: document.getElementById('visitPlan').value
             };
 
+            // Collect medications if any
+            const medications = [];
+            document.querySelectorAll('#visitMedsTableBody tr').forEach(row => {
+                const name = row.querySelector('.med-name').value;
+                if (name) {
+                    medications.push({
+                        medicineName: name,
+                        dosage: row.querySelector('.med-dosage').value,
+                        frequency: row.querySelector('.med-freq').value,
+                        duration: row.querySelector('.med-dur').value,
+                        instructions: row.querySelector('.med-instr').value
+                    });
+                }
+            });
+
+            const pharmacistNotes = document.getElementById('visitPharmacistNotes').value;
+
             fetch(`/api/emr/patients/${patientId}/visits`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -730,22 +829,116 @@
                     throw new Error('Error recording visit');
                 }
             }).then(visit => {
-                // Save each symptom separately
-                const symptomPromises = visitSymptoms.map(symptom =>
-                    fetch(`/api/emr/visits/${visit.id}/symptoms`, {
+                const promises = [];
+
+                // Save symptoms
+                visitSymptoms.forEach(symptom => {
+                    promises.push(fetch(`/api/emr/visits/${visit.id}/symptoms`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(symptom)
-                    })
-                );
+                    }));
+                });
 
-                return Promise.all(symptomPromises);
+                // Save prescription if medications were added
+                if (medications.length > 0) {
+                    promises.push(fetch(`/api/emr/visits/${visit.id}/prescription`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            pharmacistNotes: pharmacistNotes,
+                            medications: medications
+                        })
+                    }));
+                }
+
+                return Promise.all(promises);
             }).then(() => {
-                visitSymptoms = []; // Clear symptoms array
+                visitSymptoms = [];
                 location.reload();
             }).catch(err => {
                 alert('Error recording visit: ' + err.message);
             });
+        }
+
+        // --- Clinical Safety Helpers ---
+
+        function checkAllergy(input) {
+            const val = input.value.toLowerCase().trim();
+            const warningEl = input.parentElement.querySelector('.allergy-warning');
+
+            if (val.length < 3) {
+                if (warningEl) warningEl.remove();
+                return;
+            }
+
+            const isAllergic = patientAllergies.some(allergy => val.includes(allergy) || allergy.includes(val));
+
+            if (isAllergic) {
+                if (!warningEl) {
+                    const badge = document.createElement('div');
+                    badge.className = 'allergy-warning text-danger small fw-bold mt-1 animate__animated animate__shakeX';
+                    badge.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> Allergy Risk Detected!';
+                    input.parentElement.appendChild(badge);
+                }
+            } else if (warningEl) {
+                warningEl.remove();
+            }
+        }
+
+        function getVitalStatus(key, value) {
+            const threshold = VITAL_THRESHOLDS[key];
+            if (!threshold || value === null || value === undefined || value === '') return '';
+            if (value < threshold.min || value > threshold.max) return 'text-danger fw-bold';
+            return '';
+        }
+
+        function checkVitalInput(key, input) {
+            const val = parseFloat(input.value);
+            const statusClass = getVitalStatus(key, val);
+            if (statusClass) {
+                input.classList.add('is-invalid', 'text-danger', 'fw-bold');
+            } else {
+                input.classList.remove('is-invalid', 'text-danger', 'fw-bold');
+            }
+        }
+
+        // --- Prescription Hub Helpers ---
+
+        function addVisitMedicationRow() {
+            const tbody = document.getElementById('visitMedsTableBody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>
+                    <input type="text" class="form-control form-control-sm med-name" placeholder="Medicine" oninput="checkAllergy(this)">
+                </td>
+                <td><input type="text" class="form-control form-control-sm med-dosage" placeholder="e.g. 500mg"></td>
+                <td><input type="text" class="form-control form-control-sm med-freq" placeholder="e.g. 1-0-1"></td>
+                <td><input type="text" class="form-control form-control-sm med-dur" placeholder="e.g. 5 days"></td>
+                <td><input type="text" class="form-control form-control-sm med-instr" placeholder="Instructions"></td>
+                <td><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="this.closest('tr').remove()"><i class="fas fa-times"></i></button></td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        function openPrescriptionForLatestVisit() {
+            fetch(`/api/emr/patients/${patientId}/visits`)
+                .then(r => r.json())
+                .then(page => {
+                    if (page.content && page.content.length > 0) {
+                        // Find the most recent visit that is CREATED or IN_PROGRESS
+                        const eligibleVisit = page.content.find(v => v.status === 'CREATED' || v.status === 'IN_PROGRESS');
+                        if (eligibleVisit) {
+                            openPrescriptionModal(eligibleVisit.id);
+                        } else {
+                            alert('No active visits found for this patient. Please record a new visit first.');
+                            new bootstrap.Modal(document.getElementById('visitModal')).show();
+                        }
+                    } else {
+                        alert('No visits found. Please record a new visit first.');
+                        new bootstrap.Modal(document.getElementById('visitModal')).show();
+                    }
+                });
         }
 
         // --- Prescription Logic ---
@@ -761,7 +954,9 @@
             const tbody = document.getElementById('medsTableBody');
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td><input type="text" class="form-control form-control-sm med-name" placeholder="Medicine"></td>
+                <td>
+                    <input type="text" class="form-control form-control-sm med-name" placeholder="Medicine" oninput="checkAllergy(this)">
+                </td>
                 <td><input type="text" class="form-control form-control-sm med-dosage" placeholder="500mg"></td>
                 <td><input type="text" class="form-control form-control-sm med-freq" placeholder="1-0-1"></td>
                 <td><input type="text" class="form-control form-control-sm med-dur" placeholder="5 days"></td>
@@ -844,6 +1039,11 @@
                                 <td>Dr. ${p.doctorName}</td>
                                 <td>${meds}</td>
                                 <td>${p.medications.map(m => m.instructions || '-').join('<br>')}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="printPrescription(${p.visitId})">
+                                        <i class="fas fa-print"></i>
+                                    </button>
+                                </td>
                             </tr>
                         `;
                     });
@@ -960,7 +1160,15 @@
             }
         }
 
+        function printPrescription(visitId) {
+            window.open(`/api/emr/reports/prescription/${visitId}`, '_blank');
+        }
+
+        function printVisitSummary(visitId) {
+            window.open(`/api/emr/reports/visit-summary/${visitId}`, '_blank');
+        }
     </script>
 </body>
 
 </html>
+```
