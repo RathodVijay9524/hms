@@ -20,4 +20,9 @@ public interface PdfExportService {
      * Generates a PDF visit summary for a given doctor visit.
      */
     ByteArrayOutputStream generateVisitSummaryPdf(Long visitId);
+
+    /**
+     * Generates a PDF dispensing receipt for a given dispensing ID.
+     */
+    ByteArrayOutputStream generateDispensingReceipt(Long dispensingId);
 }

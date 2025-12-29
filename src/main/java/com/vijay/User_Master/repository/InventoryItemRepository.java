@@ -18,6 +18,10 @@ public interface InventoryItemRepository extends JpaRepository<InventoryItem, Lo
 
     Optional<InventoryItem> findByItemCodeAndOwnerIdAndIsDeletedFalse(String itemCode, Long ownerId);
     
+    List<InventoryItem> findByOwnerId(Long ownerId);
+    
+    Optional<InventoryItem> findByNameAndOwnerIdAndIsDeletedFalse(String name, Long ownerId);
+    
     List<InventoryItem> findByOwnerIdAndIsDeletedFalse(Long ownerId);
     
     Page<InventoryItem> findByOwnerIdAndIsDeletedFalse(Long ownerId, Pageable pageable);

@@ -382,10 +382,11 @@
                                         <tr class="small text-uppercase">
                                             <th>Medicine</th>
                                             <th style="width: 120px;">Dosage</th>
-                                            <th style="width: 120px;">Freq</th>
-                                            <th style="width: 120px;">Duration</th>
+                                            <th style="width: 100px;">Freq</th>
+                                            <th style="width: 100px;">Duration</th>
+                                            <th style="width: 80px;">Qty</th>
                                             <th>Instructions</th>
-                                            <th style="width: 50px;"></th>
+                                            <th style="width: 40px;"></th>
                                         </tr>
                                     </thead>
                                     <tbody id="visitMedsTableBody">
@@ -427,6 +428,7 @@
                                 placeholder="Notes for pharmacist..."></textarea>
                         </div>
                         <h6 class="fw-bold mb-2">Medications</h6>
+                        <datalist id="medicineSuggestions"></datalist>
                         <div class="table-responsive mb-2">
                             <table class="table table-bordered table-sm" id="medsTable">
                                 <thead>
@@ -435,6 +437,7 @@
                                         <th>Dosage</th>
                                         <th>Freq</th>
                                         <th>Duration</th>
+                                        <th style="width: 80px;">Qty</th>
                                         <th>Instructions</th>
                                         <th></th>
                                     </tr>
@@ -479,6 +482,7 @@
     <script th:inline="javascript">
         const patientId = /*[[${patient.id}]]*/ 1;
         let patientAllergies = [];
+        let medicineStockMap = {}; // Global map for medicine stock info
 
         const VITAL_THRESHOLDS = {
             BP_SYSTOLIC: { min: 90, max: 150 },
@@ -494,6 +498,7 @@
             loadHistory();
             loadTimeline();
             loadSymptomSuggestions();
+            loadMedicineSuggestions();
 
             // Initialize medication rows when visit modal opens
             const visitModal = document.getElementById('visitModal');
@@ -514,6 +519,26 @@
                     datalist.innerHTML = symptoms.map(s => `<option value="${s.name}">`).join('');
                 })
                 .catch(err => console.error('Error loading symptoms:', err));
+        }
+
+        function loadMedicineSuggestions() {
+            fetch('/api/inventory/items/names')
+                .then(r => r.json())
+                .then(medicines => {
+                    const datalist = document.getElementById('medicineSuggestions');
+                    if (datalist) {
+                        datalist.innerHTML = medicines.map(m => `<option value="${m.name}">`).join('');
+                    }
+                    // Cache stock info for lookup
+                    medicineStockMap = {};
+                    medicines.forEach(m => {
+                        medicineStockMap[m.name.toLowerCase().trim()] = {
+                            stock: m.currentStock || 0,
+                            uom: m.unitOfMeasure || 'units'
+                        };
+                    });
+                })
+                .catch(err => console.error('Error loading medicine suggestions:', err));
         }
 
         function addSymptom() {
@@ -811,6 +836,7 @@
                         dosage: row.querySelector('.med-dosage').value,
                         frequency: row.querySelector('.med-freq').value,
                         duration: row.querySelector('.med-dur').value,
+                        quantity: parseInt(row.querySelector('.med-qty').value) || 0,
                         instructions: row.querySelector('.med-instr').value
                     });
                 }
@@ -865,24 +891,37 @@
 
         function checkAllergy(input) {
             const val = input.value.toLowerCase().trim();
-            const warningEl = input.parentElement.querySelector('.allergy-warning');
+            const container = input.parentElement;
 
-            if (val.length < 3) {
-                if (warningEl) warningEl.remove();
-                return;
+            // Remove existing warnings
+            container.querySelectorAll('.emr-warning').forEach(el => el.remove());
+
+            if (val.length < 2) return;
+
+            // 1. Check Allergy
+            const isAllergic = patientAllergies.some(allergy => val.includes(allergy) || allergy.includes(val));
+            if (isAllergic) {
+                const badge = document.createElement('div');
+                badge.className = 'emr-warning text-danger small fw-bold mt-1 animate__animated animate__shakeX';
+                badge.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> Allergy Risk Detected!';
+                container.appendChild(badge);
             }
 
-            const isAllergic = patientAllergies.some(allergy => val.includes(allergy) || allergy.includes(val));
-
-            if (isAllergic) {
-                if (!warningEl) {
-                    const badge = document.createElement('div');
-                    badge.className = 'allergy-warning text-danger small fw-bold mt-1 animate__animated animate__shakeX';
-                    badge.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> Allergy Risk Detected!';
-                    input.parentElement.appendChild(badge);
+            // 2. Check Stock
+            const stockInfo = medicineStockMap[val];
+            if (stockInfo) {
+                const stockBadge = document.createElement('div');
+                if (stockInfo.stock <= 0) {
+                    stockBadge.className = 'emr-warning text-danger small fw-bold mt-1';
+                    stockBadge.innerHTML = '<i class="fas fa-times-circle me-1"></i> Out of Stock!';
+                } else if (stockInfo.stock < 10) {
+                    stockBadge.className = 'emr-warning text-warning small fw-bold mt-1';
+                    stockBadge.innerHTML = `<i class="fas fa-exclamation-circle me-1"></i> Low Stock: ${stockInfo.stock} ${stockInfo.uom}`;
+                } else {
+                    stockBadge.className = 'emr-warning text-success small mt-1';
+                    stockBadge.innerHTML = `<i class="fas fa-check-circle me-1"></i> In Stock: ${stockInfo.stock} ${stockInfo.uom}`;
                 }
-            } else if (warningEl) {
-                warningEl.remove();
+                container.appendChild(stockBadge);
             }
         }
 
@@ -910,11 +949,12 @@
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>
-                    <input type="text" class="form-control form-control-sm med-name" placeholder="Medicine" oninput="checkAllergy(this)">
+                    <input type="text" class="form-control form-control-sm med-name" placeholder="Medicine" oninput="checkAllergy(this)" list="medicineSuggestions">
                 </td>
                 <td><input type="text" class="form-control form-control-sm med-dosage" placeholder="e.g. 500mg"></td>
                 <td><input type="text" class="form-control form-control-sm med-freq" placeholder="e.g. 1-0-1"></td>
                 <td><input type="text" class="form-control form-control-sm med-dur" placeholder="e.g. 5 days"></td>
+                <td><input type="number" class="form-control form-control-sm med-qty" placeholder="Qty" min="0"></td>
                 <td><input type="text" class="form-control form-control-sm med-instr" placeholder="Instructions"></td>
                 <td><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="this.closest('tr').remove()"><i class="fas fa-times"></i></button></td>
             `;
@@ -955,11 +995,12 @@
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>
-                    <input type="text" class="form-control form-control-sm med-name" placeholder="Medicine" oninput="checkAllergy(this)">
+                    <input type="text" class="form-control form-control-sm med-name" placeholder="Medicine" oninput="checkAllergy(this)" list="medicineSuggestions">
                 </td>
                 <td><input type="text" class="form-control form-control-sm med-dosage" placeholder="500mg"></td>
                 <td><input type="text" class="form-control form-control-sm med-freq" placeholder="1-0-1"></td>
                 <td><input type="text" class="form-control form-control-sm med-dur" placeholder="5 days"></td>
+                <td><input type="number" class="form-control form-control-sm med-qty" placeholder="Qty" min="0"></td>
                 <td><input type="text" class="form-control form-control-sm med-instr" placeholder="After food"></td>
                 <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove()"><i class="fas fa-times"></i></button></td>
             `;
@@ -978,6 +1019,7 @@
                         dosage: row.querySelector('.med-dosage').value,
                         frequency: row.querySelector('.med-freq').value,
                         duration: row.querySelector('.med-dur').value,
+                        quantity: parseInt(row.querySelector('.med-qty').value) || 0,
                         instructions: row.querySelector('.med-instr').value
                     });
                 }

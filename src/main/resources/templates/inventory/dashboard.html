@@ -35,9 +35,10 @@
                     <p class="mb-0 small opacity-75">Centralized Hospital Store & Logistics Overview</p>
                 </div>
                 <div class="d-none d-md-flex gap-3" style="z-index: 1;">
-                    <button class="btn btn-sm btn-outline-light px-3 rounded-pill shadow-sm">
-                        <i class="fas fa-file-invoice me-2"></i>Audit
-                    </button>
+                    <a th:href="@{/pharmacy/inventory}"
+                        class="btn btn-sm btn-outline-light px-3 rounded-pill shadow-sm d-flex align-items-center">
+                        <i class="fas fa-boxes-stacked me-2"></i>Manage Stock
+                    </a>
                     <button class="btn btn-sm btn-light text-theme fw-bold px-4 rounded-pill shadow-sm">
                         <i class="fas fa-plus me-2"></i>Create PO
                     </button>

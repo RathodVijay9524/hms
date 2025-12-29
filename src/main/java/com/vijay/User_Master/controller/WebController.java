@@ -21,6 +21,8 @@ public class WebController {
     private final BillingService billingService;
     private final UserService userService;
     private final ReceptionService receptionService;
+    private final PharmacyDispensingService pharmacyDispensingService;
+    private final InventoryService inventoryService;
 
     @GetMapping("/login")
     public String login() {
@@ -445,13 +447,7 @@ public class WebController {
 
     @GetMapping("/pharmacy/dashboard")
     public String pharmacyDashboard(Model model) {
-        // Placeholder stats for Pharmacy
-        model.addAttribute("pendingPrescriptions", 12);
-        model.addAttribute("lowStockCount", 8);
-        model.addAttribute("todayDispensed", 67);
-        model.addAttribute("expiringCount", 5);
-        model.addAttribute("activePrescriptions", java.util.Collections.emptyList());
-        model.addAttribute("watchlist", java.util.Collections.emptyList());
+        model.addAttribute("dashboardStats", pharmacyDispensingService.getDashboardStats());
         return "pharmacy/dashboard";
     }
 
@@ -462,11 +458,15 @@ public class WebController {
 
     @GetMapping("/pharmacy/inventory")
     public String pharmacyInventory(Model model) {
+        model.addAttribute("inventoryItems", inventoryService.getAllInventoryItems(org.springframework.data.domain.PageRequest.of(0, 100)).getContent());
         return "pharmacy/inventory";
     }
 
     @GetMapping("/pharmacy/dispense")
-    public String pharmacyDispense(Model model) {
+    public String pharmacyDispense(@RequestParam(required = false) Long id, Model model) {
+        if (id != null) {
+            model.addAttribute("prescription", pharmacyDispensingService.getPrescriptionForDispensing(id));
+        }
         return "pharmacy/dispense";
     }
 
@@ -475,8 +475,16 @@ public class WebController {
         return "pharmacy/orders";
     }
 
+    @GetMapping("/pharmacy/history")
+    public String pharmacyHistory(Model model) {
+        model.addAttribute("dispensings", pharmacyDispensingService.getAllDispensings());
+        return "pharmacy/history";
+    }
+
     @GetMapping("/pharmacy/expiry")
     public String pharmacyExpiry(Model model) {
+        // For now, reuse inventory but we could filter it specifically for expiring items if InventoryService had that
+        model.addAttribute("inventoryItems", inventoryService.getAllInventoryItems(org.springframework.data.domain.PageRequest.of(0, 100)).getContent());
         return "pharmacy/expiry";
     }
 

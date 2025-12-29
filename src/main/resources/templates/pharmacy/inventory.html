@@ -129,7 +129,8 @@
                     <button class="btn btn-outline-light px-4 rounded-pill border-opacity-25">
                         <i class="fas fa-file-export me-2"></i>Export
                     </button>
-                    <button class="btn btn-sky-theme text-white fw-bold px-4 rounded-pill">
+                    <button class="btn btn-sky-theme text-white fw-bold px-4 rounded-pill" data-bs-toggle="modal"
+                        data-bs-target="#addMedicineModal">
                         <i class="fas fa-plus me-2"></i>Add Medicine
                     </button>
                 </div>
@@ -181,74 +182,50 @@
                                 <th class="text-end">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="fw-bold">Amoxicillin 500mg</div>
-                                    <div class="small text-muted">AstraZeneca</div>
-                                </td>
-                                <td>
-                                    <code>MED-AMX-500</code>
-                                    <div class="small text-muted">B# AB-8812</div>
-                                </td>
-                                <td><span class="badge bg-indigo-subtle text-indigo-700">Antibiotic</span></td>
-                                <td>
-                                    <div class="fw-bold">18 units</div>
-                                    <div class="small text-danger">Min: 50</div>
-                                </td>
-                                <td>₹ 120.00</td>
-                                <td><span class="status-pill status-low">Low Stock</span></td>
-                                <td class="text-end">
-                                    <button class="btn btn-sm btn-outline-primary rounded-pill me-1"><i
-                                            class="fas fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-outline-warning rounded-pill"><i
-                                            class="fas fa-truck-loading"></i></button>
-                                </td>
+                        <tbody id="inventoryTableBody">
+                            <tr th:if="${#lists.isEmpty(inventoryItems)}">
+                                <td colspan="7" class="text-center py-5 text-muted">No items found in inventory</td>
                             </tr>
-                            <tr>
+                            <tr th:each="item : ${inventoryItems}">
                                 <td>
-                                    <div class="fw-bold">Metformin 850mg</div>
-                                    <div class="small text-muted">GlaxoSmithKline</div>
+                                    <div class="fw-bold" th:text="${item.name}">Amoxicillin 500mg</div>
+                                    <div class="small text-muted"
+                                        th:text="${item.description != null ? item.description : 'No description'}">
+                                        AstraZeneca</div>
                                 </td>
                                 <td>
-                                    <code>MED-MTF-850</code>
-                                    <div class="small text-muted">B# MT-1102</div>
+                                    <code th:text="${item.itemCode}">MED-AMX-500</code>
                                 </td>
-                                <td><span class="badge bg-indigo-subtle text-indigo-700">Diabetes</span></td>
+                                <td><span class="badge bg-indigo-subtle text-indigo-700"
+                                        th:text="${item.category}">Antibiotic</span></td>
                                 <td>
-                                    <div class="fw-bold">45 units</div>
-                                    <div class="small text-warning">Min: 60</div>
+                                    <div class="fw-bold" th:text="${item.currentStock + ' units'}">18 units</div>
+                                    <div class="small text-danger" th:if="${item.currentStock le item.minStockLevel}"
+                                        th:text="'Min: ' + ${item.minStockLevel}">Min: 50</div>
+                                    <div class="small text-muted" th:if="${item.currentStock gt item.minStockLevel}"
+                                        th:text="'Min: ' + ${item.minStockLevel}">Min: 50</div>
                                 </td>
-                                <td>₹ 45.50</td>
-                                <td><span class="status-pill status-warning">Warning</span></td>
+                                <td th:text="'₹ ' + ${item.unitPrice}">₹ 120.00</td>
+                                <td>
+                                    <span th:if="${item.currentStock le 0}" class="status-pill status-low">Out of
+                                        Stock</span>
+                                    <span th:if="${item.currentStock gt 0 and item.currentStock le item.minStockLevel}"
+                                        class="status-pill status-low">Low Stock</span>
+                                    <span
+                                        th:if="${item.currentStock gt item.minStockLevel and item.currentStock le item.reorderLevel}"
+                                        class="status-pill status-warning">Reorder</span>
+                                    <span th:if="${item.currentStock gt item.reorderLevel}"
+                                        class="status-pill status-good">Good Stock</span>
+                                </td>
                                 <td class="text-end">
-                                    <button class="btn btn-sm btn-outline-primary rounded-pill me-1"><i
-                                            class="fas fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-outline-warning rounded-pill"><i
-                                            class="fas fa-truck-loading"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="fw-bold">Paracetamol 500mg</div>
-                                    <div class="small text-muted">Abbott</div>
-                                </td>
-                                <td>
-                                    <code>MED-PCM-500</code>
-                                    <div class="small text-muted">B# PC-0012</div>
-                                </td>
-                                <td><span class="badge bg-indigo-subtle text-indigo-700">Painkiller</span></td>
-                                <td>
-                                    <div class="fw-bold">230 units</div>
-                                    <div class="small text-muted">Min: 100</div>
-                                </td>
-                                <td>₹ 12.00</td>
-                                <td><span class="status-pill status-good">Good Stock</span></td>
-                                <td class="text-end">
-                                    <button class="btn btn-sm btn-outline-primary rounded-pill me-1"><i
-                                            class="fas fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-outline-warning rounded-pill"><i
-                                            class="fas fa-truck-loading"></i></button>
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill me-1"
+                                        th:attr="onclick='openEditModal(' + ${item.id} + ')'">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-success rounded-pill"
+                                        th:attr="onclick='openAdjustStockModal(' + ${item.id} + ', \'' + ${#strings.escapeJavaScript(item.name)} + '\', ' + ${item.currentStock} + ')'">
+                                        <i class="fas fa-plus-minus"></i>
+                                    </button>
                                 </td>
                             </tr>
                         </tbody>
@@ -258,8 +235,202 @@
         </div>
     </main>
 
+    <!-- Add Medicine Modal -->
+    <div class="modal fade" id="addMedicineModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content stock-card border-0">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" style="font-family: 'Outfit';">Add New Medicine</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="addMedicineForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Medicine Name</label>
+                                <input type="text" class="form-control rounded-pill px-3" name="name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">SKU / Item Code</label>
+                                <input type="text" class="form-control rounded-pill px-3" name="itemCode" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Category</label>
+                                <select class="form-select rounded-pill px-3" name="category" required>
+                                    <option value="Antibiotics">Antibiotics</option>
+                                    <option value="Cardiac">Cardiac</option>
+                                    <option value="Painkillers">Painkillers</option>
+                                    <option value="Vitamins">Vitamins</option>
+                                    <option value="Injections">Injections</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Unit of Measure</label>
+                                <input type="text" class="form-control rounded-pill px-3" name="unitOfMeasure"
+                                    placeholder="e.g. Tablets, Bottle" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Unit Price (₹)</label>
+                                <input type="number" step="0.01" class="form-control rounded-pill px-3" name="unitPrice"
+                                    required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Min Stock Level</label>
+                                <input type="number" class="form-control rounded-pill px-3" name="minStockLevel"
+                                    value="50" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Initial Stock</label>
+                                <input type="number" class="form-control rounded-pill px-3" name="currentStock"
+                                    value="0" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">Description</label>
+                                <textarea class="form-control rounded-4 px-3" name="description" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-outline-light rounded-pill px-4"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-sky-theme text-white fw-bold rounded-pill px-4"
+                        onclick="saveNewMedicine()">Save Medicine</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Adjust Stock Modal -->
+    <div class="modal fade" id="adjustStockModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content stock-card border-0">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" style="font-family: 'Outfit';">Adjust Stock</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <h5 id="adjustItemName" class="mb-4 text-sky-theme fw-bold">Medicine Name</h5>
+                    <div class="d-flex justify-content-center align-items-center gap-3 mb-4">
+                        <div class="text-start">
+                            <label class="small text-muted d-block">Current</label>
+                            <h3 id="adjustCurrentStock" class="fw-bold mb-0">100</h3>
+                        </div>
+                        <i class="fas fa-arrow-right text-muted"></i>
+                        <div class="text-start">
+                            <label class="small text-muted d-block">New Stock</label>
+                            <input type="number" id="newStockLevel"
+                                class="form-control form-control-lg rounded-4 text-center fw-bold" style="width: 120px;"
+                                value="100">
+                        </div>
+                    </div>
+                    <input type="hidden" id="adjustItemId">
+                    <p class="text-muted small">Update the available quantity of this item in the inventory.</p>
+                </div>
+                <div class="modal-footer border-0 pt-0 justify-content-center">
+                    <button type="button" class="btn btn-sky-theme text-white fw-bold rounded-pill px-5"
+                        onclick="updateStock()">Update Stock Level</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        function openAdjustStockModal(id, name, current) {
+            document.getElementById('adjustItemId').value = id;
+            document.getElementById('adjustItemName').innerText = name;
+            document.getElementById('adjustCurrentStock').innerText = current;
+            document.getElementById('newStockLevel').value = current;
+            new bootstrap.Modal(document.getElementById('adjustStockModal')).show();
+        }
+
+        function updateStock() {
+            const id = document.getElementById('adjustItemId').value;
+            const newStock = document.getElementById('newStockLevel').value;
+
+            fetch(`/api/inventory/items/${id}/stock?newStock=${newStock}&performedBy=1`, {
+                method: 'PATCH'
+            }).then(res => {
+                if (res.ok) location.reload();
+                else alert('Error updating stock');
+            });
+        }
+
+        function saveNewMedicine() {
+            const form = document.getElementById('addMedicineForm');
+            const data = {};
+            new FormData(form).forEach((value, key) => {
+                if (value === "" && (key === 'unitPrice' || key === 'currentStock' || key === 'minStockLevel')) {
+                    data[key] = null;
+                } else {
+                    data[key] = value;
+                }
+            });
+
+            // Set some defaults
+            data.isActive = true;
+            data.isDeleted = false;
+
+            // Set reorder level if not provided
+            if (!data.reorderLevel && data.minStockLevel) {
+                data.reorderLevel = data.minStockLevel;
+            }
+
+            fetch('/api/inventory/items', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(res => {
+                if (res.ok) location.reload();
+                else res.json().then(err => alert('Error saving medicine: ' + (err.message || 'Unknown error')));
+            }).catch(err => alert('Network error: ' + err));
+        }
+
+        function openEditModal(id) {
+            // TODO: Implement full edit modal if needed, for now reuse add modal logic or alert
+            fetch(`/api/inventory/items/${id}`)
+                .then(r => r.json())
+                .then(item => {
+                    const form = document.getElementById('addMedicineForm');
+                    Object.keys(item).forEach(key => {
+                        const input = form.querySelector(`[name="${key}"]`);
+                        if (input) input.value = item[key];
+                    });
+                    // Change save button to update
+                    const saveBtn = document.querySelector('[onclick="saveNewMedicine()"]');
+                    saveBtn.innerText = 'Update Medicine';
+                    saveBtn.onclick = () => updateMedicine(id);
+
+                    const modal = new bootstrap.Modal(document.getElementById('addMedicineModal'));
+                    document.querySelector('#addMedicineModal .modal-title').innerText = 'Edit Medicine';
+                    modal.show();
+                });
+        }
+
+        function updateMedicine(id) {
+            const form = document.getElementById('addMedicineForm');
+            const data = {};
+            new FormData(form).forEach((value, key) => {
+                if (value === "" && (key === 'unitPrice' || key === 'currentStock' || key === 'minStockLevel')) {
+                    data[key] = null;
+                } else {
+                    data[key] = value;
+                }
+            });
+
+            fetch(`/api/inventory/items/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(res => {
+                if (res.ok) location.reload();
+                else alert('Error updating medicine');
+            });
+        }
+    </script>
 </body>
 
 </html>

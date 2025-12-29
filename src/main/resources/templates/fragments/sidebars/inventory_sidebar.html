@@ -32,6 +32,12 @@
                 <span>Inventory Dashboard</span>
             </a>
 
+            <a th:href="@{/pharmacy/inventory}" class="sidebar-link"
+                th:classappend="${activeLink == 'inventory' ? 'active' : ''}">
+                <i class="fas fa-boxes-stacked"></i>
+                <span>Stock Management</span>
+            </a>
+
             <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Supply
                     Chain</small></div>
 

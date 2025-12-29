@@ -39,9 +39,10 @@
                     <button class="btn btn-sm btn-outline-light px-3 rounded-pill border-opacity-25 shadow-sm">
                         <i class="fas fa-barcode me-2"></i>Scan SKU
                     </button>
-                    <button class="btn btn-sm btn-light text-theme fw-bold px-4 rounded-pill shadow-sm">
+                    <a th:href="@{/pharmacy/inventory}"
+                        class="btn btn-sm btn-light text-theme fw-bold px-4 rounded-pill shadow-sm d-flex align-items-center">
                         <i class="fas fa-plus me-2"></i>Add Stock
-                    </button>
+                    </a>
                 </div>
             </div>
 
@@ -55,7 +56,8 @@
                             </div>
                             <div>
                                 <div class="text-theme-muted smaller fw-bold text-uppercase mb-1 ls-1">Pending Rx</div>
-                                <div class="h3 fw-bold mb-0 text-theme">12</div>
+                                <div class="h3 fw-bold mb-0 text-theme"
+                                    th:text="${dashboardStats.pendingPrescriptionsCount}">12</div>
                             </div>
                         </div>
                     </div>
@@ -68,7 +70,8 @@
                             </div>
                             <div>
                                 <div class="text-theme-muted smaller fw-bold text-uppercase mb-1 ls-1">Low Stock</div>
-                                <div class="h3 fw-bold mb-0 text-red-500">8</div>
+                                <div class="h3 fw-bold mb-0 text-red-500" th:text="${dashboardStats.lowStockCount}">8
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -82,7 +85,8 @@
                             <div>
                                 <div class="text-theme-muted smaller fw-bold text-uppercase mb-1 ls-1">Today Dispensed
                                 </div>
-                                <div class="h3 fw-bold mb-0 text-emerald-400">67</div>
+                                <div class="h3 fw-bold mb-0 text-emerald-400"
+                                    th:text="${dashboardStats.todayDispensedCount}">67</div>
                             </div>
                         </div>
                     </div>
@@ -96,7 +100,8 @@
                             <div>
                                 <div class="text-theme-muted smaller fw-bold text-uppercase mb-1 ls-1">Expiring Soon
                                 </div>
-                                <div class="h3 fw-bold mb-0 text-amber-400">5</div>
+                                <div class="h3 fw-bold mb-0 text-amber-400"
+                                    th:text="${dashboardStats.expiringSoonCount}">5</div>
                             </div>
                         </div>
                     </div>
@@ -136,36 +141,21 @@
 
             <div class="row g-4">
                 <!-- Live Prescription Feed -->
-                <div class="col-lg-7">
+                <div class="col-lg-6">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="section-title mb-0 text-theme" style="font-family: 'Outfit';">Live Prescription Feed
-                        </h5>
-                        <a href="#" class="btn btn-sm btn-link text-decoration-none text-blue-400">View All <i
+                        <h5 class="section-title mb-0 text-theme" style="font-family: 'Outfit';">Pending Queue</h5>
+                        <a th:href="@{/pharmacy/prescriptions}"
+                            class="btn btn-sm btn-link text-decoration-none text-blue-400">View All <i
                                 class="fas fa-arrow-right ms-1"></i></a>
                     </div>
 
-                    <div class="glass-card p-0 overflow-hidden shadow-lg">
-                        <div
-                            class="p-3 border-bottom border-color-theme d-flex justify-content-between align-items-center hover-bg-opacity-5 transition-all">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="metric-icon mb-0 bg-red-500 bg-opacity-10 text-red-400"
-                                    style="width: 45px; height: 45px; font-size: 1.1rem;">
-                                    <i class="fas fa-prescription"></i>
-                                </div>
-                                <div>
-                                    <div class="fw-bold text-theme">John Smith</div>
-                                    <div class="small text-theme-muted">UHID-2024-0891 • Dr. Williams</div>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="badge bg-secondary bg-opacity-10 text-theme-muted">4 Items</span>
-                                <span
-                                    class="badge bg-red-500 bg-opacity-10 text-red-500 rounded-pill px-3">URGENT</span>
-                                <button class="btn btn-sm btn-pink-theme rounded-pill px-3 ms-2">Process</button>
-                            </div>
+                    <div class="glass-card p-0 overflow-hidden shadow-lg mb-4" id="recentPrescriptionsContainer">
+                        <div th:if="${#lists.isEmpty(dashboardStats.recentPrescriptions)}"
+                            class="p-5 text-center text-muted">
+                            <i class="fas fa-check-circle text-success fs-2 mb-3"></i>
+                            <p class="mb-0">No pending prescriptions</p>
                         </div>
-
-                        <div
+                        <div th:each="rx : ${dashboardStats.recentPrescriptions}"
                             class="p-3 border-bottom border-color-theme d-flex justify-content-between align-items-center hover-bg-opacity-5 transition-all">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="metric-icon mb-0 bg-blue-500 bg-opacity-10 text-blue-400"
@@ -173,35 +163,17 @@
                                     <i class="fas fa-prescription"></i>
                                 </div>
                                 <div>
-                                    <div class="fw-bold text-theme">Sarah Johnson</div>
-                                    <div class="small text-theme-muted">UHID-2024-0892 • Dr. Patel</div>
+                                    <div class="fw-bold text-theme" th:text="${rx.patientName}">John Smith</div>
+                                    <div class="small text-theme-muted"
+                                        th:text="${rx.patientUhid + ' • Dr. ' + rx.doctorName}">UHID-2024-0891 • Dr.
+                                        Williams</div>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center gap-2">
-                                <span class="badge bg-secondary bg-opacity-10 text-theme-muted">2 Items</span>
-                                <span
-                                    class="badge bg-emerald-500 bg-opacity-10 text-emerald-500 rounded-pill px-3">NORMAL</span>
-                                <button class="btn btn-sm btn-pink-theme rounded-pill px-3 ms-2">Process</button>
-                            </div>
-                        </div>
-
-                        <div
-                            class="p-3 d-flex justify-content-between align-items-center hover-bg-opacity-5 transition-all">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="metric-icon mb-0 bg-blue-500 bg-opacity-10 text-blue-400"
-                                    style="width: 45px; height: 45px; font-size: 1.1rem;">
-                                    <i class="fas fa-prescription"></i>
-                                </div>
-                                <div>
-                                    <div class="fw-bold text-theme">Michael Brown</div>
-                                    <div class="small text-theme-muted">UHID-2024-0893 • Dr. Chen</div>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="badge bg-secondary bg-opacity-10 text-theme-muted">1 Item</span>
-                                <span
-                                    class="badge bg-emerald-500 bg-opacity-10 text-emerald-500 rounded-pill px-3">NORMAL</span>
-                                <button class="btn btn-sm btn-pink-theme rounded-pill px-3 ms-2">Process</button>
+                                <span class="badge bg-secondary bg-opacity-10 text-theme-muted"
+                                    th:text="${rx.items.size() + ' Items'}">4 Items</span>
+                                <button class="btn btn-sm btn-pink-theme rounded-pill px-3 ms-2"
+                                    th:onclick="'window.location.href=\'/pharmacy/dispense?id=' + ${rx.prescriptionId} + '\''">Process</button>
                             </div>
                         </div>
                     </div>
@@ -211,64 +183,44 @@
                 <div class="col-lg-5">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="section-title mb-0 text-theme">Inventory Alerts</h5>
-                        <span class="badge rounded-pill" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;">8
-                            Low Stock</span>
                     </div>
-
-                    <div
-                        class="p-3 mb-3 rounded-4 border border-color-theme bg-secondary bg-opacity-5 hover-bg-opacity-10 transition-all border-start-4 border-start-red-500">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="fw-bold text-theme">Amoxicillin 500mg</div>
-                                <div class="small text-theme-muted">SKU: MED-AMX-500</div>
-                            </div>
-                            <div class="text-end">
-                                <div class="fw-bold text-red-500">18 units</div>
-                                <div class="small text-theme-muted">Min: 50</div>
-                            </div>
+                    <div id="inventoryAlertsContainer">
+                        <div th:if="${#lists.isEmpty(dashboardStats.stockAlerts)}"
+                            class="p-5 text-center text-muted glass-card">
+                            <i class="fas fa-check-circle text-success fs-1 mb-3"></i>
+                            <p>All stock levels are optimal</p>
                         </div>
-                        <div class="progress mt-2 bg-primary bg-opacity-10" style="height: 6px;">
-                            <div class="progress-bar bg-danger" style="width: 18%;"></div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="p-3 mb-3 rounded-4 border border-color-theme bg-secondary bg-opacity-5 hover-bg-opacity-10 transition-all border-start-4 border-start-amber-500">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="fw-bold text-theme">Metformin 850mg</div>
-                                <div class="small text-theme-muted">SKU: MED-MTF-850</div>
+                        <div th:each="alert : ${dashboardStats.stockAlerts}"
+                            class="p-3 mb-3 rounded-4 border border-color-theme bg-secondary bg-opacity-5 hover-bg-opacity-10 transition-all border-start-4"
+                            th:classappend="${alert.type == 'OUT_OF_STOCK' ? 'border-start-red-500' : 'border-start-amber-500'}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-bold text-theme" th:text="${alert.medicineName}">Amoxicillin 500mg
+                                    </div>
+                                    <div class="small text-theme-muted" th:text="'SKU: ' + ${alert.sku}">SKU:
+                                        MED-AMX-500</div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold"
+                                        th:classappend="${alert.type == 'OUT_OF_STOCK' ? 'text-red-500' : 'text-amber-500'}"
+                                        th:text="${alert.currentStock + ' units'}">18 units</div>
+                                    <div class="small text-theme-muted" th:text="'Min: ' + ${alert.minStock}">Min: 50
+                                    </div>
+                                </div>
                             </div>
-                            <div class="text-end">
-                                <div class="fw-bold text-amber-500">45 units</div>
-                                <div class="small text-theme-muted">Min: 60</div>
+                            <div class="progress mt-2 bg-primary bg-opacity-10" style="height: 6px;">
+                                <div class="progress-bar"
+                                    th:classappend="${alert.type == 'OUT_OF_STOCK' ? 'bg-danger' : 'bg-warning'}"
+                                    th:style="'width: ' + ${alert.minStock > 0 ? (alert.currentStock * 100 / alert.minStock) : 0} + '%;'">
+                                </div>
                             </div>
-                        </div>
-                        <div class="progress mt-2 bg-primary bg-opacity-10" style="height: 6px;">
-                            <div class="progress-bar bg-warning" style="width: 45%;"></div>
                         </div>
                     </div>
 
-                    <div
-                        class="p-3 mb-3 rounded-4 border border-color-theme bg-secondary bg-opacity-5 hover-bg-opacity-10 transition-all border-start-4 border-start-emerald-500">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="fw-bold text-theme">Paracetamol 500mg</div>
-                                <div class="small text-theme-muted">SKU: MED-PCM-500</div>
-                            </div>
-                            <div class="text-end">
-                                <div class="fw-bold text-emerald-400">230 units</div>
-                                <div class="small text-theme-muted">Min: 100</div>
-                            </div>
-                        </div>
-                        <div class="progress mt-2 bg-primary bg-opacity-10" style="height: 6px;">
-                            <div class="progress-bar bg-success" style="width: 92%;"></div>
-                        </div>
-                    </div>
-
-                    <button class="btn btn-outline-pink w-100 mt-2 rounded-pill py-2">
+                    <a th:href="@{/pharmacy/inventory}"
+                        class="btn btn-outline-pink w-100 mt-2 rounded-pill py-2 text-decoration-none">
                         <i class="fas fa-boxes-stacked me-2"></i>Full Inventory
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>

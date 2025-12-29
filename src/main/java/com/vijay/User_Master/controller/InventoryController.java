@@ -89,6 +89,11 @@ public class InventoryController {
         return ResponseEntity.ok(items);
     }
     
+    @GetMapping("/items/names")
+    public ResponseEntity<List<com.vijay.User_Master.dto.inventory.MedicineSuggestionDTO>> getActiveMedicineSuggestions() {
+        return ResponseEntity.ok(inventoryService.getActiveMedicineSuggestions());
+    }
+
     @PatchMapping("/items/{id}/stock")
     public ResponseEntity<Void> updateStockLevel(
             @PathVariable Long id,

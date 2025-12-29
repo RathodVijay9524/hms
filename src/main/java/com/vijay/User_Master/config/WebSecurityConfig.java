@@ -83,6 +83,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/patient/**").hasAnyRole("PATIENT", "ADMIN")
                         .requestMatchers("/pharmacy/**").hasAnyRole("PHARMACIST", "ADMIN")
                         .requestMatchers("/nurse/**").hasAnyRole("NURSE", "ADMIN")
+                        .requestMatchers("/api/nursing/**").hasAnyRole("NURSE", "ADMIN")
                         .requestMatchers("/insurance/**").hasAnyRole("INSURANCE", "ADMIN")
                         .requestMatchers("/analytics/**").hasAnyRole("ANALYST", "ADMIN")
                         

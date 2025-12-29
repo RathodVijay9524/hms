@@ -46,6 +46,7 @@ public class Prescription extends BaseModel {
         private String dosage; // e.g., "500mg"
         private String frequency; // e.g., "1-0-1"
         private String duration; // e.g., "5 days"
+        private Integer quantity; // Total quantity prescribed
         private String instructions; // e.g., "After food"
     }
 }

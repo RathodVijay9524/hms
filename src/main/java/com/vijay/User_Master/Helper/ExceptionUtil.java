@@ -4,14 +4,14 @@ package com.vijay.User_Master.Helper;
 
 import com.vijay.User_Master.exceptions.ErrorDetails;
 import com.vijay.User_Master.exceptions.GenericResponse;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 
 
-@Log4j2
+@Slf4j
 public class ExceptionUtil {
 
     // Generic success response

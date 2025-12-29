@@ -142,67 +142,32 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <tr th:if="${#lists.isEmpty(inventoryItems)}">
+                                <td colspan="7" class="text-center py-5 text-muted">No items found with expiry data</td>
+                            </tr>
+                            <tr th:each="item : ${inventoryItems}">
                                 <td>
-                                    <div class="fw-bold">Insulin Glargine</div>
-                                    <div class="small text-muted">Sanofi-Aventis</div>
+                                    <div class="fw-bold" th:text="${item.name}">Insulin Glargine</div>
+                                    <div class="small text-muted" th:text="${item.description}">Sanofi-Aventis</div>
                                 </td>
                                 <td>
-                                    <code>INS-GLG-100</code>
-                                    <div class="small text-muted">B# SN-1102</div>
+                                    <code th:text="${item.itemCode}">INS-GLG-100</code>
                                 </td>
                                 <td>
-                                    <div class="fw-bold text-danger">15-Jan-2026</div>
+                                    <div class="fw-bold text-warning">TBD</div>
                                 </td>
                                 <td>
-                                    <div class="days-left text-danger">19 Days</div>
+                                    <div class="days-left text-muted">N/A</div>
                                 </td>
-                                <td>25 Vials</td>
-                                <td><span class="alert-pill alert-critical">CRITICAL</span></td>
+                                <td th:text="${item.currentStock + ' Units'}">25 Vials</td>
+                                <td>
+                                    <span th:if="${item.currentStock <= item.minStockLevel}"
+                                        class="alert-pill alert-warning">Check Stock</span>
+                                    <span th:if="${item.currentStock > item.minStockLevel}"
+                                        class="badge bg-success-subtle text-success-emphasis">Normal</span>
+                                </td>
                                 <td class="text-end">
                                     <button class="btn btn-sm btn-outline-danger rounded-pill">Remove Stock</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-theme">
-                                    <div class="fw-bold">Azithromycin 250mg</div>
-                                    <div class="small text-muted">Pfizer Ltd</div>
-                                </td>
-                                <td class="text-theme">
-                                    <code>AZI-PZ-250</code>
-                                    <div class="small text-muted">B# PZ-9921</div>
-                                </td>
-                                <td class="text-theme">
-                                    <div class="fw-bold text-warning">10-Mar-2026</div>
-                                </td>
-                                <td class="text-theme">
-                                    <div class="days-left text-warning">74 Days</div>
-                                </td>
-                                <td>150 Units</td>
-                                <td><span class="alert-pill alert-warning">WARNING</span></td>
-                                <td class="text-end">
-                                    <button class="btn btn-sm btn-outline-warning rounded-pill">Mark for Sale</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-theme">
-                                    <div class="fw-bold">Ciprofloxacin 500mg</div>
-                                    <div class="small text-muted">Bayer Pharma</div>
-                                </td>
-                                <td class="text-theme">
-                                    <code>CIP-BY-500</code>
-                                    <div class="small text-muted">B# BY-0811</div>
-                                </td>
-                                <td class="text-theme">
-                                    <div class="fw-bold text-warning">28-Mar-2026</div>
-                                </td>
-                                <td class="text-theme">
-                                    <div class="days-left text-warning">92 Days</div>
-                                </td>
-                                <td>85 Units</td>
-                                <td><span class="alert-pill alert-warning">WARNING</span></td>
-                                <td class="text-end">
-                                    <button class="btn btn-sm btn-outline-warning rounded-pill">Mark for Sale</button>
                                 </td>
                             </tr>
                         </tbody>

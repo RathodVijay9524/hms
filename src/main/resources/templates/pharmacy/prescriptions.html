@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prescriptions Management - MedLab Pro</title>
+    <title>Prescription Queue - Pharmacy</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
@@ -30,55 +30,10 @@
             box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.15);
         }
 
-        .priority-badge {
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 0.35rem 0.75rem;
-            border-radius: 2rem;
-            text-transform: uppercase;
-        }
-
-        .priority-urgent {
-            background: rgba(239, 68, 68, 0.15);
-            color: #ef4444;
-        }
-
-        .priority-normal {
-            background: rgba(34, 197, 94, 0.15);
-            color: #22c55e;
-        }
-
-        .search-container {
-            position: relative;
-        }
-
-        .search-container i {
-            position: absolute;
-            left: 1.25rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-        }
-
-        .search-container input {
-            padding-left: 3rem;
-            border-radius: 2rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-
-        .search-container input:focus {
-            background: var(--bg-tertiary);
-            border-color: #38bdf8;
-            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1);
-        }
-
         .prescription-item {
             padding: 1.5rem;
             border-bottom: 1px solid var(--border-color);
             transition: background 0.2s ease;
-            cursor: pointer;
         }
 
         .prescription-item:last-child {
@@ -98,6 +53,22 @@
             margin-right: 0.5rem;
             border: 1px solid rgba(56, 189, 248, 0.2);
         }
+
+        .stock-badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.4rem;
+        }
+
+        .in-stock {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+
+        .out-of-stock {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
     </style>
 </head>
 
@@ -113,151 +84,294 @@
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h1 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">Prescription Orders</h1>
-                    <p class="text-theme-muted mb-0">Fulfill medical orders from Clinical Care</p>
+                    <h1 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">Prescription Queue</h1>
+                    <p class="text-theme-muted mb-0">Process and dispense doctor prescriptions</p>
                 </div>
-                <div class="d-none d-md-flex gap-2">
-                    <button class="btn btn-outline-secondary rounded-pill px-4 border-opacity-25">
-                        <i class="fas fa-filter me-2"></i>Filter
-                    </button>
-                    <button class="btn btn-sky-theme text-white fw-bold px-4 rounded-pill">
-                        <i class="fas fa-history me-2"></i>Completed
-                    </button>
-                </div>
-            </div>
-
-            <!-- Management Tools -->
-            <div class="row g-4 mb-4">
-                <div class="col-md-6">
-                    <div class="search-container">
-                        <i class="fas fa-search"></i>
-                        <input type="text" class="form-control" placeholder="Search by Patient Name, UHID or Doctor...">
-                    </div>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <div class="btn-group rounded-pill overflow-hidden shadow-sm bg-tertiary-theme border-color-theme">
-                        <button
-                            class="btn btn-primary px-4 bg-transparent border-0 text-sky-500 fw-bold">Active</button>
-                        <button class="btn btn-secondary px-4 bg-transparent border-0 text-theme-muted">Stat</button>
-                        <button
-                            class="btn btn-secondary px-4 bg-transparent border-0 text-theme-muted">Outpatient</button>
-                    </div>
+                <div class="d-flex gap-2">
+                    <span class="badge bg-info fs-6 px-3 py-2">
+                        <i class="fas fa-clock me-2"></i>
+                        <span id="pendingCount">0</span> Pending
+                    </span>
                 </div>
             </div>
 
             <!-- Prescription List -->
-            <div class="pharmacy-card overflow-hidden">
-                <!-- Item 1 -->
-                <div class="prescription-item">
-                    <div class="row align-items-center">
-                        <div class="col-md-4">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center"
-                                    style="width: 50px; height: 50px; background: rgba(239, 68, 68, 0.1);">
-                                    <i class="fas fa-file-medical text-danger fs-5"></i>
-                                </div>
-                                <div>
-                                    <div class="fw-bold fs-5">John Smith</div>
-                                    <div class="small text-muted">UHID-2024-0891 • Male, 45y</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="small text-muted mb-1">Prescribed By</div>
-                            <div class="fw-bold">Dr. Sarah Williams</div>
-                            <div class="small text-muted">Cardiology Dept.</div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="small text-muted mb-1">Medications</div>
-                            <div class="d-flex flex-wrap gap-1">
-                                <span class="medicine-tag">Amlodipine</span>
-                                <span class="medicine-tag">Atorvastatin</span>
-                                <span class="text-muted small">+2 more</span>
-                            </div>
-                        </div>
-                        <div class="col-md-2 text-end">
-                            <span class="priority-badge priority-urgent d-inline-block mb-3">URGENT</span>
-                            <br>
-                            <button class="btn btn-sm btn-primary px-4 rounded-pill">Process Rx</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Item 2 -->
-                <div class="prescription-item">
-                    <div class="row align-items-center">
-                        <div class="col-md-4">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center"
-                                    style="width: 50px; height: 50px; background: rgba(56, 189, 248, 0.1);">
-                                    <i class="fas fa-file-medical text-primary fs-5"></i>
-                                </div>
-                                <div>
-                                    <div class="fw-bold fs-5">Elena Rodriguez</div>
-                                    <div class="small text-muted">UHID-2024-1102 • Female, 29y</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="small text-muted mb-1">Prescribed By</div>
-                            <div class="fw-bold">Dr. Michael Chen</div>
-                            <div class="small text-muted">General Medicine</div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="small text-muted mb-1">Medications</div>
-                            <div class="d-flex flex-wrap gap-1">
-                                <span class="medicine-tag">Paracetamol</span>
-                                <span class="medicine-tag">Amoxicillin</span>
-                            </div>
-                        </div>
-                        <div class="col-md-2 text-end">
-                            <span class="priority-badge priority-normal d-inline-block mb-3">NORMAL</span>
-                            <br>
-                            <button class="btn btn-sm btn-primary px-4 rounded-pill">Process Rx</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Item 3 -->
-                <div class="prescription-item">
-                    <div class="row align-items-center">
-                        <div class="col-md-4">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center"
-                                    style="width: 50px; height: 50px; background: rgba(56, 189, 248, 0.1);">
-                                    <i class="fas fa-file-medical text-primary fs-5"></i>
-                                </div>
-                                <div>
-                                    <div class="fw-bold fs-5">David Miller</div>
-                                    <div class="small text-muted">UHID-2024-0945 • Male, 62y</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="small text-muted mb-1">Prescribed By</div>
-                            <div class="fw-bold">Dr. Robert Brown</div>
-                            <div class="small text-muted">Orthopedics</div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="small text-muted mb-1">Medications</div>
-                            <div class="d-flex flex-wrap gap-1">
-                                <span class="medicine-tag">Ibuprofen</span>
-                                <span class="medicine-tag">Calcium D3</span>
-                            </div>
-                        </div>
-                        <div class="col-md-2 text-end">
-                            <span class="priority-badge priority-normal d-inline-block mb-3">NORMAL</span>
-                            <br>
-                            <button class="btn btn-sm btn-primary px-4 rounded-pill">Process Rx</button>
-                        </div>
-                    </div>
+            <div id="prescriptionList" class="pharmacy-card overflow-hidden">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="text-muted mt-2">Loading prescriptions...</p>
                 </div>
             </div>
         </div>
     </main>
 
+    <!-- Dispensing Modal -->
+    <div class="modal fade" id="dispensingModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content" style="background: var(--bg-secondary); border: 1px solid var(--border-color);">
+                <div class="modal-header">
+                    <div>
+                        <h5 class="modal-title fw-bold">Process Prescription</h5>
+                        <p class="text-muted small mb-0" id="modalPatientInfo"></p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th>Qty Prescribed</th>
+                                    <th>Available</th>
+                                    <th>Qty to Dispense</th>
+                                    <th>Unit Price</th>
+                                    <th>Batch #</th>
+                                    <th>Expiry</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dispensingItems"></tbody>
+                        </table>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label">Notes</label>
+                        <textarea id="dispensingNotes" class="form-control" rows="2"
+                            style="background: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary);"></textarea>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-3 p-3"
+                        style="background: var(--bg-tertiary); border-radius: 0.5rem;">
+                        <h5 class="mb-0">Total Amount:</h5>
+                        <h4 class="mb-0 text-primary" id="totalAmount">₹0.00</h4>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmDispensing()">
+                        <i class="fas fa-check me-2"></i>Confirm Dispensing
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        let currentPrescriptionId = null;
+        let currentDispensingData = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPendingPrescriptions();
+        });
+
+        async function loadPendingPrescriptions() {
+            try {
+                const response = await fetch('/api/pharmacy/pending-prescriptions');
+                const data = await response.json();
+                const prescriptions = data.data || [];
+
+                displayPrescriptions(prescriptions);
+                document.getElementById('pendingCount').textContent = prescriptions.length;
+            } catch (error) {
+                console.error('Error loading prescriptions:', error);
+                document.getElementById('prescriptionList').innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-exclamation-triangle text-danger fs-1 mb-3"></i>
+                        <p class="text-danger">Failed to load prescriptions</p>
+                    </div>`;
+            }
+        }
+
+        function displayPrescriptions(prescriptions) {
+            const container = document.getElementById('prescriptionList');
+
+            if (prescriptions.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-check-circle text-success fs-1 mb-3"></i>
+                        <p class="text-muted">No pending prescriptions</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = prescriptions.map(rx => `
+                <div class="prescription-item">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                    style="width: 50px; height: 50px; background: rgba(56, 189, 248, 0.1);">
+                                    <i class="fas fa-file-medical text-primary fs-5"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold fs-5">${rx.patientName}</div>
+                                    <div class="small text-muted">${rx.patientUhid}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="small text-muted mb-1">Prescribed By</div>
+                            <div class="fw-bold">${rx.doctorName}</div>
+                            <div class="small text-muted">${formatDate(rx.prescriptionDate)}</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="small text-muted mb-1">Medications</div>
+                            <div class="d-flex flex-wrap gap-1">
+                                ${rx.items.slice(0, 2).map(item => `
+                                    <span class="medicine-tag">${item.medicineName}</span>
+                                `).join('')}
+                                ${rx.items.length > 2 ? `<span class="text-muted small">+${rx.items.length - 2} more</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <button class="btn btn-sm btn-primary px-4 rounded-pill" 
+                                    onclick="window.location.href='/pharmacy/dispense?id=${rx.prescriptionId}'">
+                                <i class="fas fa-pills me-2"></i>Process
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function openDispensingModal(prescriptionId) {
+            currentPrescriptionId = prescriptionId;
+
+            try {
+                const response = await fetch(`/api/pharmacy/prescription/${prescriptionId}`);
+                const data = await response.json();
+                currentDispensingData = data.data;
+
+                document.getElementById('modalPatientInfo').textContent =
+                    `${currentDispensingData.patientName} (${currentDispensingData.patientUhid}) - Dr. ${currentDispensingData.doctorName}`;
+
+                const tbody = document.getElementById('dispensingItems');
+                tbody.innerHTML = currentDispensingData.items.map((item, index) => `
+                    <tr>
+                        <td>
+                            <strong>${item.medicineName}</strong>
+                            ${!item.inStock ? '<span class="stock-badge out-of-stock ms-2">Out of Stock</span>' : ''}
+                        </td>
+                        <td>${item.quantityPrescribed}</td>
+                        <td>
+                            <span class="stock-badge ${item.inStock ? 'in-stock' : 'out-of-stock'}">
+                                ${item.quantityAvailable || 0}
+                            </span>
+                        </td>
+                        <td>
+                            <input type="number" class="form-control form-control-sm dispense-qty" 
+                                   data-index="${index}" 
+                                   min="0" 
+                                   max="${item.quantityAvailable || 0}" 
+                                   value="${Math.min(item.quantityPrescribed, item.quantityAvailable || 0)}"
+                                   ${!item.inStock ? 'disabled' : ''}
+                                   oninput="calculateTotal()"
+                                   style="width: 80px; background: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary);">
+                        </td>
+                        <td>₹${item.unitPrice ? item.unitPrice.toFixed(2) : '0.00'}</td>
+                        <td>
+                            <input type="text" class="form-control form-control-sm batch-input" 
+                                   data-index="${index}" 
+                                   placeholder="Batch #"
+                                   style="width: 100px; background: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary);">
+                        </td>
+                        <td>
+                            <input type="date" class="form-control form-control-sm expiry-input" 
+                                   data-index="${index}"
+                                   style="width: 140px; background: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary);">
+                        </td>
+                    </tr>
+                `).join('');
+
+                calculateTotal();
+                new bootstrap.Modal(document.getElementById('dispensingModal')).show();
+            } catch (error) {
+                console.error('Error loading prescription details:', error);
+                alert('Failed to load prescription details');
+            }
+        }
+
+        function calculateTotal() {
+            let total = 0;
+            const items = document.querySelectorAll('.dispense-qty');
+            items.forEach((input, index) => {
+                const qty = parseInt(input.value) || 0;
+                // Safely get price from currentDispensingData
+                const item = currentDispensingData.items[index];
+                const price = (item && item.unitPrice) ? parseFloat(item.unitPrice) : 0;
+                total += qty * price;
+            });
+            const totalElement = document.getElementById('totalAmount');
+            if (totalElement) {
+                totalElement.textContent = `₹${total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            }
+        }
+
+        async function confirmDispensing() {
+            const items = [];
+            const qtyInputs = document.querySelectorAll('.dispense-qty');
+
+            qtyInputs.forEach((input, index) => {
+                const qty = parseInt(input.value) || 0;
+                if (qty > 0) {
+                    const batch = document.querySelector(`.batch-input[data-index="${index}"]`).value;
+                    const expiry = document.querySelector(`.expiry-input[data-index="${index}"]`).value;
+
+                    items.push({
+                        inventoryItemId: currentDispensingData.items[index].inventoryItemId,
+                        quantityDispensed: qty,
+                        unitPrice: currentDispensingData.items[index].unitPrice,
+                        batchNumber: batch,
+                        expiryDate: expiry || null
+                    });
+                }
+            });
+
+            if (items.length === 0) {
+                alert('Please dispense at least one item');
+                return;
+            }
+
+            const request = {
+                prescriptionId: currentPrescriptionId,
+                notes: document.getElementById('dispensingNotes').value,
+                items: items
+            };
+
+            try {
+                const response = await fetch('/api/pharmacy/dispense', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(request)
+                });
+
+                if (response.ok) {
+                    const dispensedData = await response.json();
+                    bootstrap.Modal.getInstance(document.getElementById('dispensingModal')).hide();
+                    alert('Dispensing completed successfully!');
+
+                    // Trigger receipt download
+                    if (dispensedData && dispensedData.id) {
+                        window.open(`/api/pharmacy/download-receipt/${dispensedData.id}`, '_blank');
+                    }
+
+                    loadPendingPrescriptions();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + (error.errorMessage || 'Failed to dispense'));
+                }
+            } catch (error) {
+                console.error('Error dispensing prescription:', error);
+                alert('Network error during dispensing');
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+    </script>
 </body>
 
 </html>

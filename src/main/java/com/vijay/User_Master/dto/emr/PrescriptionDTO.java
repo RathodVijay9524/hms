@@ -28,6 +28,7 @@ public class PrescriptionDTO {
         private String dosage;
         private String frequency;
         private String duration;
+        private Integer quantity;
         private String instructions;
     }
 }

@@ -2,14 +2,12 @@ package com.vijay.User_Master.service.impl;
 
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.vijay.User_Master.Helper.CommonUtils;
-import com.vijay.User_Master.entity.DoctorVisit;
-import com.vijay.User_Master.entity.LabOrder;
-import com.vijay.User_Master.entity.LabResult;
-import com.vijay.User_Master.entity.Prescription;
+import com.vijay.User_Master.entity.*;
 import com.vijay.User_Master.exceptions.ResourceNotFoundException;
 import com.vijay.User_Master.repository.DoctorVisitRepository;
 import com.vijay.User_Master.repository.LabOrderRepository;
 import com.vijay.User_Master.repository.LabResultRepository;
+import com.vijay.User_Master.repository.PrescriptionDispensingRepository;
 import com.vijay.User_Master.repository.PrescriptionRepository;
 import com.vijay.User_Master.service.PdfExportService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +30,7 @@ public class PdfExportServiceImpl implements PdfExportService {
     private final LabResultRepository labResultRepository;
     private final DoctorVisitRepository doctorVisitRepository;
     private final PrescriptionRepository prescriptionRepository;
+    private final PrescriptionDispensingRepository dispensingRepository;
     private final TemplateEngine templateEngine;
 
     @Override
@@ -116,6 +115,23 @@ public class PdfExportServiceImpl implements PdfExportService {
         context.setVariable("hospitalPhone", visit.getOwner().getPhoNo());
 
         String htmlContent = templateEngine.process("reports/visit-summary", context);
+        return renderPdf(htmlContent);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ByteArrayOutputStream generateDispensingReceipt(Long dispensingId) {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        PrescriptionDispensing dispensing = dispensingRepository.findByIdAndOwnerId(dispensingId, ownerId)
+                .orElseThrow(() -> new ResourceNotFoundException("PrescriptionDispensing", "id", dispensingId));
+
+        Context context = new Context();
+        context.setVariable("dispensing", dispensing);
+        context.setVariable("hospitalName", dispensing.getOwner().getName());
+        context.setVariable("hospitalAddress", dispensing.getOwner().getAbout());
+        context.setVariable("hospitalPhone", dispensing.getOwner().getPhoNo());
+
+        String htmlContent = templateEngine.process("reports/dispensing-receipt", context);
         return renderPdf(htmlContent);
     }
 
