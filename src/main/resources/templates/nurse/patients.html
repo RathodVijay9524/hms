@@ -112,14 +112,22 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h1 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">Ward Patients</h1>
-                    <p class="text-theme-muted mb-0">Active management of patients in Ward-C (Shift A)</p>
+                    <p class="text-theme-muted mb-0">Manage patient admissions and assignments.</p>
                 </div>
-                <div class="d-none d-md-flex gap-2">
-                    <button class="btn btn-outline-secondary rounded-pill px-4 border-opacity-25">
-                        <i class="fas fa-layer-group me-2"></i>Change Ward
-                    </button>
-                    <button class="btn btn-pink-theme text-white fw-bold px-4 rounded-pill">
+                <!-- Dynamic Ward Selector -->
+                <div class="d-flex gap-2">
+                    <select id="wardSelect"
+                        class="form-select rounded-pill px-4 border-opacity-25 bg-secondary text-theme"
+                        style="width: 200px;">
+                        <option value="" class="text-dark">Select Ward</option>
+                    </select>
+                    <button class="btn btn-pink-theme text-white fw-bold px-4 rounded-pill" data-bs-toggle="modal"
+                        data-bs-target="#admitPatientModal">
                         <i class="fas fa-plus me-2"></i>Admit Patient
+                    </button>
+                    <button class="btn btn-sm btn-light text-pink-600 fw-bold px-4 rounded-pill"
+                        onclick="loadWardPatients()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh
                     </button>
                 </div>
             </div>
@@ -129,15 +137,17 @@
                 <div class="col-md-9">
                     <div class="search-container">
                         <i class="fas fa-search"></i>
-                        <input type="text" class="form-control"
-                            placeholder="Search by Patient Name, UHID or Bed Number...">
+                        <input type="text" id="patientSearchInput" class="form-control"
+                            placeholder="Search by Patient Name, UHID or Bed Number..." onkeyup="filterPatients()">
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <select class="form-select rounded-pill bg-tertiary-theme border-color-theme text-theme">
-                        <option>All Stability Levels</option>
-                        <option>Critical Only</option>
-                        <option>Stable Only</option>
+                    <select class="form-select rounded-pill bg-tertiary-theme border-color-theme text-theme"
+                        id="stabilityFilter" onchange="filterPatients()">
+                        <option value="ALL">All Stability Levels</option>
+                        <option value="CRITICAL">Critical Only</option>
+                        <option value="STABLE">Stable Only</option>
+                        <option value="OBSERVATION">Observation Only</option>
                     </select>
                 </div>
             </div>
@@ -150,106 +160,15 @@
                             <tr>
                                 <th class="ps-4 py-3 text-theme-muted small text-uppercase fw-bold">Patient & Bed</th>
                                 <th class="py-3 text-theme-muted small text-uppercase fw-bold">UHID / Vitals</th>
-                                <th class="py-3 text-theme-muted small text-uppercase fw-bold">Primary Doctor</th>
-                                <th class="py-3 text-theme-muted small text-uppercase fw-bold">Last Action</th>
                                 <th class="py-3 text-theme-muted small text-uppercase fw-bold">Stability</th>
                                 <th class="pe-4 py-3 text-end text-theme-muted small text-uppercase fw-bold">Actions
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr class="patient-row">
-                                <td class="ps-4">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <span class="bed-tag">C-101</span>
-                                        <div>
-                                            <div class="fw-bold fs-6">Robert Downey</div>
-                                            <div class="small text-muted">Male, 54y • Post-Op</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <code>UHID-2024-0012</code>
-                                    <div class="small text-muted mt-1"><i class="fas fa-heartbeat text-danger me-1"></i>
-                                        110/80 mmHg</div>
-                                </td>
-                                <td>
-                                    <div class="fw-bold">Dr. Stephen Strange</div>
-                                    <div class="small text-muted">Neuro Surgery</div>
-                                </td>
-                                <td>
-                                    <div class="small">Administered Meds</div>
-                                    <div class="small text-muted">15 mins ago</div>
-                                </td>
-                                <td><span class="stability-pill stability-stable">Stable</span></td>
-                                <td class="pe-4 text-end">
-                                    <button class="btn btn-sm btn-outline-pink rounded-pill px-3"
-                                        style="border-color: #ec4899; color: #ec4899;">Vitals</button>
-                                    <button class="btn btn-sm btn-pink text-white rounded-pill px-3"
-                                        style="background: #ec4899;">View</button>
-                                </td>
-                            </tr>
-                            <tr class="patient-row">
-                                <td class="ps-4">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <span class="bed-tag">C-105</span>
-                                        <div>
-                                            <div class="fw-bold fs-6">Wanda Maximoff</div>
-                                            <div class="small text-muted">Female, 31y • Trauma</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <code>UHID-2024-0045</code>
-                                    <div class="small text-muted mt-1"><i class="fas fa-heartbeat text-danger me-1"></i>
-                                        140/95 mmHg</div>
-                                </td>
-                                <td>
-                                    <div class="fw-bold">Dr. Monica Rambeau</div>
-                                    <div class="small text-muted">Cardiology</div>
-                                </td>
-                                <td>
-                                    <div class="small">Vitals Recorded</div>
-                                    <div class="small text-muted">2 hours ago</div>
-                                </td>
-                                <td><span class="stability-pill stability-critical">Critical</span></td>
-                                <td class="pe-4 text-end">
-                                    <button class="btn btn-sm btn-outline-pink rounded-pill px-3"
-                                        style="border-color: #ec4899; color: #ec4899;">Vitals</button>
-                                    <button class="btn btn-sm btn-pink text-white rounded-pill px-3"
-                                        style="background: #ec4899;">View</button>
-                                </td>
-                            </tr>
-                            <tr class="patient-row">
-                                <td class="ps-4">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <span class="bed-tag">C-108</span>
-                                        <div>
-                                            <div class="fw-bold fs-6">Peter Parker</div>
-                                            <div class="small text-muted">Male, 21y • Observation</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <code>UHID-2024-0089</code>
-                                    <div class="small text-muted mt-1"><i class="fas fa-heartbeat text-danger me-1"></i>
-                                        120/80 mmHg</div>
-                                </td>
-                                <td>
-                                    <div class="fw-bold">Dr. Otto Octavius</div>
-                                    <div class="small text-muted">General Medicine</div>
-                                </td>
-                                <td>
-                                    <div class="small">Initial Screening</div>
-                                    <div class="small text-muted">Just Now</div>
-                                </td>
-                                <td><span class="stability-pill stability-observation">Observation</span></td>
-                                <td class="pe-4 text-end">
-                                    <button class="btn btn-sm btn-outline-pink rounded-pill px-3"
-                                        style="border-color: #ec4899; color: #ec4899;">Vitals</button>
-                                    <button class="btn btn-sm btn-pink text-white rounded-pill px-3"
-                                        style="background: #ec4899;">View</button>
-                                </td>
+                        <tbody id="patientsTableBody">
+                            <!-- Dynamic rows will be inserted here -->
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">Select a ward to view patients</td>
                             </tr>
                         </tbody>
                     </table>
@@ -258,8 +177,385 @@
         </div>
     </main>
 
+    <!-- Admit Patient Modal -->
+    <div class="modal fade" id="admitPatientModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-secondary text-theme">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title fw-bold">Admit Patient to Ward</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="admitPatientForm">
+                        <div class="mb-3">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Select Patient</label>
+                            <select class="form-select bg-tertiary text-theme border-secondary" id="patientSelect"
+                                required>
+                                <option value="">Loading patients...</option>
+                            </select>
+                            <div class="form-text text-muted">Select a registered patient to admit.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Bed Code</label>
+                            <input type="text" class="form-control bg-tertiary text-theme border-secondary"
+                                id="bedCodeInput" placeholder="e.g. ICU-101" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-pink-theme text-white rounded-pill px-4"
+                        onclick="submitAdmission()">Admit Patient</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Record Vitals Modal -->
+    <div class="modal fade" id="vitalsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-secondary text-theme">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title fw-bold">Record Vitals</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="vitalsForm">
+                        <input type="hidden" id="vitalsAssignmentId">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">BP (mmHg)</label>
+                                <input type="text" class="form-control bg-tertiary text-theme border-secondary"
+                                    id="vitalBP" placeholder="120/80">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">Pulse (bpm)</label>
+                                <input type="number" class="form-control bg-tertiary text-theme border-secondary"
+                                    id="vitalPulse" placeholder="72">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">Temp (°C)</label>
+                                <input type="number" step="0.1"
+                                    class="form-control bg-tertiary text-theme border-secondary" id="vitalTemp"
+                                    placeholder="37.0">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">SpO2 (%)</label>
+                                <input type="number" class="form-control bg-tertiary text-theme border-secondary"
+                                    id="vitalSpo2" placeholder="98">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-pink-theme text-white rounded-pill px-4"
+                        onclick="saveContextVitals()">Save Vitals</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Patient Modal -->
+    <div class="modal fade" id="viewPatientModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-secondary text-theme">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title fw-bold">Patient Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="patientDetailsContent" class="text-center py-4">
+                        <i class="fas fa-spinner fa-spin"></i> Loading...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        let currentPatients = [];
+        let vitalsModal, viewPatientModal;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            loadWards();
+            loadAllPatientsForSelect();
+
+            // Initialize modals
+            const vitalsModalEl = document.getElementById('vitalsModal');
+            if (vitalsModalEl) vitalsModal = new bootstrap.Modal(vitalsModalEl);
+
+            const viewPatientModalEl = document.getElementById('viewPatientModal');
+            if (viewPatientModalEl) viewPatientModal = new bootstrap.Modal(viewPatientModalEl);
+
+            document.getElementById('wardSelect').addEventListener('change', loadWardPatients);
+        });
+
+        async function loadWards() {
+            try {
+                const response = await fetch('/api/nursing/wards');
+                const wards = await response.json();
+
+                const select = document.getElementById('wardSelect');
+                select.innerHTML = '<option value="" class="text-dark">Select Ward</option>';
+
+                wards.forEach(ward => {
+                    const option = document.createElement('option');
+                    option.value = ward.id;
+                    option.textContent = `${ward.name} (${ward.code})`;
+                    option.className = 'text-dark';
+                    select.appendChild(option);
+                });
+
+                // Auto-select first ward
+                if (wards.length > 0) {
+                    select.value = wards[0].id;
+                    loadWardPatients();
+                }
+            } catch (error) {
+                console.error('Error loading wards:', error);
+            }
+        }
+
+        async function loadAllPatientsForSelect() {
+            try {
+                // Fetch first page of patients
+                const response = await fetch('/api/lab/patients?page=0&size=100');
+                const data = await response.json();
+                const patients = data.content || [];
+
+                const select = document.getElementById('patientSelect');
+                select.innerHTML = '<option value="">Select Patient...</option>';
+
+                patients.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.id;
+                    option.textContent = `${p.name} (UHID: ${p.uhid || 'N/A'})`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading patients:', error);
+                document.getElementById('patientSelect').innerHTML = '<option value="">Error loading patients</option>';
+            }
+        }
+
+        async function loadWardPatients() {
+            const wardId = document.getElementById('wardSelect').value;
+            const tbody = document.getElementById('patientsTableBody');
+
+            if (!wardId) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">Select a ward to view patients</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Loading patients...</td></tr>';
+
+            try {
+                const response = await fetch(`/api/nursing/patients?wardId=${wardId}`);
+                currentPatients = await response.json(); // Store for filter
+                renderPatients(currentPatients);
+            } catch (error) {
+                console.error('Error loading ward patients:', error);
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-danger">Error loading patients</td></tr>';
+            }
+        }
+
+        function renderPatients(patients) {
+            const tbody = document.getElementById('patientsTableBody');
+
+            if (!patients || patients.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">No patients assigned to this ward</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+
+            patients.forEach(p => {
+                const row = document.createElement('tr');
+                row.className = 'patient-row';
+
+                const stability = p.stability || 'STABLE';
+                let stabilityClass = 'stability-stable';
+                if (stability === 'CRITICAL') stabilityClass = 'stability-critical';
+                if (stability === 'OBSERVATION') stabilityClass = 'stability-observation';
+
+                row.innerHTML = `
+                    <td class="ps-4">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="bed-tag">${p.bedCode || 'No Bed'}</span>
+                            <div>
+                                <div class="fw-bold fs-6">${p.patientName}</div>
+                                <div class="small text-muted">${p.gender || 'Unknown'}, ${p.age || '?'}y</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <code>${p.uhid || 'No UHID'}</code>
+                        <div class="small text-muted mt-1"><i class="fas fa-heartbeat text-danger me-1"></i>
+                            ${p.lastVitals || '--/--'}</div>
+                    </td>
+                    <td><span class="stability-pill ${stabilityClass}">${stability.charAt(0) + stability.toLowerCase().slice(1)}</span></td>
+                    <td class="pe-4 text-end">
+                        <button class="btn btn-sm btn-outline-pink rounded-pill px-3" 
+                                style="border-color: #ec4899; color: #ec4899;" 
+                                onclick="openVitalsModal(${p.id})">Vitals</button>
+                        <button class="btn btn-sm btn-pink text-white rounded-pill px-3" 
+                                style="background: #ec4899;"
+                                onclick="openViewModal(${p.patientId})">View</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function submitAdmission() {
+            const wardId = document.getElementById('wardSelect').value;
+            const patientId = document.getElementById('patientSelect').value;
+            const bedCode = document.getElementById('bedCodeInput').value;
+
+            if (!wardId) {
+                alert('Please select a ward first.');
+                return;
+            }
+            if (!patientId || !bedCode) {
+                alert('Please select a patient and enter a bed code.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/nursing/assignments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        wardId: parseInt(wardId),
+                        patientId: parseInt(patientId),
+                        bedCode: bedCode
+                    })
+                });
+
+                if (response.ok) {
+                    const modalEl = document.getElementById('admitPatientModal');
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal) modal.hide();
+
+                    document.getElementById('admitPatientForm').reset();
+                    loadWardPatients();
+                    alert('Patient admitted successfully!');
+                } else {
+                    alert('Failed to admit patient. Please check bed availability.');
+                }
+            } catch (error) {
+                console.error('Error admitting patient:', error);
+                alert('An error occurred during admission.');
+            }
+        }
+
+        function filterPatients() {
+            const search = document.getElementById('patientSearchInput').value.toLowerCase();
+            const stability = document.getElementById('stabilityFilter').value;
+            const rows = document.querySelectorAll('.patient-row');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const rowStabilityText = row.querySelector('.stability-pill').textContent.toUpperCase();
+
+                const matchesSearch = text.includes(search);
+                const matchesStability = stability === 'ALL' || rowStabilityText === stability;
+
+                row.style.display = matchesSearch && matchesStability ? '' : 'none';
+            });
+        }
+
+        // New Logic for Vitals and View
+        function openVitalsModal(assignmentId) {
+            document.getElementById('vitalsAssignmentId').value = assignmentId;
+            document.getElementById('vitalsForm').reset();
+            if (vitalsModal) vitalsModal.show();
+        }
+
+        async function saveContextVitals() {
+            const assignmentId = document.getElementById('vitalsAssignmentId').value;
+            const wardId = document.getElementById('wardSelect').value;
+
+            const vitals = {
+                assignmentId: parseInt(assignmentId),
+                bp: document.getElementById('vitalBP').value,
+                pulse: document.getElementById('vitalPulse').value,
+                temp: document.getElementById('vitalTemp').value,
+                spo2: document.getElementById('vitalSpo2').value
+            };
+
+            if (!vitals.bp && !vitals.pulse && !vitals.temp && !vitals.spo2) {
+                alert('Enter at least one vital sign');
+                return;
+            }
+
+            try {
+                // Batch endpoint requires array
+                const response = await fetch(`/api/nursing/vitals/batch?wardId=${wardId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify([vitals])
+                });
+
+                if (response.ok) {
+                    vitalsModal.hide();
+                    loadWardPatients();
+                    alert('Vitals recorded successfully');
+                } else {
+                    alert('Failed to save vitals');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Error recording vitals');
+            }
+        }
+
+        async function openViewModal(patientId) {
+            if (viewPatientModal) viewPatientModal.show();
+            const content = document.getElementById('patientDetailsContent');
+            content.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin"></i> Loading details...</div>';
+
+            try {
+                const response = await fetch(`/api/lab/patients/${patientId}`);
+                if (!response.ok) throw new Error('Failed to fetch');
+                const p = await response.json();
+
+                content.innerHTML = `
+                    <div class="row text-start px-3">
+                        <div class="col-md-6 mb-3">
+                            <label class="small text-muted text-uppercase fw-bold">Full Name</label>
+                            <div class="fw-bold fs-5">${p.name}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="small text-muted text-uppercase fw-bold">UHID</label>
+                            <div class="fw-bold fs-5">${p.uhid || 'N/A'}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="small text-muted text-uppercase fw-bold">Phone</label>
+                            <div>${p.phone || 'N/A'}</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="small text-muted text-uppercase fw-bold">DOB / Age</label>
+                            <div>${p.dateOfBirth || '-'} (${p.age || '?'}y)</div>
+                        </div>
+                         <div class="col-md-12 mb-3">
+                            <label class="small text-muted text-uppercase fw-bold">Emergency Contact</label>
+                            <div>${p.emergencyContactName || '-'} (${p.emergencyContactRelationship || '-'}) : ${p.emergencyContactPhone || '-'}</div>
+                        </div>
+                         <div class="col-md-12">
+                            <label class="small text-muted text-uppercase fw-bold">Address</label>
+                            <div>${p.address || 'N/A'}</div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                content.innerHTML = '<div class="text-center text-danger py-4">Failed to load patient details</div>';
+            }
+        }
+    </script>
 </body>
 
 </html>

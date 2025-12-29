@@ -64,6 +64,29 @@ public class NursingServiceImpl implements NursingService {
 
     @Override
     @Transactional
+    public WardDTO updateWard(Long id, WardDTO dto) {
+        Long ownerId = getOwnerId();
+        Ward ward = wardRepository.findByIdAndOwnerId(id, ownerId)
+                .orElseThrow(() -> new RuntimeException("Ward not found"));
+        ward.setName(dto.getName());
+        ward.setCode(dto.getCode());
+        Ward saved = wardRepository.save(ward);
+        return new WardDTO(saved.getId(), saved.getName(), saved.getCode());
+    }
+
+    @Override
+    @Transactional
+    public void deleteWard(Long id) {
+        Long ownerId = getOwnerId();
+        Ward ward = wardRepository.findByIdAndOwnerId(id, ownerId)
+                .orElseThrow(() -> new RuntimeException("Ward not found"));
+        ward.setIsDeleted(true);
+        ward.setIsActive(false);
+        wardRepository.save(ward);
+    }
+
+    @Override
+    @Transactional
     public WardPatientDTO assignPatientToWard(AssignPatientRequestDTO dto) {
         Long ownerId = getOwnerId();
         Ward ward = wardRepository.findByIdAndOwnerId(dto.getWardId(), ownerId)
@@ -196,9 +219,12 @@ public class NursingServiceImpl implements NursingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<NursingTaskDTO> getTasks(Long wardId, String shift) {
+    public List<NursingTaskDTO> getTasks(Long wardId, String shift, LocalDate date) {
         Long ownerId = getOwnerId();
-        return nursingTaskRepository.findByWardIdAndOwnerIdAndIsDeletedFalseAndShift(wardId, ownerId, shift)
+        LocalDateTime start = date.atStartOfDay();
+        LocalDateTime end = date.atTime(23, 59, 59);
+        
+        return nursingTaskRepository.findByWardIdAndOwnerIdAndIsDeletedFalseAndShiftAndDueAtBetween(wardId, ownerId, shift, start, end)
                 .stream()
                 .sorted(Comparator.comparing(NursingTask::getDueAt, Comparator.nullsLast(Comparator.naturalOrder())))
                 .map(this::toTaskDTO)

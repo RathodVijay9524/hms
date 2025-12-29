@@ -19,4 +19,9 @@ public interface NursingTaskRepository extends JpaRepository<NursingTask, Long> 
     Page<NursingTask> findByWardIdAndOwnerIdAndIsDeletedFalseAndShift(Long wardId, Long ownerId, String shift, Pageable pageable);
 
     long countByWardIdAndOwnerIdAndIsDeletedFalseAndShiftAndStatus(Long wardId, Long ownerId, String shift, NursingTask.TaskStatus status);
+
+    boolean existsByWardIdAndTitleAndIsDeletedFalse(Long wardId, String title);
+
+    List<NursingTask> findByWardIdAndOwnerIdAndIsDeletedFalseAndShiftAndDueAtBetween(Long wardId, Long ownerId, String shift, java.time.LocalDateTime start, java.time.LocalDateTime end);
 }
+

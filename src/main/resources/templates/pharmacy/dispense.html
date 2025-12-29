@@ -168,6 +168,7 @@
                                         <th>Dosage / Freq</th>
                                         <th>Qty Presc</th>
                                         <th>Dispense</th>
+                                        <th>Price</th>
                                         <th>Batch #</th>
                                         <th>Expiry</th>
                                         <th>Stock</th>
@@ -176,11 +177,17 @@
                                 <tbody th:if="${prescription != null}">
                                     <tr th:each="item, stat : ${prescription.items}" class="dispensing-row"
                                         th:data-inventory-id="${item.inventoryItemId}"
-                                        th:data-unit-price="${item.unitPrice}">
+                                        th:data-unit-price="${item.unitPrice}"
+                                        th:classappend="${item.inventoryItemId == null ? 'table-warning' : ''}">
                                         <td>
                                             <div class="fw-bold" th:text="${item.medicineName}">Amoxicillin 500mg</div>
-                                            <div class="small text-muted"
-                                                th:text="${item.inStock ? 'In Stock' : 'Out of Stock'}">Capsule</div>
+                                            <div th:if="${item.inventoryItemId == null}"
+                                                class="small text-danger fw-bold">
+                                                <i class="fas fa-exclamation-triangle me-1"></i>NOT IN STOCK SYSTEM
+                                            </div>
+                                            <div th:if="${item.inventoryItemId != null}" class="small"
+                                                th:classappend="${item.inStock ? 'text-success' : 'text-danger'}"
+                                                th:text="${item.inStock ? 'In Stock' : 'Out of Stock'}">In Stock</div>
                                         </td>
                                         <td>
                                             <div th:text="${item.dosage != null ? item.dosage : 'As directed'}">1-0-1
@@ -194,21 +201,33 @@
                                             <input type="number"
                                                 class="form-control form-control-sm dispense-qty bg-tertiary-theme border-color-theme text-theme"
                                                 th:value="${item.inStock ? item.quantityPrescribed : 0}"
-                                                th:max="${item.quantityAvailable}" min="0">
+                                                th:max="${item.quantityAvailable}" min="0"
+                                                th:disabled="${item.inventoryItemId == null}">
+                                        </td>
+                                        <td style="width: 100px;">
+                                            <div th:if="${item.inventoryItemId != null}"
+                                                class="fw-bold text-accent-theme"
+                                                th:text="${'₹' + (item.unitPrice != null ? item.unitPrice : '0.00')}">
+                                                ₹0.00</div>
+                                            <div th:if="${item.inventoryItemId == null}" class="text-muted small">N/A
+                                            </div>
                                         </td>
                                         <td style="width: 120px;">
                                             <input type="text"
                                                 class="form-control form-control-sm batch-input bg-tertiary-theme border-color-theme text-theme"
-                                                placeholder="Batch #">
+                                                placeholder="Batch #" th:disabled="${item.inventoryItemId == null}">
                                         </td>
                                         <td style="width: 150px;">
                                             <input type="date"
-                                                class="form-control form-control-sm expiry-input bg-tertiary-theme border-color-theme text-theme">
+                                                class="form-control form-control-sm expiry-input bg-tertiary-theme border-color-theme text-theme"
+                                                th:disabled="${item.inventoryItemId == null}">
                                         </td>
                                         <td>
-                                            <span class="badge"
+                                            <span th:if="${item.inventoryItemId != null}" class="badge"
                                                 th:classappend="${item.inStock ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}"
                                                 th:text="${item.quantityAvailable != null ? item.quantityAvailable : '0'}">Available</span>
+                                            <span th:if="${item.inventoryItemId == null}"
+                                                class="badge bg-secondary-subtle text-secondary">--</span>
                                         </td>
                                     </tr>
                                 </tbody>

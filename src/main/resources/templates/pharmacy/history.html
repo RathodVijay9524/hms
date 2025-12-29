@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dispensing History - Pharmacy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .history-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .table th {
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .search-box {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 0.5rem 1rem;
+            color: var(--text-primary);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-completed {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+
+        .status-cancelled {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/pharmacy_sidebar :: pharmacy_sidebar('history')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">Dispensing History</h1>
+                    <p class="text-theme-muted mb-0">Track all medication fulfillment records</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <input type="text" id="historySearch" class="search-box" placeholder="Search by patient, UHID...">
+                </div>
+            </div>
+
+            <!-- History List -->
+            <div class="history-card shadow-lg">
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Patient Details</th>
+                                <th>Doctor / Date</th>
+                                <th>Dispensed On</th>
+                                <th>Items</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <tr th:each="disp : ${dispensings}">
+                                <td>
+                                    <div class="fw-bold text-theme" th:text="${disp.patientName}">John Doe</div>
+                                    <div class="small text-theme-muted" th:text="${disp.patientUhid}">H7-2025-000001
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-theme" th:text="'Dr. ' + ${disp.doctorName}">Dr. Smith</div>
+                                    <div class="small text-theme-muted"
+                                        th:text="${#temporals.format(disp.prescriptionDate, 'dd MMM yyyy')}">27 Dec 2025
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-theme"
+                                        th:text="${#temporals.format(disp.dispensedDate, 'dd MMM yyyy HH:mm')}">29 Dec
+                                        2025 14:30</div>
+                                    <div class="small text-theme-muted" th:text="'By: ' + ${disp.dispensedBy}">
+                                        Pharmacist A</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 rounded-pill"
+                                        th:text="${disp.items.size()} + ' Items'">3 Items</span>
+                                </td>
+                                <td class="fw-bold text-theme"
+                                    th:text="'₹ ' + ${#numbers.formatDecimal(disp.totalAmount, 1, 2)}">₹ 450.00</td>
+                                <td>
+                                    <span class="status-badge"
+                                        th:classappend="${disp.status == 'COMPLETED' ? 'status-completed' : 'status-cancelled'}"
+                                        th:text="${disp.status}">COMPLETED</span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-link text-theme-muted p-0" type="button"
+                                            data-bs-toggle="dropdown">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul
+                                            class="dropdown-menu dropdown-menu-end bg-secondary-theme border-color-theme shadow-lg">
+                                            <li>
+                                                <a class="dropdown-item text-theme"
+                                                    th:href="@{'/api/pharmacy/download-receipt/' + ${disp.id}}"
+                                                    target="_blank">
+                                                    <i class="fas fa-file-invoice me-2 text-primary"></i>View Receipt
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <hr class="dropdown-divider border-color-theme">
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item text-danger" href="#">
+                                                    <i class="fas fa-undo me-2"></i>Process Return
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(dispensings)}">
+                                <td colspan="7" class="text-center py-5 text-theme-muted">
+                                    <i class="fas fa-history fs-2 mb-3 d-block"></i>
+                                    No dispensing records found.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+    <script>
+        document.getElementById('historySearch').addEventListener('keyup', function () {
+            let value = this.value.toLowerCase();
+            document.querySelectorAll('#historyTableBody tr').forEach(row => {
+                if (row.innerText.toLowerCase().indexOf(value) > -1) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

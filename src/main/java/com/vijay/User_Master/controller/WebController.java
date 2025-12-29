@@ -510,6 +510,11 @@ public class WebController {
         return "nurse/patients";
     }
 
+    @GetMapping("/nurse/wards")
+    public String nurseWards(Model model) {
+        return "nurse/wards";
+    }
+
     @GetMapping("/nurse/vitals")
     public String nurseVitals(Model model) {
         return "nurse/vitals";
@@ -662,11 +667,18 @@ public class WebController {
         return "admin/dashboard";
     }
 
+
     @GetMapping("/admin/users")
     public String adminUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());
         return "admin/users";
     }
+
+    @GetMapping("/owner/nurses")
+    public String ownerNurses() {
+        return "owner/nurses";
+    }
+
 
     @GetMapping("/admin/roles")
     public String adminRoles(Model model) {

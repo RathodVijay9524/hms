@@ -70,6 +70,13 @@ public interface WorkerRepository extends JpaRepository<Worker, Long>, JpaSpecif
 
 
 
+
+    Page<Worker> findByUser_IdAndRoles_Name(Long userId, String roleName, Pageable pageable);
+
+    @Query("SELECT w FROM Worker w JOIN w.roles r WHERE w.user.id = :userId AND r.name = :roleName AND w.isDeleted = false")
+    List<Worker> findAllNursesByOwner(@Param("userId") Long userId, @Param("roleName") String roleName);
 }
+
+
 
 

@@ -12,6 +12,10 @@ public interface NursingService {
 
     WardDTO createWard(WardDTO dto);
 
+    WardDTO updateWard(Long id, WardDTO dto);
+
+    void deleteWard(Long id);
+
     WardPatientDTO assignPatientToWard(AssignPatientRequestDTO dto);
 
     NursingDashboardDTO getDashboard(Long wardId, String shift, LocalDateTime now);
@@ -20,7 +24,7 @@ public interface NursingService {
 
     void saveBatchVitals(Long wardId, List<BatchVitalEntryDTO> entries);
 
-    List<NursingTaskDTO> getTasks(Long wardId, String shift);
+    List<NursingTaskDTO> getTasks(Long wardId, String shift, LocalDate date);
 
     NursingTaskDTO createTask(CreateNursingTaskRequestDTO dto);
 

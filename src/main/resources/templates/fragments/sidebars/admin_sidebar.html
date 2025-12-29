@@ -35,10 +35,14 @@
             <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">User
                     Management</small></div>
 
+
             <a th:href="@{/admin/users}" class="sidebar-link" th:classappend="${activeLink == 'users' ? 'active' : ''}">
                 <i class="fas fa-users"></i>
                 <span>All Users</span>
             </a>
+
+
+
 
             <a th:href="@{/admin/roles}" class="sidebar-link" th:classappend="${activeLink == 'roles' ? 'active' : ''}">
                 <i class="fas fa-user-tag"></i>

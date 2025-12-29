@@ -35,40 +35,12 @@
             text-transform: uppercase;
         }
 
-        .badge-morning {
-            background: rgba(245, 158, 11, 0.15);
-            color: #f59e0b;
-        }
-
-        .badge-night {
-            background: rgba(99, 102, 241, 0.15);
-            color: #6366f1;
-        }
-
         .patient-summary {
             background: var(--bg-primary);
             border-radius: 1rem;
             padding: 1.5rem;
             border-left: 4px solid #ec4899;
             margin-bottom: 1rem;
-        }
-
-        .report-section {
-            border-left: 1px dashed var(--border-color);
-            padding-left: 1.5rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
-
-        .report-section::before {
-            content: '';
-            position: absolute;
-            left: -5px;
-            top: 0;
-            width: 9px;
-            height: 9px;
-            background: #ec4899;
-            border-radius: 50%;
         }
     </style>
 </head>
@@ -88,105 +60,266 @@
                     <h1 class="fw-bold mb-1" style="font-family: 'Outfit'; color: #ec4899;">Shift Handover</h1>
                     <p class="text-muted mb-0">Prepare clinical handover for the incoming shift team</p>
                 </div>
-                <div class="d-flex gap-2">
-                    <div class="shift-badge badge-morning me-2">Shift A (Current)</div>
-                    <i class="fas fa-arrow-right text-muted align-self-center me-2"></i>
-                    <div class="shift-badge badge-night">Shift B (Incoming)</div>
+                <div class="d-flex gap-2 align-items-center">
+                    <select id="wardSelect"
+                        class="form-select rounded-pill px-4 border-opacity-25 bg-secondary text-theme"
+                        style="width: 200px;">
+                        <option value="">Select Ward</option>
+                    </select>
                 </div>
             </div>
 
-            <div class="row g-4">
+            <!-- Controls -->
+            <div class="row mb-4 g-3 align-items-center">
+                <div class="col-md-3">
+                    <label class="small text-muted fw-bold mb-1">Date</label>
+                    <input type="date" id="handoverDate"
+                        class="form-control bg-secondary text-theme border-secondary rounded-pill">
+                </div>
+                <div class="col-md-3">
+                    <label class="small text-muted fw-bold mb-1">Current Shift</label>
+                    <select id="fromShift" class="form-select bg-secondary text-theme border-secondary rounded-pill">
+                        <option value="MORNING">Morning (7AM - 3PM)</option>
+                        <option value="EVENING">Evening (3PM - 10PM)</option>
+                        <option value="NIGHT">Night (10PM - 7AM)</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="small text-muted fw-bold mb-1">Incoming Shift</label>
+                    <select id="toShift" class="form-select bg-secondary text-theme border-secondary rounded-pill">
+                        <option value="MORNING">Morning</option>
+                        <option value="EVENING" selected>Evening</option>
+                        <option value="NIGHT">Night</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-pink-theme text-white fw-bold w-100 rounded-pill"
+                        onclick="loadHandoverData()">
+                        <i class="fas fa-sync-alt me-2"></i>Load / Create
+                    </button>
+                </div>
+            </div>
+
+            <div class="row g-4" id="handoverContent" style="display:none;">
                 <div class="col-lg-8">
                     <div class="handover-card">
-                        <h5 class="fw-bold mb-4" style="font-family: 'Outfit';">Clinical Handover Report</h5>
-
-                        <!-- Patient 1 -->
-                        <div class="patient-summary">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div>
-                                    <h6 class="fw-bold mb-0">Robert Downey (Bed C-101)</h6>
-                                    <span class="small text-muted">Post-Op Recovery • Day 2</span>
-                                </div>
-                                <span class="badge bg-success-subtle text-success rounded-pill px-3">Stable</span>
-                            </div>
-
-                            <div class="report-section">
-                                <small class="text-muted d-block mb-1 fw-bold text-uppercase"
-                                    style="font-size: 0.6rem;">Status Update</small>
-                                <p class="small mb-0">Patient is conscious and oriented. Pain managed with oral meds.
-                                    Surgical site clean, no discharge noted. 18:00 dose administered.</p>
-                            </div>
-
-                            <div class="report-section mb-0">
-                                <small class="text-muted d-block mb-1 fw-bold text-uppercase"
-                                    style="font-size: 0.6rem;">Pending Tasks</small>
-                                <p class="small mb-0">Monitor vitals every 4 hours. Surgeon visit expected tomorrow
-                                    morning. 22:00 med due.</p>
-                            </div>
-                        </div>
-
-                        <!-- Patient 2 -->
-                        <div class="patient-summary" style="border-left-color: #ef4444;">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div>
-                                    <h6 class="fw-bold mb-0">Wanda Maximoff (Bed C-105)</h6>
-                                    <span class="small text-muted">Trauma Ward • High Priority</span>
-                                </div>
-                                <span class="badge bg-danger-subtle text-danger rounded-pill px-3">Critical</span>
-                            </div>
-
-                            <div class="report-section">
-                                <small class="text-muted d-block mb-1 fw-bold text-uppercase"
-                                    style="font-size: 0.6rem;">Clinical Concern</small>
-                                <p class="small mb-0">SpO2 fluctuating between 92-94%. On supplemental oxygen (2L).
-                                    Pulse slightly elevated (108 bpm). BP monitoring strictly. Dr. Rambeau notified.</p>
-                            </div>
+                        <h5 class="fw-bold mb-4" style="font-family: 'Outfit';">Patient Reports</h5>
+                        <div id="patientsContainer">
+                            <!-- Dynamic Patients -->
                         </div>
                     </div>
                 </div>
 
                 <div class="col-lg-4">
                     <div class="handover-card">
-                        <h5 class="fw-bold mb-4" style="font-family: 'Outfit';">Handover Checklist</h5>
+                        <h5 class="fw-bold mb-4" style="font-family: 'Outfit';">Checklist & Sign-off</h5>
                         <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="check1" checked>
-                            <label class="form-check-label small" for="check1">All IV meds for Shift A
-                                administered</label>
+                            <input class="form-check-input" type="checkbox" id="check1" onchange="updateChecklist()">
+                            <label class="form-check-label small" for="check1">All IV meds administered/charted</label>
                         </div>
                         <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="check2" checked>
-                            <label class="form-check-label small" for="check2">Ward inventory/consumables
-                                replenished</label>
+                            <input class="form-check-input" type="checkbox" id="check2" onchange="updateChecklist()">
+                            <label class="form-check-label small" for="check2">Consumables replenished</label>
                         </div>
                         <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="check3">
+                            <input class="form-check-input" type="checkbox" id="check3" onchange="updateChecklist()">
                             <label class="form-check-label small" for="check3">Controlled drug count verified</label>
                         </div>
-                        <div class="form-check mb-4">
-                            <input class="form-check-input" type="checkbox" id="check4">
-                            <label class="form-check-label small" for="check4">Stat orders completed and charted</label>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="check4" onchange="updateChecklist()">
+                            <label class="form-check-label small" for="check4">High-risk patients highlighted</label>
                         </div>
 
                         <hr style="opacity: 0.1;">
 
                         <div class="mb-4">
                             <label class="small text-muted mb-2 fw-bold text-uppercase">Outgoing Nurse Sign-off</label>
-                            <input type="password" class="form-control rounded-pill text-center"
+                            <input type="text" id="signOffPin" class="form-control rounded-pill text-center mb-2"
                                 style="background: var(--bg-primary); border-color: var(--border-color); color: white;"
-                                placeholder="Enter PIN to sign">
+                                placeholder="Enter Name/ID to sign">
+                            <div class="small text-muted text-center" id="signedOffDisplay"></div>
                         </div>
 
-                        <button class="btn text-white fw-bold w-100 py-3 rounded-pill" style="background: #ec4899;">
-                            Finalize Handover
+                        <button class="btn btn-pink-theme text-white fw-bold w-100 py-3 rounded-pill"
+                            onclick="saveHandover()">
+                            Save Handover Report
                         </button>
                     </div>
                 </div>
+            </div>
+
+            <div id="loading" class="text-center py-5" style="display:none;">
+                <i class="fas fa-spinner fa-spin fa-2x text-theme"></i>
             </div>
         </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        let currentHandoverId = null;
+        let checklistState = { check1: false, check2: false, check3: false, check4: false };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('handoverDate').valueAsDate = new Date();
+            loadWards();
+        });
+
+        async function loadWards() {
+            try {
+                const response = await fetch('/api/nursing/wards');
+                const wards = await response.json();
+                const select = document.getElementById('wardSelect');
+                wards.forEach(w => {
+                    const opt = document.createElement('option');
+                    opt.value = w.id;
+                    opt.textContent = w.name;
+                    select.appendChild(opt);
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadHandoverData() {
+            const wardId = document.getElementById('wardSelect').value;
+            const date = document.getElementById('handoverDate').value;
+            const from = document.getElementById('fromShift').value;
+            const to = document.getElementById('toShift').value;
+
+            if (!wardId) { alert('Select Ward'); return; }
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('handoverContent').style.display = 'none';
+
+            try {
+                // 1. Get Handover Record
+                const hUrl = `/api/nursing/handover?wardId=${wardId}&date=${date}&fromShift=${from}&toShift=${to}`;
+                const hRes = await fetch(hUrl);
+                const handover = await hRes.json();
+                currentHandoverId = handover.id;
+
+                // 2. Get Patients
+                const pUrl = `/api/nursing/patients?wardId=${wardId}`;
+                const pRes = await fetch(pUrl);
+                const patients = await pRes.json();
+
+                renderHandover(handover, patients);
+            } catch (e) {
+                console.error(e);
+                alert('Error loading data');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function renderHandover(handover, patients) {
+            document.getElementById('handoverContent').style.display = 'flex';
+            const container = document.getElementById('patientsContainer');
+            container.innerHTML = '';
+
+            let reportData = {};
+            if (handover.reportText && handover.reportText.startsWith('{')) {
+                try { reportData = JSON.parse(handover.reportText); } catch (e) { }
+            }
+
+            if (patients.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted">No patients in this ward.</div>';
+            }
+
+            patients.forEach(p => {
+                const note = reportData[p.patientId] || '';
+                const stability = p.stability || 'STABLE';
+                let color = '#22c55e'; // green
+                if (stability === 'CRITICAL') color = '#ef4444';
+                if (stability === 'OBSERVATION') color = '#f59e0b';
+
+                const html = `
+                    <div class="patient-summary" style="border-left-color: ${color};">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="fw-bold mb-0">${p.patientName} (${p.bedCode})</h6>
+                                <span class="small text-muted">UHID: ${p.uhid || '?'}</span>
+                            </div>
+                            <span class="badge rounded-pill px-3" style="background: ${color}20; color: ${color};">${stability}</span>
+                        </div>
+                        <div class="mb-0">
+                            <textarea class="form-control bg-secondary text-theme border-secondary patient-note" 
+                                      data-id="${p.patientId}" rows="2" 
+                                      placeholder="Enter status update and pending tasks...">${note}</textarea>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(document.createRange().createContextualFragment(html));
+            });
+
+            // Restore Checklist
+            if (handover.checklistJson) {
+                try {
+                    checklistState = JSON.parse(handover.checklistJson);
+                    document.getElementById('check1').checked = checklistState.check1;
+                    document.getElementById('check2').checked = checklistState.check2;
+                    document.getElementById('check3').checked = checklistState.check3;
+                    document.getElementById('check4').checked = checklistState.check4;
+                } catch (e) { }
+            }
+
+            // Signed Off
+            if (handover.signedOffBy) {
+                document.getElementById('signedOffDisplay').innerText = `Last saved by User ID: ${handover.signedOffBy} at ${new Date(handover.signedOffAt).toLocaleTimeString()}`;
+            } else {
+                document.getElementById('signedOffDisplay').innerText = 'Not yet signed off';
+            }
+        }
+
+        function updateChecklist() {
+            checklistState = {
+                check1: document.getElementById('check1').checked,
+                check2: document.getElementById('check2').checked,
+                check3: document.getElementById('check3').checked,
+                check4: document.getElementById('check4').checked
+            };
+        }
+
+        async function saveHandover() {
+            if (!currentHandoverId) return;
+
+            // Collect Notes
+            let reportData = {};
+            document.querySelectorAll('.patient-note').forEach(el => {
+                const id = el.dataset.id;
+                const txt = el.value.trim();
+                if (txt) reportData[id] = txt;
+            });
+
+            const signer = document.getElementById('signOffPin').value;
+            const dto = {
+                id: currentHandoverId,
+                wardId: document.getElementById('wardSelect').value,
+                handoverDate: document.getElementById('handoverDate').value,
+                fromShift: document.getElementById('fromShift').value,
+                toShift: document.getElementById('toShift').value,
+                reportText: JSON.stringify(reportData),
+                checklistJson: JSON.stringify(checklistState),
+                signedOffBy: signer ? parseInt(signer) || 1 : null // Mock user ID 1 if not number
+            };
+
+            try {
+                const response = await fetch('/api/nursing/handover', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dto)
+                });
+
+                if (response.ok) {
+                    const saved = await response.json();
+                    renderHandover(saved, currentPatients); // Need to keep patients ref?
+                    alert('Handover Saved!');
+                    loadHandoverData(); // Reload to refresh timestamp
+                } else {
+                    alert('Failed to save');
+                }
+            } catch (e) { console.error(e); alert('Error saving'); }
+        }
+    </script>
 </body>
 
 </html>

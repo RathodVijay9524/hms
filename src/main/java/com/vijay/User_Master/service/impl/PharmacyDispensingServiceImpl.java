@@ -14,9 +14,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -132,6 +134,7 @@ public class PharmacyDispensingServiceImpl implements PharmacyDispensingService 
         for (DispensingItemRequest itemReq : request.getItems()) {
             if (itemReq.getQuantityDispensed() > 0) {
                 DispensedItem dispensedItem = createDispensedItem(itemReq, dispensing);
+                dispensedItem.calculateTotal(); // Explicitly calculate before parent total
                 dispensing.addDispensedItem(dispensedItem);
                 
                 // Reduce inventory stock
@@ -176,12 +179,17 @@ public class PharmacyDispensingServiceImpl implements PharmacyDispensingService 
             throw new BadApiRequestException("Insufficient stock for " + inventoryItem.getName());
         }
         
+        BigDecimal unitPrice = request.getUnitPrice();
+        if (unitPrice == null || unitPrice.compareTo(BigDecimal.ZERO) == 0) {
+            unitPrice = inventoryItem.getUnitPrice() != null ? inventoryItem.getUnitPrice() : BigDecimal.ZERO;
+        }
+
         return DispensedItem.builder()
                 .dispensing(dispensing)
                 .inventoryItem(inventoryItem)
                 .medicineName(inventoryItem.getName()) // Store medicine name
                 .quantityDispensed(request.getQuantityDispensed())
-                .unitPrice(request.getUnitPrice() != null ? request.getUnitPrice() : inventoryItem.getUnitPrice())
+                .unitPrice(unitPrice)
                 .batchNumber(request.getBatchNumber())
                 .expiryDate(request.getExpiryDate())
                 .notes(request.getNotes())
@@ -410,6 +418,7 @@ public class PharmacyDispensingServiceImpl implements PharmacyDispensingService 
     private DispensingDTO convertToDispensingDTO(Prescription prescription) {
         User doctor = prescription.getVisit() != null ? prescription.getVisit().getDoctor() : null;
         Patient patient = prescription.getVisit() != null ? prescription.getVisit().getPatient() : null;
+        Long ownerId = prescription.getOwner().getId();
         
         return DispensingDTO.builder()
                 .prescriptionId(prescription.getId())
@@ -422,14 +431,20 @@ public class PharmacyDispensingServiceImpl implements PharmacyDispensingService 
                 .prescriptionDate(convertToLocalDateTime(prescription.getCreatedOn()))
                 .status("PENDING")
                 .items(prescription.getMedications().stream()
-                        .map(medication -> DispensedItemDTO.builder()
-                                .medicineName(medication.getMedicineName())
-                                .quantityPrescribed(medication.getQuantity() != null ? medication.getQuantity() : 0)
-                                .dosage(medication.getDosage())
-                                .duration(medication.getDuration())
-                                .instructions(medication.getInstructions())
-                                .unitPrice(java.math.BigDecimal.ZERO)
-                                .build())
+                        .map(medication -> {
+                            Optional<InventoryItem> itemOpt = inventoryItemRepository.findByNameAndOwnerIdAndIsDeletedFalse(medication.getMedicineName(), ownerId);
+                            return DispensedItemDTO.builder()
+                                    .inventoryItemId(itemOpt.map(InventoryItem::getId).orElse(null))
+                                    .medicineName(medication.getMedicineName())
+                                    .quantityPrescribed(medication.getQuantity() != null ? medication.getQuantity() : 0)
+                                    .dosage(medication.getDosage())
+                                    .duration(medication.getDuration())
+                                    .instructions(medication.getInstructions())
+                                    .unitPrice(itemOpt.map(InventoryItem::getUnitPrice).orElse(java.math.BigDecimal.ZERO))
+                                    .inStock(itemOpt.map(i -> i.getCurrentStock() > 0).orElse(false))
+                                    .quantityAvailable(itemOpt.map(InventoryItem::getCurrentStock).orElse(0))
+                                    .build();
+                        })
                         .collect(Collectors.toList()))
                 .build();
     }

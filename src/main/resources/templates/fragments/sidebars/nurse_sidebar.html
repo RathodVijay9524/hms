@@ -77,6 +77,12 @@
             <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold"
                     style="font-size: 0.65rem;">System</small></div>
 
+            <a th:href="@{/nurse/wards}" class="sidebar-link"
+                th:classappend="${activeLink == 'nurse-wards' ? 'active' : ''}">
+                <i class="fas fa-hospital-alt"></i>
+                <span>Ward Management</span>
+            </a>
+
             <a th:href="@{/select-role}" class="sidebar-link">
                 <i class="fas fa-th-large"></i>
                 <span>Switch Portal</span>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ward Management - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .nurse-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nurse-card:hover {
+            border-color: rgba(236, 72, 153, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(236, 72, 153, 0.15);
+        }
+
+        .ward-row {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .ward-row:last-child {
+            border-bottom: none;
+        }
+
+        .ward-row:hover {
+            background: rgba(236, 72, 153, 0.05);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/nurse_sidebar :: nurse_sidebar('nurse-wards')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">Ward Management</h1>
+                    <p class="text-theme-muted mb-0">Create and manage hospital wards.</p>
+                </div>
+                <button class="btn btn-pink-theme text-white fw-bold px-4 rounded-pill" onclick="openWardModal()">
+                    <i class="fas fa-plus me-2"></i>New Ward
+                </button>
+            </div>
+
+            <!-- Ward List -->
+            <div class="nurse-card overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table mb-0" style="vertical-align: middle;">
+                        <thead class="bg-tertiary-theme">
+                            <tr>
+                                <th class="ps-4 py-3 text-theme-muted small text-uppercase fw-bold">Ward Name</th>
+                                <th class="py-3 text-theme-muted small text-uppercase fw-bold">Code</th>
+                                <th class="pe-4 py-3 text-end text-theme-muted small text-uppercase fw-bold">Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="wardsTableBody">
+                            <tr>
+                                <td colspan="3" class="text-center py-4 text-muted"><i
+                                        class="fas fa-spinner fa-spin me-2"></i>Loading wards...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Ward Modal -->
+    <div class="modal fade" id="wardModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-secondary text-theme">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title fw-bold" id="wardModalTitle">Add/Edit Ward</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="wardForm">
+                        <input type="hidden" id="wardId">
+                        <div class="mb-3">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Ward Name</label>
+                            <input type="text" class="form-control bg-tertiary text-theme border-secondary"
+                                id="wardName" placeholder="e.g. Intensive Care Unit" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Ward Code</label>
+                            <input type="text" class="form-control bg-tertiary text-theme border-secondary"
+                                id="wardCode" placeholder="e.g. ICU-01" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-pink-theme text-white rounded-pill px-4"
+                        onclick="saveWard()">Save Ward</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', loadWards);
+
+        let wardModal;
+
+        async function loadWards() {
+            const tbody = document.getElementById('wardsTableBody');
+            try {
+                const response = await fetch('/api/nursing/wards');
+                const wards = await response.json();
+
+                if (!wards || wards.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-muted">No wards found. Create one to get started.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                wards.forEach(ward => {
+                    const row = document.createElement('tr');
+                    row.className = 'ward-row';
+                    row.innerHTML = `
+                        <td class="ps-4">
+                            <div class="fw-bold fs-6">${ward.name}</div>
+                        </td>
+                        <td>
+                            <code>${ward.code}</code>
+                        </td>
+                        <td class="pe-4 text-end">
+                            <button class="btn btn-sm btn-outline-light rounded-pill px-3 me-2" onclick="editWard(${ward.id}, '${ward.name}', '${ward.code}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="deleteWard(${ward.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading wards:', error);
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-danger">Error loading wards.</td></tr>';
+            }
+        }
+
+        function openWardModal() {
+            document.getElementById('wardId').value = '';
+            document.getElementById('wardName').value = '';
+            document.getElementById('wardCode').value = '';
+            document.getElementById('wardModalTitle').textContent = 'Add New Ward';
+
+            wardModal = new bootstrap.Modal(document.getElementById('wardModal'));
+            wardModal.show();
+        }
+
+        function editWard(id, name, code) {
+            document.getElementById('wardId').value = id;
+            document.getElementById('wardName').value = name;
+            document.getElementById('wardCode').value = code;
+            document.getElementById('wardModalTitle').textContent = 'Edit Ward';
+
+            wardModal = new bootstrap.Modal(document.getElementById('wardModal'));
+            wardModal.show();
+        }
+
+        async function saveWard() {
+            const id = document.getElementById('wardId').value;
+            const name = document.getElementById('wardName').value;
+            const code = document.getElementById('wardCode').value;
+
+            if (!name || !code) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const dto = { name, code };
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `/api/nursing/wards/${id}` : '/api/nursing/wards';
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dto)
+                });
+
+                if (response.ok) {
+                    wardModal.hide();
+                    loadWards();
+                    // If creating the first ward, you might want to reload other parts, but this page is standalone.
+                } else {
+                    alert('Failed to save ward');
+                }
+            } catch (error) {
+                console.error('Error saving ward:', error);
+                alert('Error saving ward');
+            }
+        }
+
+        async function deleteWard(id) {
+            if (!confirm('Are you sure you want to delete this ward? This action may fail if it has active patients/tasks.')) return;
+
+            try {
+                const response = await fetch(`/api/nursing/wards/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    loadWards();
+                } else {
+                    alert('Failed to delete ward. It may be in use.');
+                }
+            } catch (error) {
+                console.error('Error deleting ward:', error);
+                alert('Error deleting ward');
+            }
+        }
+    </script>
+</body>
+
+</html>

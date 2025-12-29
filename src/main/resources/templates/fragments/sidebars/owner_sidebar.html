@@ -50,6 +50,12 @@
                 <span>Physician Roster (Doctors)</span>
             </a>
 
+            <a th:href="@{/owner/nurses}" class="sidebar-link"
+                th:classappend="${activeLink == 'nurses' ? 'active' : ''}">
+                <i class="fas fa-user-nurse"></i>
+                <span>Nursing Roster</span>
+            </a>
+
             <div class="mb-3 mt-4"><small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Clinical
                     Oversight</small></div>
 

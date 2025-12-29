@@ -218,12 +218,13 @@
                                         class="status-pill status-good">Good Stock</span>
                                 </td>
                                 <td class="text-end">
-                                    <button class="btn btn-sm btn-outline-primary rounded-pill me-1"
-                                        th:attr="onclick='openEditModal(' + ${item.id} + ')'">
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill me-1 edit-btn"
+                                        th:data-id="${item.id}" title="Edit Medicine">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-outline-success rounded-pill"
-                                        th:attr="onclick='openAdjustStockModal(' + ${item.id} + ', \'' + ${#strings.escapeJavaScript(item.name)} + '\', ' + ${item.currentStock} + ')'">
+                                    <button class="btn btn-sm btn-outline-success rounded-pill adjust-btn"
+                                        th:data-id="${item.id}" th:data-name="${item.name}"
+                                        th:data-stock="${item.currentStock}" title="Adjust Stock">
                                         <i class="fas fa-plus-minus"></i>
                                     </button>
                                 </td>
@@ -350,12 +351,29 @@
         function updateStock() {
             const id = document.getElementById('adjustItemId').value;
             const newStock = document.getElementById('newStockLevel').value;
+            console.log('Updating stock for ID:', id, 'New value:', newStock);
+
+            if (!id || newStock === '') {
+                alert('Please enter valid values');
+                return;
+            }
 
             fetch(`/api/inventory/items/${id}/stock?newStock=${newStock}&performedBy=1`, {
                 method: 'PATCH'
             }).then(res => {
-                if (res.ok) location.reload();
-                else alert('Error updating stock');
+                console.log('Response status:', res.status);
+                if (res.ok) {
+                    alert('Stock updated successfully!');
+                    location.reload();
+                } else {
+                    res.text().then(text => {
+                        console.error('Error response:', text);
+                        alert('Error updating stock: ' + text);
+                    });
+                }
+            }).catch(err => {
+                console.error('Network error:', err);
+                alert('Network error: ' + err.message);
             });
         }
 
@@ -430,6 +448,25 @@
                 else alert('Error updating medicine');
             });
         }
+
+        // Event delegation for edit and adjust stock buttons
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const id = this.getAttribute('data-id');
+                    openEditModal(id);
+                });
+            });
+
+            document.querySelectorAll('.adjust-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const id = this.getAttribute('data-id');
+                    const name = this.getAttribute('data-name');
+                    const stock = this.getAttribute('data-stock');
+                    openAdjustStockModal(id, name, stock);
+                });
+            });
+        });
     </script>
 </body>
 

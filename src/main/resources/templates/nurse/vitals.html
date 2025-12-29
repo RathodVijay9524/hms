@@ -92,9 +92,14 @@
                     <h1 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">Batch Vitals Entry</h1>
                     <p class="text-theme-muted mb-0">Record vitals for all patients in Ward-C</p>
                 </div>
-                <div>
-                    <span class="badge rounded-pill bg-success-subtle text-success px-3 py-2">Last Sync: 2 mins
-                        ago</span>
+                <div class="d-flex align-items-center gap-3">
+                    <select id="wardSelect"
+                        class="form-select rounded-pill px-4 border-opacity-25 bg-transparent text-white"
+                        style="width: 200px;">
+                        <option value="" class="text-dark">Select Ward</option>
+                    </select>
+                    <span class="badge rounded-pill bg-success-subtle text-success px-3 py-2"
+                        id="lastSyncTime">Syncing...</span>
                 </div>
             </div>
 
@@ -113,48 +118,8 @@
                                 <th class="text-theme-muted small text-uppercase fw-bold">Notes</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="fw-bold">Robert Downey</div>
-                                    <div class="small text-muted">Post-Op Recovery</div>
-                                </td>
-                                <td><span class="badge bg-secondary">C-101</span></td>
-                                <td><input type="text" class="vitals-input" placeholder="120/80" value="110/80"></td>
-                                <td><input type="text" class="vitals-input" placeholder="98.6" value="98.4"></td>
-                                <td><input type="text" class="vitals-input abnormal-pulse" placeholder="72" value="95">
-                                </td>
-                                <td><input type="text" class="vitals-input" placeholder="98" value="97"></td>
-                                <td><input type="text" class="vitals-input text-start px-3" placeholder="Add remark...">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="fw-bold">Wanda Maximoff</div>
-                                    <div class="small text-muted">Trauma Ward</div>
-                                </td>
-                                <td><span class="badge bg-secondary">C-105</span></td>
-                                <td><input type="text" class="vitals-input" placeholder="120/80" value="140/95"></td>
-                                <td><input type="text" class="vitals-input" placeholder="98.6" value="101.2"></td>
-                                <td><input type="text" class="vitals-input" placeholder="72" value="108"></td>
-                                <td><input type="text" class="vitals-input abnormal-pulse" placeholder="98" value="92">
-                                </td>
-                                <td><input type="text" class="vitals-input text-start px-3" placeholder="Add remark...">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="fw-bold">Peter Parker</div>
-                                    <div class="small text-muted">Observation</div>
-                                </td>
-                                <td><span class="badge bg-secondary">C-108</span></td>
-                                <td><input type="text" class="vitals-input" placeholder="120/80"></td>
-                                <td><input type="text" class="vitals-input" placeholder="98.6"></td>
-                                <td><input type="text" class="vitals-input" placeholder="72"></td>
-                                <td><input type="text" class="vitals-input" placeholder="98"></td>
-                                <td><input type="text" class="vitals-input text-start px-3" placeholder="Add remark...">
-                                </td>
-                            </tr>
+                        <tbody id="vitalsTableBody">
+                            <!-- Dynamic rows will be inserted here -->
                         </tbody>
                     </table>
                 </div>
@@ -168,8 +133,10 @@
                 <div class="divider d-none d-md-block"
                     style="width: 1px; height: 20px; background: rgba(255,255,255,0.1);"></div>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary rounded-pill px-4">Reset Form</button>
-                    <button class="btn btn-pink-theme text-white fw-bold px-5 rounded-pill">
+                    <button class="btn btn-outline-secondary rounded-pill px-4" onclick="location.reload()">Reset
+                        Form</button>
+                    <button id="saveVitalsBtn" class="btn btn-pink-theme text-white fw-bold px-5 rounded-pill"
+                        onclick="saveAllVitals()">
                         Save All Vitals
                     </button>
                 </div>
@@ -179,6 +146,138 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            loadWards();
+            document.getElementById('wardSelect').addEventListener('change', loadPatients);
+        });
+
+        async function loadWards() {
+            try {
+                const response = await fetch('/api/nursing/wards');
+                const wards = await response.json();
+                const select = document.getElementById('wardSelect');
+
+                wards.forEach(ward => {
+                    const option = document.createElement('option');
+                    option.value = ward.id;
+                    option.textContent = ward.name;
+                    option.className = 'text-dark';
+                    select.appendChild(option);
+                });
+
+                if (wards.length > 0) {
+                    select.value = wards[0].id; // Optional: Default to first ward
+                    loadPatients();
+                }
+            } catch (error) {
+                console.error('Error loading wards:', error);
+            }
+        }
+
+        async function loadPatients() {
+            const wardId = document.getElementById('wardSelect').value;
+            if (!wardId) return;
+
+            document.getElementById('lastSyncTime').textContent = 'Syncing...';
+
+            try {
+                const response = await fetch(`/api/nursing/patients?wardId=${wardId}`);
+                const patients = await response.json();
+                renderPatients(patients);
+                document.getElementById('lastSyncTime').textContent = 'Last Sync: Just Now';
+            } catch (error) {
+                console.error('Error loading patients:', error);
+                document.getElementById('lastSyncTime').textContent = 'Sync Error';
+            }
+        }
+
+        function renderPatients(patients) {
+            const tbody = document.getElementById('vitalsTableBody');
+            if (patients.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-5 text-muted">No patients assigned to this ward</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = patients.map(p => `
+                <tr data-patient-id="${p.patientId}">
+                    <td>
+                        <div class="fw-bold">${p.patientName}</div>
+                        <div class="small text-muted">${p.uhid || 'N/A'}</div>
+                    </td>
+                    <td><span class="badge bg-secondary">${p.bedCode || 'N/A'}</span></td>
+                    <td><input type="text" class="vitals-input bp-input" placeholder="120/80" value="${p.bpSummary || ''}"></td>
+                    <td><input type="number" step="0.1" class="vitals-input temp-input" placeholder="98.6"></td>
+                    <td><input type="number" class="vitals-input pulse-input" placeholder="72"></td>
+                    <td><input type="number" class="vitals-input spo2-input" placeholder="98"></td>
+                    <td><input type="text" class="vitals-input text-start px-3 remark-input" placeholder="Add remark..."></td>
+                </tr>
+            `).join('');
+        }
+
+        async function saveAllVitals() {
+            const wardId = document.getElementById('wardSelect').value;
+            if (!wardId) {
+                alert('Please select a ward first');
+                return;
+            }
+
+            const btn = document.getElementById('saveVitalsBtn');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            const entries = [];
+            const rows = document.querySelectorAll('#vitalsTableBody tr[data-patient-id]');
+
+            rows.forEach(row => {
+                const patientId = row.getAttribute('data-patient-id');
+                const bp = row.querySelector('.bp-input').value;
+                const temperature = row.querySelector('.temp-input').value;
+                const pulse = row.querySelector('.pulse-input').value;
+                const oxygenLevel = row.querySelector('.spo2-input').value;
+
+                // Only add if at least one value is entered
+                if (bp || temperature || pulse || oxygenLevel) {
+                    entries.push({
+                        patientId: parseInt(patientId),
+                        bp: bp || null,
+                        temperature: temperature ? parseFloat(temperature) : null,
+                        pulse: pulse ? parseInt(pulse) : null,
+                        oxygenLevel: oxygenLevel ? parseInt(oxygenLevel) : null
+                    });
+                }
+            });
+
+            if (entries.length === 0) {
+                alert('No data entered to save');
+                btn.disabled = false;
+                btn.textContent = originalText;
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/nursing/vitals/batch?wardId=${wardId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(entries)
+                });
+
+                if (response.ok) {
+                    alert('Vitals saved successfully!');
+                    loadPatients(); // Refresh to clear/update
+                } else {
+                    alert('Error saving vitals');
+                }
+            } catch (error) {
+                console.error('Error saving vitals:', error);
+                alert('Connection error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+    </script>
 </body>
 
 </html>

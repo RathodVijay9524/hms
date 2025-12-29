@@ -28,6 +28,17 @@ public class NursingController {
         return ResponseEntity.ok(nursingService.createWard(dto));
     }
 
+    @PutMapping("/wards/{id}")
+    public ResponseEntity<WardDTO> updateWard(@PathVariable Long id, @RequestBody WardDTO dto) {
+        return ResponseEntity.ok(nursingService.updateWard(id, dto));
+    }
+
+    @DeleteMapping("/wards/{id}")
+    public ResponseEntity<Void> deleteWard(@PathVariable Long id) {
+        nursingService.deleteWard(id);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/assignments")
     public ResponseEntity<WardPatientDTO> assignPatient(@RequestBody AssignPatientRequestDTO dto) {
         return ResponseEntity.ok(nursingService.assignPatientToWard(dto));
@@ -58,9 +69,11 @@ public class NursingController {
     @GetMapping("/tasks")
     public ResponseEntity<List<NursingTaskDTO>> getTasks(
             @RequestParam Long wardId,
-            @RequestParam String shift
+            @RequestParam String shift,
+            @RequestParam(required = false) String date
     ) {
-        return ResponseEntity.ok(nursingService.getTasks(wardId, shift));
+        LocalDate d = (date == null || date.isBlank()) ? LocalDate.now() : LocalDate.parse(date);
+        return ResponseEntity.ok(nursingService.getTasks(wardId, shift, d));
     }
 
     @PostMapping("/tasks")

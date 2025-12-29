@@ -24,4 +24,6 @@ public interface MedicationAdministrationRepository extends JpaRepository<Medica
 
     @Query("SELECT COUNT(ma) FROM MedicationAdministration ma WHERE ma.owner.id = :ownerId AND ma.assignment.ward.id = :wardId AND ma.adminDate = :date AND ma.status = :status")
     long countForWardDateAndStatus(@Param("ownerId") Long ownerId, @Param("wardId") Long wardId, @Param("date") LocalDate date, @Param("status") MedicationAdministration.AdminStatus status);
+
+    boolean existsByAssignmentIdAndMedicineNameAndScheduledAtBetween(Long assignmentId, String medicineName, LocalDateTime start, LocalDateTime end);
 }

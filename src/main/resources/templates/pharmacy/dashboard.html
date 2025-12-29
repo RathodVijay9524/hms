@@ -49,7 +49,7 @@
             <!-- Quick Stats Row -->
             <div class="row g-4 mb-4">
                 <div class="col-md-6 col-lg-3">
-                    <div class="metric-card">
+                    <div class="metric-card cursor-pointer" onclick="window.location.href='/pharmacy/prescriptions'">
                         <div class="d-flex align-items-center gap-3">
                             <div class="metric-icon bg-blue-500 bg-opacity-10 text-blue-400">
                                 <i class="fas fa-file-prescription"></i>
@@ -63,7 +63,7 @@
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
-                    <div class="metric-card">
+                    <div class="metric-card cursor-pointer" onclick="window.location.href='/pharmacy/inventory'">
                         <div class="d-flex align-items-center gap-3">
                             <div class="metric-icon bg-red-500 bg-opacity-10 text-red-500">
                                 <i class="fas fa-exclamation-triangle"></i>
@@ -77,7 +77,7 @@
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
-                    <div class="metric-card">
+                    <div class="metric-card cursor-pointer" onclick="window.location.href='/pharmacy/history'">
                         <div class="d-flex align-items-center gap-3">
                             <div class="metric-icon bg-emerald-500 bg-opacity-10 text-emerald-400">
                                 <i class="fas fa-check-double"></i>
@@ -92,7 +92,7 @@
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3">
-                    <div class="metric-card">
+                    <div class="metric-card cursor-pointer" onclick="window.location.href='/pharmacy/expiry'">
                         <div class="d-flex align-items-center gap-3">
                             <div class="metric-icon bg-amber-500 bg-opacity-10 text-amber-400">
                                 <i class="fas fa-calendar-times"></i>
@@ -114,42 +114,43 @@
                     <h6 class="text-theme-muted smaller fw-bold text-uppercase ls-1 mb-3">Quick Actions</h6>
                 </div>
                 <div class="col-6 col-md-3">
-                    <a href="#" class="hub-link text-center px-4">
+                    <a th:href="@{/pharmacy/prescriptions}" class="hub-link text-center px-4">
                         <i class="fas fa-file-prescription text-blue-500 fs-2 mb-3"></i>
                         <div class="fw-bold text-theme">Process Rx</div>
                     </a>
                 </div>
                 <div class="col-6 col-md-3">
-                    <a href="#" class="hub-link text-center px-4">
+                    <a th:href="@{/pharmacy/inventory}" class="hub-link text-center px-4">
                         <i class="fas fa-barcode text-purple-500 fs-2 mb-3"></i>
-                        <div class="fw-bold text-theme">Scan Item</div>
+                        <div class="fw-bold text-theme">Stock Manage</div>
                     </a>
                 </div>
                 <div class="col-6 col-md-3">
-                    <a href="#" class="hub-link text-center px-4">
+                    <a th:href="@{/pharmacy/orders}" class="hub-link text-center px-4">
                         <i class="fas fa-truck text-amber-500 fs-2 mb-3"></i>
                         <div class="fw-bold text-theme">New Order</div>
                     </a>
                 </div>
                 <div class="col-6 col-md-3">
-                    <a href="#" class="hub-link text-center px-4">
+                    <a th:href="@{/pharmacy/history}" class="hub-link text-center px-4">
                         <i class="fas fa-chart-bar text-emerald-500 fs-2 mb-3"></i>
-                        <div class="fw-bold text-theme">Reports</div>
+                        <div class="fw-bold text-theme">History</div>
                     </a>
                 </div>
             </div>
 
-            <div class="row g-4">
-                <!-- Live Prescription Feed -->
+            <div class="row g-4 mb-2">
+                <!-- Pending Queue -->
                 <div class="col-lg-6">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
                         <h5 class="section-title mb-0 text-theme" style="font-family: 'Outfit';">Pending Queue</h5>
                         <a th:href="@{/pharmacy/prescriptions}"
                             class="btn btn-sm btn-link text-decoration-none text-blue-400">View All <i
                                 class="fas fa-arrow-right ms-1"></i></a>
                     </div>
 
-                    <div class="glass-card p-0 overflow-hidden shadow-lg mb-4" id="recentPrescriptionsContainer">
+                    <div class="glass-card p-0 overflow-hidden shadow-lg mb-2" id="recentPrescriptionsContainer"
+                        style="max-height: 350px; overflow-y: auto;">
                         <div th:if="${#lists.isEmpty(dashboardStats.recentPrescriptions)}"
                             class="p-5 text-center text-muted">
                             <i class="fas fa-check-circle text-success fs-2 mb-3"></i>
@@ -159,68 +160,112 @@
                             class="p-3 border-bottom border-color-theme d-flex justify-content-between align-items-center hover-bg-opacity-5 transition-all">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="metric-icon mb-0 bg-blue-500 bg-opacity-10 text-blue-400"
-                                    style="width: 45px; height: 45px; font-size: 1.1rem;">
+                                    style="width: 45px; height: 45px;">
                                     <i class="fas fa-prescription"></i>
                                 </div>
                                 <div>
                                     <div class="fw-bold text-theme" th:text="${rx.patientName}">John Smith</div>
-                                    <div class="small text-theme-muted"
-                                        th:text="${rx.patientUhid + ' • Dr. ' + rx.doctorName}">UHID-2024-0891 • Dr.
-                                        Williams</div>
+                                    <div class="small text-theme-muted" th:text="'Dr. ' + ${rx.doctorName}">Dr. Williams
+                                    </div>
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="badge bg-secondary bg-opacity-10 text-theme-muted"
-                                    th:text="${rx.items.size() + ' Items'}">4 Items</span>
-                                <button class="btn btn-sm btn-pink-theme rounded-pill px-3 ms-2"
-                                    th:onclick="'window.location.href=\'/pharmacy/dispense?id=' + ${rx.prescriptionId} + '\''">Process</button>
-                            </div>
+                            <button class="btn btn-sm btn-pink-theme rounded-pill px-4"
+                                th:onclick="'window.location.href=\'/pharmacy/dispense?id=' + ${rx.prescriptionId} + '\''">Process</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Inventory Watchlist -->
-                <div class="col-lg-5">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="section-title mb-0 text-theme">Inventory Alerts</h5>
-                    </div>
-                    <div id="inventoryAlertsContainer">
-                        <div th:if="${#lists.isEmpty(dashboardStats.stockAlerts)}"
-                            class="p-5 text-center text-muted glass-card">
-                            <i class="fas fa-check-circle text-success fs-1 mb-3"></i>
-                            <p>All stock levels are optimal</p>
-                        </div>
-                        <div th:each="alert : ${dashboardStats.stockAlerts}"
-                            class="p-3 mb-3 rounded-4 border border-color-theme bg-secondary bg-opacity-5 hover-bg-opacity-10 transition-all border-start-4"
-                            th:classappend="${alert.type == 'OUT_OF_STOCK' ? 'border-start-red-500' : 'border-start-amber-500'}">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <div class="fw-bold text-theme" th:text="${alert.medicineName}">Amoxicillin 500mg
-                                    </div>
-                                    <div class="small text-theme-muted" th:text="'SKU: ' + ${alert.sku}">SKU:
-                                        MED-AMX-500</div>
-                                </div>
-                                <div class="text-end">
-                                    <div class="fw-bold"
-                                        th:classappend="${alert.type == 'OUT_OF_STOCK' ? 'text-red-500' : 'text-amber-500'}"
-                                        th:text="${alert.currentStock + ' units'}">18 units</div>
-                                    <div class="small text-theme-muted" th:text="'Min: ' + ${alert.minStock}">Min: 50
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="progress mt-2 bg-primary bg-opacity-10" style="height: 6px;">
-                                <div class="progress-bar"
-                                    th:classappend="${alert.type == 'OUT_OF_STOCK' ? 'bg-danger' : 'bg-warning'}"
-                                    th:style="'width: ' + ${alert.minStock > 0 ? (alert.currentStock * 100 / alert.minStock) : 0} + '%;'">
-                                </div>
-                            </div>
-                        </div>
+                <!-- Recent Dispensing Activity -->
+                <div class="col-lg-6">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="section-title mb-0 text-theme" style="font-family: 'Outfit';">Recent Activity</h5>
+                        <a th:href="@{/pharmacy/history}"
+                            class="btn btn-sm btn-link text-decoration-none text-emerald-400">
+                            View History <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
                     </div>
 
-                    <a th:href="@{/pharmacy/inventory}"
-                        class="btn btn-outline-pink w-100 mt-2 rounded-pill py-2 text-decoration-none">
-                        <i class="fas fa-boxes-stacked me-2"></i>Full Inventory
-                    </a>
+                    <div class="glass-card p-0 overflow-hidden shadow-lg mb-2" id="recentDispensingsContainer"
+                        style="max-height: 350px; overflow-y: auto;">
+                        <div th:if="${#lists.isEmpty(dashboardStats.recentDispensings)}"
+                            class="p-5 text-center text-muted">
+                            <i class="fas fa-history fs-2 mb-3"></i>
+                            <p class="mb-0">No recent activity</p>
+                        </div>
+                        <div th:each="disp : ${dashboardStats.recentDispensings}"
+                            class="p-3 border-bottom border-color-theme d-flex justify-content-between align-items-center hover-bg-opacity-5 transition-all">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="metric-icon mb-0 bg-emerald-500 bg-opacity-10 text-emerald-400"
+                                    style="width: 45px; height: 45px;">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-theme" th:text="${disp.patientName}">Jane Doe</div>
+                                    <div class="smaller text-emerald-400 fw-bold"
+                                        th:text="${disp.totalAmount != null ? '₹ ' + #numbers.formatDecimal(disp.totalAmount, 1, 2) : '₹ 0.00'}">
+                                        ₹ 450.00</div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="smaller text-theme-muted"
+                                    th:text="${#temporals.format(disp.dispensedDate, 'HH:mm')}">14:30</div>
+                                <span class="badge bg-emerald-500 bg-opacity-10 text-emerald-400 smaller"
+                                    th:text="${disp.status}">COMPLETED</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Alerts Shelf -->
+            <div class="row g-4">
+                <div class="col-12">
+                    <div class="glass-card p-4 shadow-lg border-start-4 border-start-amber-500">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h5 class="fw-bold mb-1 text-theme"><i
+                                        class="fas fa-exclamation-triangle text-amber-500 me-2"></i>Inventory Watchlist
+                                </h5>
+                                <p class="text-theme-muted smaller mb-0">Medicines currently below threshold levels</p>
+                            </div>
+                            <a th:href="@{/pharmacy/inventory}" class="btn btn-sm btn-outline-theme rounded-pill px-4">
+                                <i class="fas fa-boxes-stacked me-2"></i>Manage
+                            </a>
+                        </div>
+
+                        <div class="row g-3" id="inventoryAlertsContainer">
+                            <div th:if="${#lists.isEmpty(dashboardStats.stockAlerts)}"
+                                class="col-12 text-center py-4 text-muted">
+                                <i class="fas fa-check-circle text-success fs-1 mb-3"></i>
+                                <p>All stock levels are optimal</p>
+                            </div>
+                            <div th:each="alert : ${dashboardStats.stockAlerts}" class="col-md-6 col-xl-4">
+                                <div class="p-3 rounded-4 bg-secondary bg-opacity-5 border border-color-theme">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div>
+                                            <div class="fw-bold text-theme" th:text="${alert.medicineName}">Amoxicillin
+                                            </div>
+                                            <div class="smaller text-theme-muted" th:text="'SKU: ' + ${alert.sku}">
+                                                SKU-123</div>
+                                        </div>
+                                        <div class="text-end">
+                                            <div class="fw-bold"
+                                                th:classappend="${alert.type == 'OUT_OF_STOCK' ? 'text-red-500' : 'text-amber-500'}"
+                                                th:text="${alert.currentStock + ' units'}">18</div>
+                                            <div class="smaller text-theme-muted" th:text="'Min: ' + ${alert.minStock}">
+                                                Min: 50</div>
+                                        </div>
+                                    </div>
+                                    <div class="progress bg-primary bg-opacity-10" style="height: 6px;">
+                                        <div class="progress-bar"
+                                            th:classappend="${alert.type == 'OUT_OF_STOCK' ? 'bg-danger' : 'bg-warning'}"
+                                            th:style="'width: ' + ${alert.minStock > 0 ? (alert.currentStock * 100 / alert.minStock) : 0} + '%;'">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

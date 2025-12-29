@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nursing Roster - MedLab Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        .nav-pills .nav-link {
+            color: var(--text-muted);
+            border-radius: 50rem;
+            padding: 0.5rem 1.5rem;
+            font-weight: 600;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .shift-column {
+            background: var(--bg-secondary);
+            border-radius: 1rem;
+            padding: 1rem;
+            min-height: 200px;
+        }
+
+        .roster-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebars/owner_sidebar :: owner_sidebar('nurses')}"></div>
+
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">Nursing Roster</h1>
+                    <p class="text-theme-muted mb-0">Manage shift assignments and view daily schedules</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-emerald-theme fw-bold px-4 rounded-pill shadow-sm"
+                        onclick="openAssignModal()">
+                        <i class="fas fa-calendar-plus me-2"></i>Assign Shift
+                    </button>
+                    <!-- Add Nurse button removed as per request (Use Staff Management) -->
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <ul class="nav nav-pills mb-4" id="nurseTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" id="roster-tab" data-bs-toggle="pill"
+                        data-bs-target="#roster-content" type="button">Shift Roster</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="directory-tab" data-bs-toggle="pill"
+                        data-bs-target="#directory-content" type="button">Nurse Directory</button>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- Roster Tab -->
+                <div class="tab-pane fade show active" id="roster-content">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <input type="date" id="rosterDate"
+                            class="form-control bg-secondary text-theme border-secondary rounded-pill"
+                            style="width: auto;">
+                        <button class="btn btn-sm btn-outline-theme rounded-circle" onclick="loadRoster()"><i
+                                class="fas fa-sync-alt"></i></button>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="shift-column">
+                                <h6 class="text-theme fw-bold text-center mb-3">MORNING SHIFT</h6>
+                                <div id="shift-MORNING"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="shift-column">
+                                <h6 class="text-theme fw-bold text-center mb-3">EVENING SHIFT</h6>
+                                <div id="shift-EVENING"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="shift-column">
+                                <h6 class="text-theme fw-bold text-center mb-3">NIGHT SHIFT</h6>
+                                <div id="shift-NIGHT"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Directory Tab -->
+                <div class="tab-pane fade" id="directory-content">
+                    <div class="glass-card shadow-sm p-0 overflow-hidden">
+                        <div class="table-responsive">
+                            <table class="table premium-table mb-0">
+                                <thead class="text-muted">
+                                    <tr>
+                                        <th class="ps-4">Name / Username</th>
+                                        <th>Contact</th>
+                                        <th>Status</th>
+                                        <th>Joined</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="nursesTableBody">
+                                    <!-- Dynamic Content -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-3 text-center text-muted small">
+                            To add or manage nurses, please visit the <a th:href="@{/owner/workers}"
+                                class="text-emerald-400">Staff Management</a> page.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Assign Shift Modal -->
+    <div class="modal fade" id="assignShiftModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card border-0">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title fw-bold text-theme">Assign Shift</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="assignShiftForm">
+                        <div class="mb-3">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Date</label>
+                            <input type="date" class="form-control bg-secondary text-theme border-secondary"
+                                id="assignDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Shift</label>
+                            <select class="form-select bg-secondary text-theme border-secondary" id="assignShiftSelect">
+                                <option value="MORNING">Morning (7AM - 3PM)</option>
+                                <option value="EVENING">Evening (3PM - 10PM)</option>
+                                <option value="NIGHT">Night (10PM - 7AM)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Nurse</label>
+                            <select class="form-select bg-secondary text-theme border-secondary" id="assignNurseSelect"
+                                required>
+                                <option value="">Select Nurse</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted text-uppercase fw-bold">Ward (Optional)</label>
+                            <select class="form-select bg-secondary text-theme border-secondary" id="assignWardSelect">
+                                <option value="">No Specific Ward</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="button" class="btn btn-emerald-theme fw-bold px-4 rounded-pill"
+                        onclick="saveAssignment()">Assign</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('rosterDate').valueAsDate = new Date();
+            document.getElementById('assignDate').valueAsDate = new Date();
+
+            document.getElementById('rosterDate').addEventListener('change', loadRoster);
+
+            loadNurses();
+            loadWards();
+            loadRoster();
+        });
+
+        // --- Directory Logic ---
+        async function loadNurses() {
+            const tbody = document.getElementById('nursesTableBody');
+            const select = document.getElementById('assignNurseSelect');
+
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Loading...</td></tr>';
+
+            try {
+                // UPDATE: API path is now /api/owner/nurses
+                const response = await fetch('/api/owner/nurses');
+                const users = await response.json();
+
+                tbody.innerHTML = '';
+                select.innerHTML = '<option value="">Select Nurse</option>';
+
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">No nurses found. Add nurses in Staff Management.</td></tr>';
+                }
+
+                users.forEach(u => {
+                    // Populate Table (Actions removed)
+                    const row = `
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                        style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                                        <i class="fas fa-user-nurse"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-theme">${u.name}</div>
+                                        <div class="small text-muted">@${u.username}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-theme small">${u.email}</div>
+                                <div class="text-muted small">${u.phoNo || '-'}</div>
+                            </td>
+                            <td>
+                                <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1 fs-12 fw-bold border border-success/20">
+                                    ${(u.accountStatus && u.accountStatus.isActive) ? 'Active' : 'Inactive'}
+                                </span>
+                            </td>
+                            <td class="text-muted small">
+                                ${new Date(u.createdOn).toLocaleDateString()}
+                            </td>
+                        </tr>
+                    `;
+                    tbody.insertAdjacentHTML('beforeend', row);
+
+                    // Populate Dropdown
+                    const opt = document.createElement('option');
+                    opt.value = u.id;
+                    opt.textContent = `${u.name}`;
+                    select.appendChild(opt);
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // --- Roster Logic ---
+
+        async function loadWards() {
+            try {
+                const res = await fetch('/api/nursing/wards');
+                if (res.ok) {
+                    const wards = await res.json();
+                    const select = document.getElementById('assignWardSelect');
+                    wards.forEach(w => {
+                        const opt = document.createElement('option');
+                        opt.value = w.id;
+                        opt.textContent = w.name;
+                        select.appendChild(opt);
+                    });
+                }
+            } catch (e) { }
+        }
+
+        function openAssignModal() {
+            document.getElementById('assignDate').value = document.getElementById('rosterDate').value;
+            new bootstrap.Modal(document.getElementById('assignShiftModal')).show();
+        }
+
+        async function saveAssignment() {
+            const dto = {
+                nurseId: document.getElementById('assignNurseSelect').value,
+                scheduleDate: document.getElementById('assignDate').value,
+                shiftName: document.getElementById('assignShiftSelect').value,
+                wardId: document.getElementById('assignWardSelect').value || null
+            };
+
+            if (!dto.nurseId || !dto.scheduleDate) { alert('Fill fields'); return; }
+
+            try {
+                // UPDATE: API path
+                const res = await fetch('/api/owner/nurses/schedules', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dto)
+                });
+                if (res.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('assignShiftModal')).hide();
+                    loadRoster();
+                    alert('Assigned!');
+                } else {
+                    alert((await res.text()));
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadRoster() {
+            const date = document.getElementById('rosterDate').value;
+            document.getElementById('shift-MORNING').innerHTML = '';
+            document.getElementById('shift-EVENING').innerHTML = '';
+            document.getElementById('shift-NIGHT').innerHTML = '';
+
+            try {
+                // UPDATE: API path
+                const res = await fetch(`/api/owner/nurses/schedules?date=${date}`);
+                const schedules = await res.json();
+
+                schedules.forEach(s => {
+                    const container = document.getElementById(`shift-${s.shiftName}`);
+                    if (container) {
+                        const card = `
+                            <div class="roster-card">
+                                <div class="d-flex w-100 justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-bold text-theme">${s.nurseName}</div>
+                                        <div class="small text-muted">${s.wardName ? 'Ward: ' + s.wardName : 'General'}</div>
+                                    </div>
+                                    <button class="btn btn-sm text-danger" onclick="deleteSchedule(${s.id})">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        container.insertAdjacentHTML('beforeend', card);
+                    }
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        async function deleteSchedule(id) {
+            if (!confirm('Remove assignment?')) return;
+            try {
+                await fetch(`/api/owner/nurses/schedules/${id}`, { method: 'DELETE' });
+                loadRoster();
+            } catch (e) { }
+        }
+    </script>
+</body>
+
+</html>

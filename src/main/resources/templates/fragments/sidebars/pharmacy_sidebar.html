@@ -47,6 +47,12 @@
                 <span>Dispense Meds</span>
             </a>
 
+            <a th:href="@{/pharmacy/history}" class="sidebar-link"
+                th:classappend="${activeLink == 'history' ? 'active' : ''}">
+                <i class="fas fa-history"></i>
+                <span>Dispense History</span>
+            </a>
+
             <a th:href="@{/pharmacy/returns}" class="sidebar-link"
                 th:classappend="${activeLink == 'returns' ? 'active' : ''}">
                 <i class="fas fa-undo-alt"></i>

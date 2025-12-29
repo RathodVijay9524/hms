@@ -33,145 +33,172 @@
                     <h1 class="fw-bold mb-1" style="font-family: 'Outfit';">Medication Schedule (MAR)</h1>
                     <p class="mb-0 opacity-75 small">Record and monitor medication administration for Ward-C</p>
                 </div>
-                <div class="d-none d-md-flex gap-2" style="z-index: 1;">
-                    <button class="btn btn-sm btn-outline-light rounded-pill px-4">
-                        <i class="fas fa-barcode me-2"></i>Scan Barcode
-                    </button>
-                    <button class="btn btn-sm btn-light text-theme fw-bold px-4 rounded-pill">
-                        <i class="fas fa-history me-2"></i>Administration Log
+                <div class="d-flex flex-wrap gap-3" style="z-index: 1;">
+                    <select id="wardSelect"
+                        class="form-select form-select-sm rounded-pill px-3 border-opacity-25 bg-transparent text-white"
+                        style="width: 150px;">
+                        <option value="" class="text-dark">Select Ward</option>
+                    </select>
+                    <input type="date" id="marDate"
+                        class="form-control form-control-sm rounded-pill px-3 border-opacity-25 bg-transparent text-white"
+                        style="width: 160px;">
+                    <button class="btn btn-sm btn-light text-theme fw-bold px-4 rounded-pill" onclick="loadMAR()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh
                     </button>
                 </div>
             </div>
 
-            <!-- MAR for Patient 1 -->
-            <div class="glass-card p-0 mb-4 overflow-hidden border-color-theme">
-                <div
-                    class="bg-primary bg-opacity-10 p-3 px-4 border-bottom border-color-theme d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center gap-3">
-                        <span class="badge bg-secondary py-2 px-3 rounded-pill">C-101</span>
-                        <h5 class="fw-bold mb-0" style="font-family: 'Outfit';">Robert Downey</h5>
-                        <span class="text-muted small">UHID-2024-0012 • 45y / Male</span>
-                    </div>
-                    <div class="text-end">
-                        <span class="badge bg-danger rounded-pill px-3">2 Meds Due</span>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-premium align-middle mb-0">
-                        <tbody>
-                            <tr>
-                                <td class="med-info">
-                                    <div class="fw-bold fs-6">Amoxicillin 500mg</div>
-                                    <div class="small text-muted mb-2">Capsule • Oral • After Meal</div>
-                                    <span class="badge bg-secondary-subtle text-muted small">QID (4 times/day)</span>
-                                </td>
-                                <td>
-                                    <div class="d-flex gap-3">
-                                        <div class="dose-slot done">
-                                            <div class="dose-time">08:00</div>
-                                            <i class="fas fa-check-circle"></i>
-                                            <div class="dose-status">Done</div>
-                                        </div>
-                                        <div class="dose-slot done">
-                                            <div class="dose-time">13:00</div>
-                                            <i class="fas fa-check-circle"></i>
-                                            <div class="dose-status">Done</div>
-                                        </div>
-                                        <div class="dose-slot due">
-                                            <div class="dose-time">18:00</div>
-                                            <i class="fas fa-clock"></i>
-                                            <div class="dose-status">Due Now</div>
-                                        </div>
-                                        <div class="dose-slot">
-                                            <div class="dose-time">22:00</div>
-                                            <i class="fas fa-moon"></i>
-                                            <div class="dose-status">Upcoming</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-end">
-                                    <button class="btn btn-pink-theme text-white rounded-pill px-4">Administer</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="med-info">
-                                    <div class="fw-bold fs-6">Atorvastatin 20mg</div>
-                                    <div class="small text-muted mb-2">Tablet • Oral</div>
-                                    <span class="badge bg-secondary-subtle text-muted small">HS (At Bedtime)</span>
-                                </td>
-                                <td>
-                                    <div class="d-flex gap-3">
-                                        <div class="dose-slot">
-                                            <div class="dose-time">22:00</div>
-                                            <i class="fas fa-moon"></i>
-                                            <div class="dose-status">Upcoming</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-end">
-                                    <button class="btn btn-outline-secondary rounded-pill px-4" disabled>Not
-                                        Due</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- MAR for Patient 2 -->
-            <div class="glass-card p-0 mb-4 overflow-hidden border-color-theme">
-                <div
-                    class="bg-primary bg-opacity-10 p-3 px-4 border-bottom border-color-theme d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center gap-3">
-                        <span class="badge bg-secondary py-2 px-3 rounded-pill">C-105</span>
-                        <h5 class="fw-bold mb-0" style="font-family: 'Outfit';">Wanda Maximoff</h5>
-                        <span class="text-muted small">UHID-2024-0045 • 31y / Female</span>
-                    </div>
-                    <div class="text-end">
-                        <span class="badge bg-success rounded-pill px-3">All Meds Administered</span>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-premium align-middle mb-0">
-                        <tbody>
-                            <tr>
-                                <td class="med-info">
-                                    <div class="fw-bold fs-6">Paracetamol 650mg</div>
-                                    <div class="small text-muted mb-2">Tablet • Oral</div>
-                                    <span class="badge bg-secondary-subtle text-muted small">TID (3 times/day)</span>
-                                </td>
-                                <td>
-                                    <div class="d-flex gap-3">
-                                        <div class="dose-slot done">
-                                            <div class="dose-time">08:00</div>
-                                            <i class="fas fa-check-circle"></i>
-                                            <div class="dose-status">Done</div>
-                                        </div>
-                                        <div class="dose-slot done">
-                                            <div class="dose-time">14:00</div>
-                                            <i class="fas fa-check-circle"></i>
-                                            <div class="dose-status">Done</div>
-                                        </div>
-                                        <div class="dose-slot done">
-                                            <div class="dose-time">20:00</div>
-                                            <i class="fas fa-check-circle"></i>
-                                            <div class="dose-status">Done</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-end">
-                                    <span class="text-success small">Completed for Day</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div id="marPatientsContainer">
+                <!-- Dynamic MAR content -->
             </div>
         </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            initDate();
+            loadWards();
+
+            document.getElementById('wardSelect').addEventListener('change', loadMAR);
+            document.getElementById('marDate').addEventListener('change', loadMAR);
+        });
+
+        function initDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('marDate').value = today;
+        }
+
+        async function loadWards() {
+            try {
+                const response = await fetch('/api/nursing/wards');
+                const wards = await response.json();
+                const select = document.getElementById('wardSelect');
+
+                wards.forEach(ward => {
+                    const option = document.createElement('option');
+                    option.value = ward.id;
+                    option.textContent = ward.name;
+                    option.className = 'text-dark';
+                    select.appendChild(option);
+                });
+
+                if (wards.length > 0) {
+                    select.value = wards[0].id;
+                    loadMAR();
+                }
+            } catch (error) {
+                console.error('Error loading wards:', error);
+            }
+        }
+
+        async function loadMAR() {
+            const wardId = document.getElementById('wardSelect').value;
+            const date = document.getElementById('marDate').value;
+
+            if (!wardId || !date) return;
+
+            try {
+                const response = await fetch(`/api/nursing/medications?wardId=${wardId}&date=${date}`);
+                const meds = await response.json();
+
+                // Also need patients for this ward to group them
+                const pResponse = await fetch(`/api/nursing/patients?wardId=${wardId}`);
+                const patients = await pResponse.json();
+
+                renderMAR(patients, meds);
+            } catch (error) {
+                console.error('Error loading MAR:', error);
+            }
+        }
+
+        function renderMAR(patients, meds) {
+            const container = document.getElementById('marPatientsContainer');
+            if (patients.length === 0) {
+                container.innerHTML = '<div class="glass-card p-5 text-center text-muted">No patients assigned to this ward</div>';
+                return;
+            }
+
+            container.innerHTML = patients.map(p => {
+                const patientMeds = meds.filter(m => m.assignmentId === p.assignmentId);
+                const dueCount = patientMeds.filter(m => m.status === 'DUE').length;
+                const statusBadge = dueCount > 0
+                    ? `<span class="badge bg-danger rounded-pill px-3">${dueCount} Meds Due</span>`
+                    : `<span class="badge bg-success rounded-pill px-3">All Administered</span>`;
+
+                return `
+                    <div class="glass-card p-0 mb-4 overflow-hidden border-color-theme">
+                        <div class="bg-primary bg-opacity-10 p-3 px-4 border-bottom border-color-theme d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="badge bg-secondary py-2 px-3 rounded-pill">${p.bedCode || 'N/A'}</span>
+                                <h5 class="fw-bold mb-0" style="font-family: 'Outfit';">${p.patientName}</h5>
+                                <span class="text-muted small">${p.uhid} • ${p.age || ''}y / ${p.gender || ''}</span>
+                            </div>
+                            <div class="text-end">${statusBadge}</div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-premium align-middle mb-0">
+                                <tbody>
+                                    ${patientMeds.length > 0 ? patientMeds.map(m => renderMedRow(m)).join('') : '<tr><td colspan="3" class="text-center p-4 text-muted">No medications scheduled for this patient today</td></tr>'}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderMedRow(m) {
+            const time = new Date(m.scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const isDone = m.status === 'DONE';
+
+            return `
+                <tr>
+                    <td class="med-info" style="width: 30%;">
+                        <div class="fw-bold fs-6">${m.medicineName} ${m.dosage || ''}</div>
+                        <div class="small text-muted mb-2">${m.route || ''} ${m.instructions ? '• ' + m.instructions : ''}</div>
+                    </td>
+                    <td>
+                        <div class="d-flex gap-3">
+                            <div class="dose-slot ${isDone ? 'done' : 'due'}">
+                                <div class="dose-time">${time}</div>
+                                <i class="fas ${isDone ? 'fa-check-circle' : 'fa-clock'}"></i>
+                                <div class="dose-status">${isDone ? 'Done' : 'Due Now'}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-end">
+                        ${isDone
+                    ? '<span class="text-success small"><i class="fas fa-check me-1"></i> Administered</span>'
+                    : `<button class="btn btn-pink-theme text-white rounded-pill px-4" onclick="administerMed(${m.id})">Administer</button>`
+                }
+                    </td>
+                </tr>
+            `;
+        }
+
+        async function administerMed(id) {
+            if (!confirm('Confirm administration of this medication?')) return;
+
+            try {
+                const response = await fetch(`/api/nursing/medications/${id}/administer`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ notes: 'Administered at bedside' })
+                });
+
+                if (response.ok) {
+                    loadMAR();
+                } else {
+                    alert('Error recording administration');
+                }
+            } catch (error) {
+                console.error('Error administering medication:', error);
+                alert('Connection error');
+            }
+        }
+    </script>
 </body>
 
 </html>
