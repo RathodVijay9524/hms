@@ -110,95 +110,181 @@
                     <h1 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">Critical Alerts</h1>
                     <p class="text-theme-muted mb-0">Real-time clinical monitoring feed for Ward-C</p>
                 </div>
-                <button class="btn btn-outline-danger rounded-pill px-4 border-opacity-25">
-                    <i class="fas fa-check-double me-2"></i>Acknowledge All
-                </button>
+                <div class="d-flex gap-2">
+                    <select id="wardSelect"
+                        class="form-select rounded-pill px-3 border-opacity-25 bg-transparent text-white"
+                        style="width: 200px;">
+                        <option value="" class="text-dark">Select Ward</option>
+                    </select>
+                    <button class="btn btn-outline-danger rounded-pill px-4 border-opacity-25">
+                        <i class="fas fa-check-double me-2"></i>Acknowledge All
+                    </button>
+                </div>
             </div>
 
             <div class="row">
                 <div class="col-lg-12">
-                    <!-- Critical Alert 1 -->
-                    <div class="alert-feed-card alert-critical pulse-critical">
-                        <div class="p-4">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="rounded-circle bg-danger-subtle d-flex align-items-center justify-content-center"
-                                        style="width: 48px; height: 48px;">
-                                        <i class="fas fa-heart-pulse text-danger fs-4"></i>
-                                    </div>
-                                    <div>
-                                        <h6 class="fw-bold mb-0">Abnormal Vital Excursion</h6>
-                                        <span class="alert-time">2 minutes ago</span>
-                                    </div>
-                                </div>
-                                <button class="acknowledge-btn">Confirm Acknowledgement</button>
-                            </div>
-                            <div class="mb-3">
-                                <span class="patient-mini-tag me-2">Bed C-105 • Wanda Maximoff</span>
-                                <span class="badge bg-danger rounded-pill">SpO2 91% (Critical)</span>
-                            </div>
-                            <p class="small text-muted mb-0">Patient's oxygen saturation has dropped below the safety
-                                threshold. Oxygen flow increased to 4L by staff. Dr. Monica Rambeau alerted via pager.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Warning Alert 2 -->
-                    <div class="alert-feed-card alert-warning">
-                        <div class="p-4">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="rounded-circle bg-warning-subtle d-flex align-items-center justify-content-center"
-                                        style="width: 48px; height: 48px;">
-                                        <i class="fas fa-pills text-warning fs-4"></i>
-                                    </div>
-                                    <div>
-                                        <h6 class="fw-bold mb-0">Stat Medication Order</h6>
-                                        <span class="alert-time">15 minutes ago</span>
-                                    </div>
-                                </div>
-                                <button class="acknowledge-btn">Confirm Acknowledgement</button>
-                            </div>
-                            <div class="mb-3">
-                                <span class="patient-mini-tag me-2">Bed C-101 • Robert Downey</span>
-                                <span class="badge bg-warning text-dark rounded-pill">Stat IM Injection</span>
-                            </div>
-                            <p class="small text-muted mb-0">New stat order for Tramadol 50mg IM for acute post-op pain.
-                                Please administer and record immediately.</p>
-                        </div>
-                    </div>
-
-                    <!-- Info Alert 3 -->
-                    <div class="alert-feed-card alert-info">
-                        <div class="p-4">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="rounded-circle bg-primary-subtle d-flex align-items-center justify-content-center"
-                                        style="width: 48px; height: 48px;">
-                                        <i class="fas fa-microscope text-primary fs-4"></i>
-                                    </div>
-                                    <div>
-                                        <h6 class="fw-bold mb-0">Lab Results Ready</h6>
-                                        <span class="alert-time">1 hour ago</span>
-                                    </div>
-                                </div>
-                                <button class="acknowledge-btn">Mark as Read</button>
-                            </div>
-                            <div class="mb-3">
-                                <span class="patient-mini-tag me-2">Bed C-108 • Peter Parker</span>
-                                <span class="badge bg-primary rounded-pill">Complete Blood Count</span>
-                            </div>
-                            <p class="small text-muted mb-0">Updated CBC results are now available in the clinical
-                                portal. Hb levels slightly improved (11.2 g/dL).</p>
-                        </div>
-                    </div>
+                    <div id="alertsContainer"></div>
                 </div>
             </div>
-        </div>
-    </main>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    loadWards();
+                });
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script th:src="@{/js/theme.js}"></script>
+                async function loadWards() {
+                    try {
+                        const response = await fetch('/api/nursing/wards');
+                        const wards = await response.json();
+                        const select = document.getElementById('wardSelect');
+
+                        if (select) {
+                            wards.forEach(ward => {
+                                const option = document.createElement('option');
+                                option.value = ward.id;
+                                option.textContent = ward.name;
+                                option.className = 'text-dark';
+                                select.appendChild(option);
+                            });
+
+                            if (wards.length > 0) {
+                                select.value = wards[0].id; // Default to first ward
+                                loadAlerts();
+                            }
+
+                            select.addEventListener('change', loadAlerts);
+                        }
+                    } catch (error) {
+                        console.error('Error loading wards:', error);
+                    }
+                }
+
+                async function loadAlerts() {
+                    const wardId = document.getElementById('wardSelect').value;
+                    const container = document.getElementById('alertsContainer');
+
+                    if (!wardId) return;
+
+                    container.innerHTML = '<div class="text-center p-5"><i class="fas fa-spinner fa-spin fa-2x text-theme"></i></div>';
+
+                    try {
+                        const response = await fetch(`/api/nursing/alerts?wardId=${wardId}`);
+                        const alerts = await response.json();
+                        renderAlerts(alerts);
+                    } catch (error) {
+                        console.error('Error loading alerts:', error);
+                        container.innerHTML = '<div class="text-center p-5 text-danger">Error loading alerts</div>';
+                    }
+                }
+
+                function renderAlerts(alerts) {
+                    const container = document.getElementById('alertsContainer');
+                    if (alerts.length === 0) {
+                        container.innerHTML = `
+                    <div class="alert-feed-card p-5 text-center">
+                        <i class="fas fa-check-circle text-success fs-1 mb-3"></i>
+                        <h5 class="text-theme fw-bold">All Clear</h5>
+                        <p class="text-muted mb-0">No active alerts for this ward.</p>
+                    </div>`;
+                        return;
+                    }
+
+                    container.innerHTML = alerts.map(alert => {
+                        const style = getAlertStyle(alert.severity, alert.alertType);
+                        const timeAgo = getTimeAgo(alert.createdDate);
+
+                        return `
+                    <div class="alert-feed-card ${style.cardClass}" id="alert-${alert.id}">
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle ${style.iconBg} d-flex align-items-center justify-content-center"
+                                        style="width: 48px; height: 48px;">
+                                        <i class="${style.icon} ${style.iconColor} fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-0 text-white">${formatAlertType(alert.alertType)}</h6>
+                                        <span class="alert-time">${timeAgo}</span>
+                                    </div>
+                                </div>
+                                <button class="acknowledge-btn" onclick="acknowledgeAlert(${alert.id})">
+                                    ${alert.isAcknowledged ? 'Acknowledged' : 'Confirm Acknowledgement'}
+                                </button>
+                            </div>
+                            <div class="mb-3">
+                                ${alert.assignmentId ?
+                                `<span class="patient-mini-tag me-2">Assignment #${alert.assignmentId}</span>` :
+                                '<span class="patient-mini-tag me-2">General Ward</span>'}
+                                <span class="badge ${style.badgeClass} rounded-pill">${alert.severity}</span>
+                            </div>
+                            <p class="small text-muted mb-0">${alert.message}</p>
+                        </div>
+                    </div>
+                `;
+                    }).join('');
+                }
+
+                async function acknowledgeAlert(id) {
+                    try {
+                        const res = await fetch(`/api/nursing/alerts/${id}/ack`, { method: 'PATCH' });
+                        if (res.ok) {
+                            // Remove from view or mark visually
+                            const card = document.getElementById(`alert-${id}`);
+                            if (card) {
+                                card.style.opacity = '0.5';
+                                setTimeout(() => card.remove(), 1000); // Remove after delay
+                            }
+                            loadAlerts(); // Reload to be sure
+                        }
+                    } catch (e) { console.error(e); }
+                }
+
+                function getAlertStyle(severity, type) {
+                    if (severity === 'CRITICAL') {
+                        return {
+                            cardClass: 'alert-critical pulse-critical',
+                            iconBg: 'bg-danger-subtle',
+                            icon: 'fas fa-heart-pulse',
+                            iconColor: 'text-danger',
+                            badgeClass: 'bg-danger'
+                        };
+                    } else if (severity === 'HIGH' || severity === 'WARNING') { // Handle WARNING if mapped
+                        return {
+                            cardClass: 'alert-warning',
+                            iconBg: 'bg-warning-subtle',
+                            icon: 'fas fa-exclamation-triangle',
+                            iconColor: 'text-warning',
+                            badgeClass: 'bg-warning text-dark'
+                        };
+                    } else {
+                        return {
+                            cardClass: 'alert-info',
+                            iconBg: 'bg-primary-subtle',
+                            icon: 'fas fa-info-circle',
+                            iconColor: 'text-primary',
+                            badgeClass: 'bg-primary'
+                        };
+                    }
+                }
+
+                function formatAlertType(type) {
+                    return type ? type.replace(/_/g, ' ') : 'Alert';
+                }
+
+                function getTimeAgo(dateString) {
+                    if (!dateString) return '';
+                    const date = new Date(dateString);
+                    const now = new Date();
+                    const diffMs = now - date;
+                    const diffMins = Math.floor(diffMs / 60000);
+
+                    if (diffMins < 1) return 'Just now';
+                    if (diffMins < 60) return `${diffMins} mins ago`;
+                    const diffHours = Math.floor(diffMins / 60);
+                    if (diffHours < 24) return `${diffHours} hours ago`;
+                    return date.toLocaleDateString();
+                }
+            </script>
 </body>
 
 </html>

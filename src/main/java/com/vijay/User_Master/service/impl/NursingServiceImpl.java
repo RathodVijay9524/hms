@@ -214,6 +214,57 @@ public class NursingServiceImpl implements NursingService {
             vs.setOxygenLevel(e.getOxygenLevel());
 
             vitalSignRepository.save(vs);
+
+            // Check for critical values and generate alert if needed
+            checkForCriticalVitals(vs, wardId);
+        }
+    }
+
+    private void checkForCriticalVitals(VitalSign vs, Long wardId) {
+        boolean critical = false;
+        StringBuilder message = new StringBuilder("Critical Vital Signs detected: ");
+
+        if (vs.getSystolicBP() != null && (vs.getSystolicBP() >= 160 || vs.getSystolicBP() <= 90)) {
+            critical = true;
+            message.append("BP ").append(vs.getSystolicBP()).append("/").append(vs.getDiastolicBP()).append(" (Systolic critical). ");
+        }
+        if (vs.getDiastolicBP() != null && (vs.getDiastolicBP() >= 100 || vs.getDiastolicBP() <= 60)) {
+            critical = true;
+            message.append("BP ").append(vs.getSystolicBP()).append("/").append(vs.getDiastolicBP()).append(" (Diastolic critical). ");
+        }
+        if (vs.getHeartRate() != null && (vs.getHeartRate() >= 120 || vs.getHeartRate() <= 50)) {
+            critical = true;
+            message.append("Pulse ").append(vs.getHeartRate()).append(" bpm. ");
+        }
+        if (vs.getOxygenLevel() != null && vs.getOxygenLevel() <= 92) {
+            critical = true;
+            message.append("SpO2 ").append(vs.getOxygenLevel()).append("% (Hypoxia). ");
+        }
+
+        if (critical) {
+            Long ownerId = getOwnerId();
+            Ward ward = wardRepository.findByIdAndOwnerId(wardId, ownerId).orElse(null);
+            if (ward == null) return;
+
+            // Find active assignment
+            WardPatientAssignment assignment = wardPatientAssignmentRepository
+                    .findByWardIdAndOwnerIdAndIsDeletedFalseAndStatus(wardId, ownerId, WardPatientAssignment.AssignmentStatus.ACTIVE)
+                    .stream()
+                    .filter(a -> a.getPatient().getId().equals(vs.getPatient().getId()))
+                    .findFirst()
+                    .orElse(null);
+
+            NursingAlert alert = new NursingAlert();
+            alert.setWard(ward);
+            alert.setAssignment(assignment);
+            alert.setOwner(ward.getOwner()); // syncing owner explicit/implicit
+            alert.setAlertType(NursingAlert.AlertType.VITAL_ABNORMAL);
+            alert.setSeverity(NursingAlert.Severity.CRITICAL);
+            alert.setMessage(message.toString());
+            alert.setCreatedDate(LocalDateTime.now());
+            alert.setIsAcknowledged(false);
+
+            nursingAlertRepository.save(alert);
         }
     }
 
