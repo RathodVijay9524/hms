@@ -18,4 +18,7 @@ public interface NursingAlertRepository extends JpaRepository<NursingAlert, Long
 
     @Query("SELECT COUNT(a) FROM NursingAlert a WHERE a.owner.id = :ownerId AND a.ward.id = :wardId AND a.isAcknowledged = false AND a.severity = 'CRITICAL'")
     long countCriticalOpen(@Param("ownerId") Long ownerId, @Param("wardId") Long wardId);
+
+    // For doctor's critical alerts view - get all open alerts
+    List<NursingAlert> findByOwnerIdAndIsAcknowledgedFalseOrderByCreatedDateDesc(Long ownerId);
 }

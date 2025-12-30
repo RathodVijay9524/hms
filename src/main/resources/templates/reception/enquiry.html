@@ -175,7 +175,7 @@
             </div>
 
             <div class="row g-4">
-                <div class="col-lg-8">
+                <div class="col-12">
                     <div class="enquiry-card">
                         <h4 class="fw-bold mb-4" style="font-family: 'Outfit';">Frequently Asked Questions</h4>
 
@@ -225,83 +225,56 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="col-lg-4">
-                    <div class="enquiry-card mb-4">
-                        <h5 class="fw-bold mb-3" style="font-family: 'Outfit';">Emergency Contacts</h5>
-                        <div class="mb-3">
-                            <div class="small text-muted text-uppercase fw-bold">Ambulance</div>
-                            <div class="fs-5 fw-bold text-danger">+91 1800-444-9111</div>
-                        </div>
-                        <div class="mb-3">
-                            <div class="small text-muted text-uppercase fw-bold">Blood Bank</div>
-                            <div class="fs-5 fw-bold">+91 22-4567-8901</div>
-                        </div>
-                    </div>
-
-                    <div class="enquiry-card">
-                        <h5 class="fw-bold mb-3" style="font-family: 'Outfit';">Quick Links</h5>
-                        <ul class="list-unstyled mb-0">
-                            <li class="mb-2"><a href="#" class="text-decoration-none text-muted"><i
-                                        class="fas fa-file-pdf me-2"></i>Lab Pricing List 2024</a></li>
-                            <li class="mb-2"><a href="#" class="text-decoration-none text-muted"><i
-                                        class="fas fa-file-pdf me-2"></i>Bed Matrix / Charges</a></li>
-                            <li><a href="#" class="text-decoration-none text-muted"><i
-                                        class="fas fa-external-link-alt me-2"></i>Insurance Portal Login</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <!-- Enquiry Log Section -->
-            <div class="row mt-5">
-                <div class="col-12">
-                    <div class="enquiry-card overflow-hidden">
-                        <h4 class="fw-bold mb-4" style="font-family: 'Outfit';">Recent Enquiry Log</h4>
-                        <div class="table-responsive">
-                            <table class="table queue-table mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Contact</th>
-                                        <th>Subject</th>
-                                        <th>Status</th>
-                                        <th class="text-end">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="enq : ${enquiries}">
-                                        <td>
-                                            <div class="fw-bold text-white" th:text="${enq.name}">John Doe</div>
-                                        </td>
-                                        <td th:text="${enq.phone}">+91 9876543210</td>
-                                        <td th:text="${enq.subject}">General Pricing</td>
-                                        <td>
-                                            <span class="badge rounded-pill px-3" th:classappend="${enq.status.name() == 'PENDING' ? 'bg-amber-500 bg-opacity-10 text-amber-400' : 
+                <!-- Enquiry Log Section -->
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <div class="enquiry-card overflow-hidden">
+                            <h4 class="fw-bold mb-4" style="font-family: 'Outfit';">Recent Enquiry Log</h4>
+                            <div class="table-responsive">
+                                <table class="table queue-table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Contact</th>
+                                            <th>Subject</th>
+                                            <th>Status</th>
+                                            <th class="text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="enq : ${enquiries}">
+                                            <td>
+                                                <div class="fw-bold text-white" th:text="${enq.name}">John Doe</div>
+                                            </td>
+                                            <td th:text="${enq.phone}">+91 9876543210</td>
+                                            <td th:text="${enq.subject}">General Pricing</td>
+                                            <td>
+                                                <span class="badge rounded-pill px-3" th:classappend="${enq.status.name() == 'PENDING' ? 'bg-amber-500 bg-opacity-10 text-amber-400' : 
                                                                enq.status.name() == 'RESOLVED' ? 'bg-emerald-500 bg-opacity-10 text-emerald-400' : 
                                                                'bg-blue-500 bg-opacity-10 text-blue-400'}"
-                                                th:text="${enq.status}">Pending</span>
-                                        </td>
-                                        <td class="text-end">
-                                            <button class="btn btn-sm btn-icon border-0"
-                                                th:onclick="'viewEnquiry(' + ${enq.id} + ')'" data-bs-toggle="modal"
-                                                data-bs-target="#viewEnquiryModal">
-                                                <i class="fas fa-eye text-theme"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr th:if="${#lists.isEmpty(enquiries)}">
-                                        <td colspan="5" class="text-center py-5 text-theme-muted">
-                                            <i class="fas fa-comment-dots opacity-25 fa-3x mb-3"></i>
-                                            <p>No recent enquiries found.</p>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                                    th:text="${enq.status}">Pending</span>
+                                            </td>
+                                            <td class="text-end">
+                                                <button class="btn btn-sm btn-icon border-0"
+                                                    th:onclick="'viewEnquiry(' + ${enq.id} + ')'" data-bs-toggle="modal"
+                                                    data-bs-target="#viewEnquiryModal">
+                                                    <i class="fas fa-eye text-theme"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr th:if="${#lists.isEmpty(enquiries)}">
+                                            <td colspan="5" class="text-center py-5 text-theme-muted">
+                                                <i class="fas fa-comment-dots opacity-25 fa-3x mb-3"></i>
+                                                <p>No recent enquiries found.</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
     </main>
 
     <!-- New Enquiry Modal -->

@@ -29,14 +29,6 @@
         .qc-card:hover {
             border-color: rgba(245, 158, 11, 0.4);
         }
-
-        .machine-status {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 10px;
-        }
     </style>
 </head>
 
@@ -54,70 +46,23 @@
                     </h1>
                     <p class="text-muted mb-0">Equipment Health & Diagnostic Precision Tracking</p>
                 </div>
-                <button class="btn btn-warning px-4 rounded-pill"
-                    style="background: #f59e0b; color: #000; border: none;">
-                    <i class="fas fa-tools me-2"></i>New Calibration
-                </button>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-warning px-4 rounded-pill" data-bs-toggle="modal"
+                        data-bs-target="#addMachineModal">
+                        <i class="fas fa-plus me-2"></i>Add Machine
+                    </button>
+                    <button class="btn btn-warning px-4 rounded-pill"
+                        style="background: #f59e0b; color: #000; border: none;" data-bs-toggle="modal"
+                        data-bs-target="#newCalibrationModal">
+                        <i class="fas fa-tools me-2"></i>New Calibration
+                    </button>
+                </div>
             </div>
 
             <!-- Machine Grid -->
-            <div class="row g-4 mb-4">
-                <div class="col-lg-4">
-                    <div class="qc-card p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h6 class="text-white fw-bold mb-0">Roche Cobas c311</h6>
-                            <span class="badge bg-success-subtle text-success rounded-pill px-3">Online</span>
-                        </div>
-                        <div class="small text-muted mb-4 text-uppercase fw-bold ls-1">Biochemistry Analyzer</div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="small text-muted">Last Calibration</span>
-                            <span class="small text-white">24-Dec 09:00 AM</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-4">
-                            <span class="small text-muted">Next Due</span>
-                            <span class="small text-warning">Tomorrow 9 AM</span>
-                        </div>
-                        <div style="height: 120px;">
-                            <canvas id="qcChart1"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4">
-                    <div class="qc-card p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h6 class="text-white fw-bold mb-0">Sysmex XN-1000</h6>
-                            <span class="badge bg-success-subtle text-success rounded-pill px-3">Online</span>
-                        </div>
-                        <div class="small text-muted mb-4 text-uppercase fw-bold ls-1">Hematology Analyzer</div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="small text-muted">Last Calibration</span>
-                            <span class="small text-white">26-Dec 08:30 AM</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-4">
-                            <span class="small text-muted">Next Due</span>
-                            <span class="small text-white">30-Dec 2025</span>
-                        </div>
-                        <div style="height: 120px;">
-                            <canvas id="qcChart2"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4">
-                    <div class="qc-card p-4 border-danger border-opacity-25">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h6 class="text-white fw-bold mb-0">Beckman Coulter</h6>
-                            <span class="badge bg-danger-subtle text-danger rounded-pill px-3">Offline</span>
-                        </div>
-                        <div class="small text-muted mb-4 text-uppercase fw-bold ls-1">Immunoassay Analyzer</div>
-                        <div class="text-center py-4">
-                            <i class="fas fa-exclamation-triangle text-danger fs-2 mb-2"></i>
-                            <div class="text-white fw-bold">Maintenance Required</div>
-                            <div class="small text-muted">Error Code: ERR-992 (Optics)</div>
-                        </div>
-                        <button class="btn btn-outline-danger btn-sm w-100 mt-2 rounded-pill">Contact Support</button>
-                    </div>
+            <div class="row g-4 mb-4" id="machinesGrid">
+                <div class="col-12 text-center py-5 text-muted">
+                    <div class="spinner-border spinner-border-sm me-2"></div>Loading machines...
                 </div>
             </div>
 
@@ -128,22 +73,9 @@
                 </div>
                 <div class="table-responsive">
                     <table class="table table-dark table-hover mb-0 align-middle">
-                        <tbody>
-                            <tr class="border-bottom border-light">
-                                <td class="ps-4" style="width: 150px;"><span class="text-muted">10:45 AM</span></td>
-                                <td><span class="fw-bold">Cobas c311</span></td>
-                                <td><span class="badge bg-info-subtle text-info rounded-pill px-3">Daily QC</span></td>
-                                <td class="text-white">All 14 parameters within normal SD ranges.</td>
-                                <td class="text-end pe-4"><i class="fas fa-check-circle text-success"></i></td>
-                            </tr>
-                            <tr class="border-bottom border-light">
-                                <td class="ps-4"><span class="text-muted">08:12 AM</span></td>
-                                <td><span class="fw-bold">Sysmex XN</span></td>
-                                <td><span
-                                        class="badge bg-warning-subtle text-warning rounded-pill px-3">Calibration</span>
-                                </td>
-                                <td class="text-white">Routine reagent priming and laser alignment completed.</td>
-                                <td class="text-end pe-4"><i class="fas fa-check-circle text-success"></i></td>
+                        <tbody id="logsTableBody">
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">Loading logs...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -152,38 +84,339 @@
         </div>
     </main>
 
+    <!-- Add Machine Modal -->
+    <div class="modal fade" id="addMachineModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card border-color-theme">
+                <div class="modal-header border-color-theme">
+                    <h5 class="modal-title fw-bold">Add New Machine</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addMachineForm">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Machine Name *</label>
+                            <input type="text" id="machineName" class="form-control" required
+                                placeholder="e.g. Roche Cobas c311">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Manufacturer</label>
+                            <input type="text" id="machineManufacturer" class="form-control"
+                                placeholder="e.g. Roche Diagnostics">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Machine Type *</label>
+                            <select id="machineType" class="form-select" required>
+                                <option value="">Select type...</option>
+                                <option value="Biochemistry Analyzer">Biochemistry Analyzer</option>
+                                <option value="Hematology Analyzer">Hematology Analyzer</option>
+                                <option value="Immunoassay Analyzer">Immunoassay Analyzer</option>
+                                <option value="Coagulation Analyzer">Coagulation Analyzer</option>
+                                <option value="Urine Analyzer">Urine Analyzer</option>
+                                <option value="Blood Gas Analyzer">Blood Gas Analyzer</option>
+                                <option value="Microscope">Microscope</option>
+                                <option value="Centrifuge">Centrifuge</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold">Model Number</label>
+                                <input type="text" id="modelNumber" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold">Serial Number</label>
+                                <input type="text" id="serialNumber" class="form-control">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Calibration Interval (Days)</label>
+                            <input type="number" id="calibrationInterval" class="form-control" value="7">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-color-theme">
+                    <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-warning rounded-pill px-4" onclick="addMachine()">Add
+                        Machine</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Calibration Modal -->
+    <div class="modal fade" id="newCalibrationModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card border-color-theme">
+                <div class="modal-header border-color-theme">
+                    <h5 class="modal-title fw-bold">Log Calibration / QC</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="calibrationForm">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Select Machine *</label>
+                            <select id="calibMachine" class="form-select" required></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Event Type *</label>
+                            <select id="calibType" class="form-select" required>
+                                <option value="DAILY_QC">Daily QC</option>
+                                <option value="CALIBRATION">Calibration</option>
+                                <option value="MAINTENANCE">Maintenance</option>
+                                <option value="PRIMING">Priming</option>
+                                <option value="CLEANING">Cleaning</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Result *</label>
+                            <select id="calibResult" class="form-select" required>
+                                <option value="PASS">Pass</option>
+                                <option value="FAIL">Fail</option>
+                                <option value="WARNING">Warning</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold">Parameters Checked</label>
+                                <input type="number" id="paramsChecked" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold">In Range</label>
+                                <input type="number" id="paramsInRange" class="form-control">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Notes</label>
+                            <textarea id="calibNotes" class="form-control" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-color-theme">
+                    <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-warning rounded-pill px-4" onclick="logCalibration()">Log
+                        Event</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
     <script>
-        const qcOptions = {
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { x: { display: false }, y: { display: false } }
-        };
+        let machines = [];
 
-        new Chart(document.getElementById('qcChart1').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: [1, 2, 3, 4, 5, 6, 7],
-                datasets: [{
-                    data: [1.2, 1.1, 1.3, 1.2, 1.2, 1.1, 1.2],
-                    borderColor: '#10b981', tension: 0.4, borderWidth: 2, pointRadius: 0
-                }]
-            },
-            options: qcOptions
-        });
+        document.addEventListener('DOMContentLoaded', loadMachines);
 
-        new Chart(document.getElementById('qcChart2').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: [1, 2, 3, 4, 5, 6, 7],
-                datasets: [{
-                    data: [2.1, 2.3, 2.2, 2.4, 2.3, 2.2, 2.3],
-                    borderColor: '#10b981', tension: 0.4, borderWidth: 2, pointRadius: 0
-                }]
-            },
-            options: qcOptions
-        });
+        async function loadMachines() {
+            try {
+                const response = await fetch('/api/lab/machines');
+                const data = await response.json();
+                machines = data.machines || [];
+
+                renderMachinesGrid(machines);
+                renderLogsTable(data.recentLogs || []);
+                populateMachineDropdown();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('machinesGrid').innerHTML =
+                    '<div class="col-12 text-center py-5 text-danger">Error loading machines</div>';
+            }
+        }
+
+        function renderMachinesGrid(machines) {
+            const grid = document.getElementById('machinesGrid');
+
+            if (machines.length === 0) {
+                grid.innerHTML = `<div class="col-12 text-center py-5 text-muted">
+                    <i class="fas fa-flask fa-3x mb-3 opacity-25"></i>
+                    <p>No machines registered. Click "Add Machine" to get started.</p>
+                </div>`;
+                return;
+            }
+
+            grid.innerHTML = machines.map(machine => {
+                const isOnline = machine.status === 'ONLINE';
+                const isError = machine.status === 'ERROR' || machine.status === 'OFFLINE';
+                const statusBadge = isOnline
+                    ? '<span class="badge bg-success-subtle text-success rounded-pill px-3">Online</span>'
+                    : (isError
+                        ? '<span class="badge bg-danger-subtle text-danger rounded-pill px-3">' + machine.status + '</span>'
+                        : '<span class="badge bg-warning-subtle text-warning rounded-pill px-3">' + machine.status + '</span>');
+
+                const lastCalib = machine.lastCalibrationDate ? new Date(machine.lastCalibrationDate).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Never';
+                const nextDue = machine.nextCalibrationDue ? new Date(machine.nextCalibrationDue).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Not set';
+
+                return `
+                    <div class="col-lg-4">
+                        <div class="qc-card p-4 ${isError ? 'border-danger border-opacity-25' : ''}">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="text-white fw-bold mb-0">${machine.machineName}</h6>
+                                ${statusBadge}
+                            </div>
+                            <div class="small text-muted mb-4 text-uppercase fw-bold ls-1">${machine.machineType}</div>
+                            ${isError && machine.errorCode ? `
+                                <div class="text-center py-3">
+                                    <i class="fas fa-exclamation-triangle text-danger fs-2 mb-2"></i>
+                                    <div class="text-white fw-bold">Maintenance Required</div>
+                                    <div class="small text-muted">Error: ${machine.errorCode}</div>
+                                </div>
+                                <button class="btn btn-outline-danger btn-sm w-100 mt-2 rounded-pill" onclick="markOnline(${machine.id})">Mark Online</button>
+                            ` : `
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="small text-muted">Last Calibration</span>
+                                    <span class="small text-white">${lastCalib}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span class="small text-muted">Next Due</span>
+                                    <span class="small text-warning">${nextDue}</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-warning btn-sm flex-grow-1 rounded-pill" onclick="quickCalibrate(${machine.id})">Quick QC</button>
+                                    <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="markOffline(${machine.id})"><i class="fas fa-power-off"></i></button>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderLogsTable(logs) {
+            const tbody = document.getElementById('logsTableBody');
+
+            if (logs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-muted">No calibration logs yet</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = logs.map(log => {
+                const time = new Date(log.calibrationDate).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+                const resultBadge = log.result === 'PASS'
+                    ? '<span class="badge bg-success-subtle text-success rounded-pill px-3">Pass</span>'
+                    : (log.result === 'FAIL'
+                        ? '<span class="badge bg-danger-subtle text-danger rounded-pill px-3">Fail</span>'
+                        : '<span class="badge bg-warning-subtle text-warning rounded-pill px-3">' + log.result + '</span>');
+                const typeBadge = `<span class="badge bg-info-subtle text-info rounded-pill px-3">${log.calibrationType.replace('_', ' ')}</span>`;
+
+                return `
+                    <tr class="border-bottom border-light">
+                        <td class="ps-4" style="width: 150px;"><span class="text-muted">${time}</span></td>
+                        <td><span class="fw-bold">${log.machineName}</span></td>
+                        <td>${typeBadge}</td>
+                        <td class="text-white">${log.notes || (log.parametersInRange ? `${log.parametersInRange}/${log.parametersChecked} parameters in range` : '-')}</td>
+                        <td class="text-end pe-4">${resultBadge}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function populateMachineDropdown() {
+            const select = document.getElementById('calibMachine');
+            select.innerHTML = '<option value="">Select machine...</option>' +
+                machines.map(m => `<option value="${m.id}">${m.machineName}</option>`).join('');
+        }
+
+        async function addMachine() {
+            const data = {
+                machineName: document.getElementById('machineName').value,
+                manufacturer: document.getElementById('machineManufacturer').value,
+                machineType: document.getElementById('machineType').value,
+                modelNumber: document.getElementById('modelNumber').value,
+                serialNumber: document.getElementById('serialNumber').value,
+                calibrationIntervalDays: document.getElementById('calibrationInterval').value
+            };
+
+            if (!data.machineName || !data.machineType) {
+                alert('Please fill required fields');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/lab/machines', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('addMachineModal')).hide();
+                    loadMachines();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error adding machine');
+            }
+        }
+
+        async function logCalibration() {
+            const machineId = document.getElementById('calibMachine').value;
+            if (!machineId) {
+                alert('Please select a machine');
+                return;
+            }
+
+            const data = {
+                type: document.getElementById('calibType').value,
+                result: document.getElementById('calibResult').value,
+                parametersChecked: document.getElementById('paramsChecked').value || null,
+                parametersInRange: document.getElementById('paramsInRange').value || null,
+                notes: document.getElementById('calibNotes').value
+            };
+
+            try {
+                const response = await fetch(`/api/lab/machines/${machineId}/calibration`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('newCalibrationModal')).hide();
+                    document.getElementById('calibrationForm').reset();
+                    loadMachines();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error logging calibration');
+            }
+        }
+
+        async function quickCalibrate(machineId) {
+            if (!confirm('Log a quick Daily QC pass for this machine?')) return;
+
+            try {
+                await fetch(`/api/lab/machines/${machineId}/calibration`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'DAILY_QC', result: 'PASS', notes: 'Quick QC - All parameters normal' })
+                });
+                loadMachines();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function markOffline(machineId) {
+            if (!confirm('Mark this machine as offline?')) return;
+            await updateMachineStatus(machineId, 'OFFLINE');
+        }
+
+        async function markOnline(machineId) {
+            await updateMachineStatus(machineId, 'ONLINE');
+        }
+
+        async function updateMachineStatus(machineId, status) {
+            try {
+                await fetch(`/api/lab/machines/${machineId}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                loadMachines();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
     </script>
 </body>
 

@@ -40,6 +40,36 @@
             font-weight: bold;
             color: #f59e0b;
         }
+
+        .status-pending {
+            background: rgba(156, 163, 175, 0.1);
+            color: #9ca3af;
+        }
+
+        .status-in_transit {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .status-received {
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+        }
+
+        .status-processing {
+            background: rgba(99, 102, 241, 0.1);
+            color: #6366f1;
+        }
+
+        .status-completed {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
     </style>
 </head>
 
@@ -58,60 +88,22 @@
                     <p class="text-muted mb-0">External Laboratory Referrals & Sample Logistics</p>
                 </div>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-outline-warning rounded-pill px-4">Courier Tracker</button>
+                    <button class="btn btn-outline-warning rounded-pill px-4" data-bs-toggle="modal"
+                        data-bs-target="#addPartnerModal">
+                        <i class="fas fa-handshake me-2"></i>Add Partner
+                    </button>
                     <button class="btn btn-warning rounded-pill px-4"
-                        style="background: #f59e0b; color: #000; border: none;">
+                        style="background: #f59e0b; color: #000; border: none;" data-bs-toggle="modal"
+                        data-bs-target="#newReferralModal">
                         <i class="fas fa-plus me-2"></i>New Referral
                     </button>
                 </div>
             </div>
 
             <!-- Active Partners -->
-            <div class="row g-4 mb-4">
-                <div class="col-md-4">
-                    <div class="ref-card p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="partner-logo me-3">DL</div>
-                            <div>
-                                <h6 class="text-white fw-bold mb-0">Dr. Lal PathLabs</h6>
-                                <div class="small text-muted">Primary Reference Partner</div>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between small text-white">
-                            <span>Active Samples</span>
-                            <span class="fw-bold">12</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="ref-card p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="partner-logo me-3">MC</div>
-                            <div>
-                                <h6 class="text-white fw-bold mb-0">Metropolis Healthcare</h6>
-                                <div class="small text-muted">Specialized Genomics</div>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between small text-white">
-                            <span>Active Samples</span>
-                            <span class="fw-bold">05</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="ref-card p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="partner-logo me-3">SR</div>
-                            <div>
-                                <h6 class="text-white fw-bold mb-0">SRL Diagnostics</h6>
-                                <div class="small text-muted">Histopathology Referral</div>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between small text-white">
-                            <span>Active Samples</span>
-                            <span class="fw-bold">08</span>
-                        </div>
-                    </div>
+            <div class="row g-4 mb-4" id="partnersGrid">
+                <div class="col-12 text-center py-4 text-muted">
+                    <div class="spinner-border spinner-border-sm me-2"></div>Loading partners...
                 </div>
             </div>
 
@@ -120,7 +112,8 @@
                 <div
                     class="card-header bg-transparent border-bottom border-light p-4 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold">Outsourced Test Monitor</h5>
-                    <span class="badge bg-warning text-dark px-3 rounded-pill fw-bold">25 TOTAL ACTIVE</span>
+                    <span class="badge bg-warning text-dark px-3 rounded-pill fw-bold" id="totalActiveBadge">0
+                        ACTIVE</span>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-dark table-hover mb-0 align-middle">
@@ -131,48 +124,12 @@
                                 <th>Reference Lab</th>
                                 <th>Sent On</th>
                                 <th>Status</th>
-                                <th class="text-end pe-4">Tracking</th>
+                                <th class="text-end pe-4">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr class="border-bottom border-light">
-                                <td class="ps-4">
-                                    <div class="fw-bold">SAM-90112</div>
-                                    <div class="small text-muted">John Doe (H101-001)</div>
-                                </td>
-                                <td>
-                                    <div class="text-white fw-bold">BRCA1/2 Gene Testing</div>
-                                    <div class="small text-muted">Genomics</div>
-                                </td>
-                                <td>Metropolis</td>
-                                <td>25-Dec 11:30 AM</td>
-                                <td>
-                                    <span class="badge bg-info-subtle text-info px-3 rounded-pill">In Transit</span>
-                                </td>
-                                <td class="text-end pe-4">
-                                    <button class="btn btn-outline-warning btn-sm rounded-pill px-3">View
-                                        Portal</button>
-                                </td>
-                            </tr>
-                            <tr class="border-bottom border-light">
-                                <td class="ps-4">
-                                    <div class="fw-bold">SAM-88123</div>
-                                    <div class="small text-muted">Alice Smith (H101-002)</div>
-                                </td>
-                                <td>
-                                    <div class="text-white fw-bold">Complex Biopsy Analysis</div>
-                                    <div class="small text-muted">Histopathology</div>
-                                </td>
-                                <td>SRL Diagnostics</td>
-                                <td>24-Dec 09:15 AM</td>
-                                <td>
-                                    <span
-                                        class="badge bg-primary-subtle text-primary px-3 rounded-pill">Processing</span>
-                                </td>
-                                <td class="text-end pe-4">
-                                    <button class="btn btn-outline-warning btn-sm rounded-pill px-3">View
-                                        Portal</button>
-                                </td>
+                        <tbody id="samplesTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">Loading samples...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -181,8 +138,359 @@
         </div>
     </main>
 
+    <!-- Add Partner Modal -->
+    <div class="modal fade" id="addPartnerModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card border-color-theme">
+                <div class="modal-header border-color-theme">
+                    <h5 class="modal-title fw-bold">Add Reference Lab Partner</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addPartnerForm">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Partner Name *</label>
+                            <input type="text" id="partnerName" class="form-control" required
+                                placeholder="e.g. Dr. Lal PathLabs">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label small fw-bold">Short Code</label>
+                                <input type="text" id="shortCode" class="form-control" placeholder="DL" maxlength="3">
+                            </div>
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label small fw-bold">Specialization</label>
+                                <input type="text" id="specialization" class="form-control" placeholder="e.g. Genomics">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Contact Person</label>
+                            <input type="text" id="contactPerson" class="form-control">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold">Phone</label>
+                                <input type="text" id="contactPhone" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold">Email</label>
+                                <input type="email" id="contactEmail" class="form-control">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Portal URL</label>
+                            <input type="url" id="portalUrl" class="form-control" placeholder="https://...">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-color-theme">
+                    <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-warning rounded-pill px-4" onclick="addPartner()">Add
+                        Partner</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Referral Modal -->
+    <div class="modal fade" id="newReferralModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card border-color-theme">
+                <div class="modal-header border-color-theme">
+                    <h5 class="modal-title fw-bold">Create New Referral</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="newReferralForm">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Patient *</label>
+                            <input type="text" id="patientSearch" class="form-control"
+                                placeholder="Type to search patients...">
+                            <input type="hidden" id="selectedPatientId">
+                            <div id="patientResults" class="list-group mt-1"
+                                style="max-height: 150px; overflow-y: auto;"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Reference Lab *</label>
+                            <select id="referralPartner" class="form-select" required></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Test Name *</label>
+                            <input type="text" id="referralTestName" class="form-control" required
+                                placeholder="e.g. BRCA1/2 Gene Testing">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Test Category</label>
+                            <input type="text" id="referralTestCategory" class="form-control"
+                                placeholder="e.g. Genomics">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Notes</label>
+                            <textarea id="referralNotes" class="form-control" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-color-theme">
+                    <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-warning rounded-pill px-4" onclick="createReferral()">Create
+                        Referral</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        let partners = [];
+        let patients = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPartners();
+            loadSamples();
+            loadPatients();
+        });
+
+        async function loadPartners() {
+            try {
+                const response = await fetch('/api/lab/reference/partners');
+                partners = await response.json();
+                renderPartnersGrid(partners);
+                populatePartnerDropdown();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function loadSamples() {
+            try {
+                const response = await fetch('/api/lab/reference/samples');
+                const data = await response.json();
+                document.getElementById('totalActiveBadge').textContent = `${data.totalActive || 0} ACTIVE`;
+                renderSamplesTable(data.samples || []);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function loadPatients() {
+            try {
+                const response = await fetch('/api/patients');
+                patients = await response.json();
+            } catch (error) {
+                console.error('Error loading patients:', error);
+            }
+        }
+
+        function renderPartnersGrid(partners) {
+            const grid = document.getElementById('partnersGrid');
+
+            if (partners.length === 0) {
+                grid.innerHTML = `<div class="col-12 text-center py-4 text-muted">
+                    <p>No reference partners added yet. Click "Add Partner" to get started.</p>
+                </div>`;
+                return;
+            }
+
+            grid.innerHTML = partners.map(p => `
+                <div class="col-md-4">
+                    <div class="ref-card p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="partner-logo me-3">${p.shortCode || p.partnerName.substring(0, 2).toUpperCase()}</div>
+                            <div>
+                                <h6 class="text-white fw-bold mb-0">${p.partnerName}</h6>
+                                <div class="small text-muted">${p.specialization || 'General Testing'}</div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between small text-white">
+                            <span>Active Samples</span>
+                            <span class="fw-bold">${p.activeSamples || 0}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderSamplesTable(samples) {
+            const tbody = document.getElementById('samplesTableBody');
+
+            if (samples.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">
+                    <i class="fas fa-truck fa-3x mb-3 opacity-25"></i>
+                    <p>No outsourced samples yet</p>
+                </td></tr>`;
+                return;
+            }
+
+            const statusLabels = {
+                'PENDING': 'Pending',
+                'IN_TRANSIT': 'In Transit',
+                'RECEIVED': 'Received',
+                'PROCESSING': 'Processing',
+                'COMPLETED': 'Completed',
+                'REJECTED': 'Rejected'
+            };
+
+            tbody.innerHTML = samples.map(s => {
+                const sentDate = s.sentDateTime ? new Date(s.sentDateTime).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '-';
+                const statusClass = 'status-' + s.status.toLowerCase();
+
+                return `
+                    <tr class="border-bottom border-light">
+                        <td class="ps-4">
+                            <div class="fw-bold">${s.sampleId}</div>
+                            <div class="small text-muted">${s.patientName} (${s.patientUhid || 'N/A'})</div>
+                        </td>
+                        <td>
+                            <div class="text-white fw-bold">${s.testName}</div>
+                            <div class="small text-muted">${s.testCategory || '-'}</div>
+                        </td>
+                        <td>${s.partnerName}</td>
+                        <td>${sentDate}</td>
+                        <td>
+                            <span class="badge ${statusClass} px-3 rounded-pill">${statusLabels[s.status] || s.status}</span>
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="dropdown">
+                                <button class="btn btn-outline-warning btn-sm rounded-pill px-3 dropdown-toggle" data-bs-toggle="dropdown">
+                                    Update
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="#" onclick="updateStatus(${s.id}, 'IN_TRANSIT')">Mark In Transit</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="updateStatus(${s.id}, 'RECEIVED')">Mark Received</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="updateStatus(${s.id}, 'PROCESSING')">Mark Processing</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="updateStatus(${s.id}, 'COMPLETED')">Mark Completed</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="updateStatus(${s.id}, 'REJECTED')">Mark Rejected</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function populatePartnerDropdown() {
+            const select = document.getElementById('referralPartner');
+            select.innerHTML = '<option value="">Select partner...</option>' +
+                partners.map(p => `<option value="${p.id}">${p.partnerName}</option>`).join('');
+        }
+
+        // Patient search
+        document.getElementById('patientSearch').addEventListener('input', function (e) {
+            const query = e.target.value.toLowerCase();
+            const resultsDiv = document.getElementById('patientResults');
+
+            if (query.length < 2) {
+                resultsDiv.innerHTML = '';
+                return;
+            }
+
+            const matches = patients.filter(p =>
+                p.name?.toLowerCase().includes(query) ||
+                p.uhid?.toLowerCase().includes(query)
+            ).slice(0, 5);
+
+            resultsDiv.innerHTML = matches.map(p => `
+                <a href="#" class="list-group-item list-group-item-action" onclick="selectPatient(${p.id}, '${p.name}')">
+                    <strong>${p.name}</strong> <small class="text-muted">(${p.uhid || 'No UHID'})</small>
+                </a>
+            `).join('');
+        });
+
+        function selectPatient(id, name) {
+            document.getElementById('selectedPatientId').value = id;
+            document.getElementById('patientSearch').value = name;
+            document.getElementById('patientResults').innerHTML = '';
+        }
+
+        async function addPartner() {
+            const data = {
+                partnerName: document.getElementById('partnerName').value,
+                shortCode: document.getElementById('shortCode').value,
+                specialization: document.getElementById('specialization').value,
+                contactPerson: document.getElementById('contactPerson').value,
+                contactPhone: document.getElementById('contactPhone').value,
+                contactEmail: document.getElementById('contactEmail').value,
+                portalUrl: document.getElementById('portalUrl').value
+            };
+
+            if (!data.partnerName) {
+                alert('Please enter partner name');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/lab/reference/partners', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('addPartnerModal')).hide();
+                    document.getElementById('addPartnerForm').reset();
+                    loadPartners();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error adding partner');
+            }
+        }
+
+        async function createReferral() {
+            const patientId = document.getElementById('selectedPatientId').value;
+            const partnerId = document.getElementById('referralPartner').value;
+            const testName = document.getElementById('referralTestName').value;
+
+            if (!patientId || !partnerId || !testName) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            const data = {
+                patientId,
+                partnerId,
+                testName,
+                testCategory: document.getElementById('referralTestCategory').value,
+                notes: document.getElementById('referralNotes').value
+            };
+
+            try {
+                const response = await fetch('/api/lab/reference/samples', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    alert('Referral created: ' + result.sampleId);
+                    bootstrap.Modal.getInstance(document.getElementById('newReferralModal')).hide();
+                    document.getElementById('newReferralForm').reset();
+                    loadSamples();
+                    loadPartners();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error creating referral');
+            }
+        }
+
+        async function updateStatus(id, status) {
+            try {
+                await fetch(`/api/lab/reference/samples/${id}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+                loadSamples();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error updating status');
+            }
+        }
+    </script>
 </body>
 
 </html>
