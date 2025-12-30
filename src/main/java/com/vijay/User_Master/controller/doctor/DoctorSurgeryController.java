@@ -49,4 +49,10 @@ public class DoctorSurgeryController {
     public ResponseEntity<?> scheduleSurgery(@org.springframework.web.bind.annotation.RequestBody com.vijay.User_Master.dto.doctor.CreateSurgeryRequest request) {
         return ExceptionUtil.createBuildResponse(surgeryService.scheduleSurgery(request), HttpStatus.CREATED);
     }
+
+    @GetMapping("/patient/{patientId}")
+    public ResponseEntity<?> getSurgeriesByPatient(@org.springframework.web.bind.annotation.PathVariable Long patientId) {
+        List<SurgeryDTO> surgeries = surgeryService.getSurgeriesByPatient(patientId);
+        return ExceptionUtil.createBuildResponse(surgeries, HttpStatus.OK);
+    }
 }

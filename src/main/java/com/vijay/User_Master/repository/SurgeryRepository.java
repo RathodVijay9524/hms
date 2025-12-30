@@ -31,4 +31,6 @@ public interface SurgeryRepository extends JpaRepository<Surgery, Long> {
     );
     
     long countByOwnerIdAndStatus(Long ownerId, Surgery.SurgeryStatus status);
+
+    List<Surgery> findByPatientIdAndOwnerIdOrderByScheduledStartTimeDesc(Long patientId, Long ownerId);
 }

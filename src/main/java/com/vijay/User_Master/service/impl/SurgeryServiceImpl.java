@@ -123,6 +123,7 @@ public class SurgeryServiceImpl implements SurgeryService {
                 .scheduledStartTime(s.getScheduledStartTime())
                 .scheduledEndTime(s.getScheduledEndTime())
                 .patientName(s.getPatient().getName())
+                .patientId(s.getPatient().getId())
                 .uhid(s.getPatient().getUhid())
                 .departmentName(s.getDepartmentName() != null ? s.getDepartmentName() : (s.getLeadDoctor().getDepartment() != null ? s.getLeadDoctor().getDepartment().getName() : ""))
                 .procedureName(s.getProcedureName())
@@ -130,5 +131,15 @@ public class SurgeryServiceImpl implements SurgeryService {
                 .anaesthetistName(s.getAnaesthetistName())
                 .status(s.getStatus().name())
                 .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SurgeryDTO> getSurgeriesByPatient(Long patientId) {
+        Long ownerId = getOwnerId();
+        return surgeryRepository.findByPatientIdAndOwnerIdOrderByScheduledStartTimeDesc(patientId, ownerId)
+                .stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 }

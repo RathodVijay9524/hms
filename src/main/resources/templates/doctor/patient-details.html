@@ -159,6 +159,8 @@
                                 Trends</a></li>
                         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab"
                                 href="#prescriptions">Prescriptions</a></li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#surgeryLog"><i
+                                    class="fas fa-procedures me-1"></i>Surgery Log</a></li>
                     </ul>
 
                     <div class="tab-content">
@@ -196,6 +198,14 @@
                                 </thead>
                                 <tbody><!-- JS Populated --></tbody>
                             </table>
+                        </div>
+
+                        <!-- Surgery Log Tab -->
+                        <div class="tab-pane fade" id="surgeryLog">
+                            <h6 class="text-muted text-uppercase mb-4 small fw-bold">Surgery History</h6>
+                            <div id="surgeryLogContent">
+                                <p class="text-muted text-center py-3">Loading surgery records...</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -497,6 +507,7 @@
             loadVitals();
             loadHistory();
             loadTimeline();
+            loadSurgeries();
             loadSymptomSuggestions();
             loadMedicineSuggestions();
 
@@ -507,6 +518,48 @@
                 addVisitMedicationRow();
             });
         });
+
+        // --- Surgery Log ---
+        function loadSurgeries() {
+            fetch(`/api/doctor/surgeries/patient/${patientId}`)
+                .then(r => r.json())
+                .then(response => {
+                    const surgeries = response.data || response;
+                    const container = document.getElementById('surgeryLogContent');
+
+                    if (!surgeries || surgeries.length === 0) {
+                        container.innerHTML = '<p class="text-muted text-center py-3">No surgery records found for this patient.</p>';
+                        return;
+                    }
+
+                    let html = '<div class="table-responsive"><table class="table">';
+                    html += '<thead><tr><th>Date</th><th>Procedure</th><th>OT</th><th>Lead Surgeon</th><th>Anaesthetist</th><th>Status</th></tr></thead><tbody>';
+
+                    surgeries.forEach(s => {
+                        const date = new Date(s.scheduledStartTime).toLocaleString();
+                        const statusClass = s.status === 'COMPLETED' ? 'bg-success' :
+                            s.status === 'IN_PROGRESS' ? 'bg-warning text-dark' :
+                                s.status === 'CANCELLED' ? 'bg-danger' : 'bg-info';
+                        html += `
+                            <tr>
+                                <td class="small">${date}</td>
+                                <td><strong>${s.procedureName}</strong><br><small class="text-muted">${s.departmentName || ''}</small></td>
+                                <td><span class="badge bg-secondary">${s.otCode}</span></td>
+                                <td>Dr. ${s.leadDoctorName}</td>
+                                <td>${s.anaesthetistName || '-'}</td>
+                                <td><span class="badge ${statusClass}">${s.status}</span></td>
+                            </tr>
+                        `;
+                    });
+
+                    html += '</tbody></table></div>';
+                    container.innerHTML = html;
+                })
+                .catch(err => {
+                    console.error('Error loading surgeries:', err);
+                    document.getElementById('surgeryLogContent').innerHTML = '<p class="text-danger text-center">Error loading surgery records.</p>';
+                });
+        }
 
         // --- Symptom Management ---
         let visitSymptoms = []; // Track symptoms for current visit

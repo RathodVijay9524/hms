@@ -17,6 +17,7 @@ public class SurgeryDTO {
     private LocalDateTime scheduledStartTime;
     private LocalDateTime scheduledEndTime;
     private String patientName;
+    private Long patientId;
     private String uhid;
     private String departmentName;
     private String procedureName;

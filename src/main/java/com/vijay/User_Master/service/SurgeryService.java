@@ -12,4 +12,5 @@ public interface SurgeryService {
     List<SurgeryDTO> getAllSurgeries(LocalDate date);
     Map<String, Object> getDashboardStats(LocalDate date);
     SurgeryDTO scheduleSurgery(com.vijay.User_Master.dto.doctor.CreateSurgeryRequest request);
+    List<SurgeryDTO> getSurgeriesByPatient(Long patientId);
 }
