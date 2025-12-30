@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AssignPatientRequestDTO {
-    private Long wardId;
-    private Long patientId;
-    private String bedCode;
-    private Long doctorId;
+public class PatientLiteDTO {
+    private Long id;
+    private String name;
+    private String uhid;
+    private Integer age;
 }

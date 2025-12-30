@@ -38,6 +38,10 @@ public class WardPatientAssignment {
     @Column(name = "bed_code", nullable = false)
     private String bedCode;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "doctor_id")
+    private DoctorProfile doctor;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AssignmentStatus status = AssignmentStatus.ACTIVE;

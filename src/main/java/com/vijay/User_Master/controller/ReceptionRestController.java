@@ -85,4 +85,10 @@ public class ReceptionRestController {
         if (date == null) date = java.time.LocalDate.now();
         return ResponseEntity.ok(receptionService.getStatsByDate(date));
     }
+    @GetMapping("/schedule/weekly")
+    public ResponseEntity<com.vijay.User_Master.dto.reception.WeeklyScheduleGridDTO> getWeeklySchedule(
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate startDate) {
+        if (startDate == null) startDate = java.time.LocalDate.now();
+        return ResponseEntity.ok(receptionService.getWeeklySchedule(startDate));
+    }
 }

@@ -64,6 +64,8 @@ public class WebSecurityConfig {
                                 "/api/auth/login",
                                 "/login", "/signin", "/register", "/forgot-password", "/reset-password", "/verify-account", "/select-role",
                                 "/api/auth/register/**",
+                                "/api/doctor/ipd/patient-status",
+                                "/api/doctor/ipd/debug-dump",
                                 "/api/v1/home/**",
                                 "/api/v1/tokens/**",
                                 "/api/users/image/**",

@@ -88,6 +88,6 @@ public class DoctorVisit extends BaseModel {
     private User owner;
 
     public enum VisitType {
-        OPD, EMERGENCY, FOLLOW_UP, ROUTINE_CHECKUP
+        OPD, EMERGENCY, FOLLOW_UP, ROUTINE_CHECKUP, TELECONSULT
     }
 }

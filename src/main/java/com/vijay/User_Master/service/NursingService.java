@@ -2,6 +2,8 @@ package com.vijay.User_Master.service;
 
 import com.vijay.User_Master.dto.nursing.*;
 
+import com.vijay.User_Master.entity.Ward;
+import com.vijay.User_Master.entity.WardPatientAssignment;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,7 +18,9 @@ public interface NursingService {
 
     void deleteWard(Long id);
 
-    WardPatientDTO assignPatientToWard(AssignPatientRequestDTO dto);
+    Ward getWardById(Long wardId); // Added method
+
+    WardPatientDTO assignPatientToWard(AssignPatientRequestDTO request); // Modified return type back to DTO
 
     NursingDashboardDTO getDashboard(Long wardId, String shift, LocalDateTime now);
 
@@ -41,4 +45,8 @@ public interface NursingService {
     List<NursingAlertDTO> getOpenAlerts(Long wardId);
 
     NursingAlertDTO acknowledgeAlert(Long alertId);
+
+    List<WardPatientDTO> getAdmittedPatientsForDoctor(Long doctorId);
+
+    PatientAdmissionStatusDTO getPatientAdmissionStatus(String uhid, Long ownerId);
 }

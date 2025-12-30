@@ -74,6 +74,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .status(Appointment.AppointmentStatus.BOOKED)
                 .reasonForVisit(request.getReasonForVisit())
                 .notes(request.getNotes())
+                .type(request.getType() != null ? request.getType() : Appointment.AppointmentType.OPD)
                 .owner(owner)
                 .build();
 
@@ -165,8 +166,37 @@ public class AppointmentServiceImpl implements AppointmentService {
         return convertToResponse(appointment);
     }
 
+    @Override
+    public List<AppointmentResponse> getMyAppointments(LocalDate date) {
+        var loggedInUser = CommonUtils.getLoggedInUser();
+        // User entity lookup is not strictly needed if we just want doctor profile by userId
+        
+        // Find doctor profile for this user
+        DoctorProfile doctor = doctorProfileRepository.findByUserIdAndOwnerId(loggedInUser.getId(), loggedInUser.getOwnerId())
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor Profile", "User ID", loggedInUser.getId()));
+
+        return appointmentRepository.findByDoctorIdAndAppointmentDate(doctor.getId(), date)
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AppointmentResponse> getTeleconsultAppointments(LocalDate date) {
+        var loggedInUser = CommonUtils.getLoggedInUser();
+        DoctorProfile doctor = doctorProfileRepository.findByUserIdAndOwnerId(loggedInUser.getId(), loggedInUser.getOwnerId())
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor Profile", "User ID", loggedInUser.getId()));
+
+        return appointmentRepository.findByDoctorIdAndAppointmentDateAndType(
+                    doctor.getId(), date, Appointment.AppointmentType.TELECONSULT)
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
     private AppointmentResponse convertToResponse(Appointment appointment) {
         AppointmentResponse response = mapper.map(appointment, AppointmentResponse.class);
+        response.setPatientId(appointment.getPatient().getId());
         response.setPatientName(appointment.getPatient().getName());
         response.setPatientUhid(appointment.getPatient().getUhid());
         response.setDoctorName(appointment.getDoctor().getUser().getName());
@@ -174,6 +204,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (appointment.getVisit() != null) {
             response.setVisitId(appointment.getVisit().getId());
         }
+        response.setType(appointment.getType());
         return response;
     }
 }

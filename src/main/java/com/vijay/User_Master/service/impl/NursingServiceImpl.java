@@ -30,6 +30,7 @@ public class NursingServiceImpl implements NursingService {
     private final MedicationAdministrationRepository medicationAdministrationRepository;
     private final NursingHandoverRepository nursingHandoverRepository;
     private final NursingAlertRepository nursingAlertRepository;
+    private final DoctorProfileRepository doctorProfileRepository;
 
     private Long getOwnerId() {
         return CommonUtils.getLoggedInUser().getOwnerId();
@@ -48,6 +49,11 @@ public class NursingServiceImpl implements NursingService {
                 .filter(w -> Boolean.TRUE.equals(w.getIsActive()))
                 .map(w -> new WardDTO(w.getId(), w.getName(), w.getCode()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Ward getWardById(Long wardId) {
+        return wardRepository.findById(wardId).orElseThrow(() -> new RuntimeException("Ward not found with ID: " + wardId));
     }
 
     @Override
@@ -89,18 +95,39 @@ public class NursingServiceImpl implements NursingService {
     @Transactional
     public WardPatientDTO assignPatientToWard(AssignPatientRequestDTO dto) {
         Long ownerId = getOwnerId();
-        Ward ward = wardRepository.findByIdAndOwnerId(dto.getWardId(), ownerId)
-                .orElseThrow(() -> new RuntimeException("Ward not found"));
-        Patient patient = patientRepository.findByIdAndOwnerId(dto.getPatientId(), ownerId)
-                .orElseThrow(() -> new RuntimeException("Patient not found"));
+        
+        // Find if patient already has an active assignment
+        Optional<WardPatientAssignment> existing = wardPatientAssignmentRepository
+                .findByPatientIdAndOwnerIdAndIsDeletedFalseAndStatus(
+                        dto.getPatientId(), 
+                        ownerId, 
+                        WardPatientAssignment.AssignmentStatus.ACTIVE)
+                .stream().findFirst();
 
-        WardPatientAssignment assignment = new WardPatientAssignment();
-        assignment.setWard(ward);
-        assignment.setPatient(patient);
-        assignment.setBedCode(dto.getBedCode());
-        assignment.setStatus(WardPatientAssignment.AssignmentStatus.ACTIVE);
+        WardPatientAssignment assignment;
+        if (existing.isPresent()) {
+            // Update existing assignment (e.g. Doctor claiming a patient already admitted by Ward Manager)
+            assignment = existing.get();
+        } else {
+            // Create new assignment (fallback if allowed or for other flows)
+            assignment = new WardPatientAssignment();
+            Ward ward = wardRepository.findByIdAndOwnerId(dto.getWardId(), ownerId)
+                    .orElseThrow(() -> new RuntimeException("Ward not found"));
+            assignment.setWard(ward);
+            assignment.setPatient(patientRepository.findByIdAndOwnerId(dto.getPatientId(), ownerId)
+                    .orElseThrow(() -> new RuntimeException("Patient not found")));
+            assignment.setBedCode(dto.getBedCode());
+            assignment.setStatus(WardPatientAssignment.AssignmentStatus.ACTIVE);
+            assignment.setAdmittedAt(LocalDateTime.now());
+        }
+
+        if (dto.getDoctorId() != null) {
+            DoctorProfile doctor = doctorProfileRepository.findById(dto.getDoctorId())
+                    .orElseThrow(() -> new RuntimeException("Doctor not found"));
+            assignment.setDoctor(doctor);
+        }
+        
         WardPatientAssignment saved = wardPatientAssignmentRepository.save(assignment);
-
         return toWardPatientDTO(saved, null, null);
     }
 
@@ -506,6 +533,7 @@ public class NursingServiceImpl implements NursingService {
                 .patientName(p.getName())
                 .uhid(p.getUhid())
                 .bedCode(a.getBedCode())
+                .wardName(a.getWard() != null ? a.getWard().getName() : null)
                 .gender(gender)
                 .age(age)
                 .primaryDoctorName(primaryDoctorName)
@@ -527,6 +555,21 @@ public class NursingServiceImpl implements NursingService {
                 .orElse(null);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<WardPatientDTO> getAdmittedPatientsForDoctor(Long doctorId) {
+        Long ownerId = getOwnerId();
+        // If doctorId is null, try to infer from logged in user? 
+        // Better to rely on controller to pass valid doctorId or service to look it up if null.
+        // For strictness, let's assume doctorId is passed.
+        
+        return wardPatientAssignmentRepository
+                .findByDoctorIdAndOwnerIdAndIsDeletedFalseAndStatus(doctorId, ownerId, WardPatientAssignment.AssignmentStatus.ACTIVE)
+                .stream()
+                .map(a -> toWardPatientDTO(a, getLastBpSummary(a.getPatient().getId(), ownerId), a.getDoctor() != null ? a.getDoctor().getUser().getName() : null))
+                .collect(Collectors.toList());
+    }
+
     private String deriveStability(String bpSummary) {
         if (bpSummary == null || !bpSummary.contains("/")) {
             return "OBSERVATION";
@@ -540,6 +583,50 @@ public class NursingServiceImpl implements NursingService {
             return "STABLE";
         } catch (Exception e) {
             return "OBSERVATION";
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PatientAdmissionStatusDTO getPatientAdmissionStatus(String uhid, Long ownerId) {
+        String cleanUhid = uhid != null ? uhid.trim() : "";
+        Optional<Patient> patientOpt = patientRepository.findByUhidAndOwnerId(cleanUhid, ownerId);
+
+        if (patientOpt.isEmpty()) {
+            return PatientAdmissionStatusDTO.builder()
+                    .isAdmitted(false)
+                    .message("Patient not found in system with UHID: " + cleanUhid)
+                    .debugInfo("No patient record found for ownerId " + ownerId)
+                    .build();
+        }
+
+        Patient patient = patientOpt.get();
+
+        List<WardPatientAssignment> assignments = wardPatientAssignmentRepository.findByPatientIdAndOwnerIdAndIsDeletedFalseAndStatus(
+                patient.getId(),
+                ownerId,
+                WardPatientAssignment.AssignmentStatus.ACTIVE
+        );
+
+        if (!assignments.isEmpty()) {
+            WardPatientAssignment assignment = assignments.get(0);
+            return PatientAdmissionStatusDTO.builder()
+                    .isAdmitted(true)
+                    .wardId(assignment.getWard().getId())
+                    .wardName(assignment.getWard().getName())
+                    .bedCode(assignment.getBedCode())
+                    .admissionDate(assignment.getAdmittedAt() != null ? assignment.getAdmittedAt().toString() : "N/A")
+                    .build();
+        } else {
+            long totalCount = wardPatientAssignmentRepository.findAll().stream()
+                    .filter(a -> a.getPatient().getId().equals(patient.getId()))
+                    .count();
+
+            return PatientAdmissionStatusDTO.builder()
+                    .isAdmitted(false)
+                    .message("Patient registered but NOT admitted to any Ward")
+                    .debugInfo("Total assignments for patient " + patient.getId() + " is " + totalCount)
+                    .build();
         }
     }
 }

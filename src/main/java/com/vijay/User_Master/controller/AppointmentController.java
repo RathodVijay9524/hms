@@ -55,4 +55,21 @@ public class AppointmentController {
         AppointmentResponse response = appointmentService.getAppointmentById(id);
         return ExceptionUtil.createBuildResponse(response, HttpStatus.OK);
     }
+
+    @GetMapping("/my-schedule")
+    public ResponseEntity<?> getMyAppointments(
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate date) {
+        if (date == null) date = java.time.LocalDate.now();
+        log.info("Request to get my appointments for date: {}", date);
+        List<AppointmentResponse> response = appointmentService.getMyAppointments(date);
+        return ExceptionUtil.createBuildResponse(response, HttpStatus.OK);
+    }
+    @GetMapping("/teleconsult")
+    public ResponseEntity<?> getTeleconsultAppointments(
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate date) {
+        if (date == null) date = java.time.LocalDate.now();
+        log.info("Request to get teleconsult appointments for date: {}", date);
+        List<AppointmentResponse> response = appointmentService.getTeleconsultAppointments(date);
+        return ExceptionUtil.createBuildResponse(response, HttpStatus.OK);
+    }
 }

@@ -60,67 +60,23 @@
             </div>
 
             <div class="row">
-                <div class="col-lg-8">
+                <div class="col-lg-8" id="consult-list-container">
                     <!-- Consult Requests -->
-                    <div class="consult-card p-4">
-                        <div class="d-flex align-items-center mb-4">
-                            <div class="sender-avatar me-3">DS</div>
-                            <div class="flex-grow-1">
-                                <div class="fw-bold text-theme">Dr. Daniel Smith (Gen. Medicine)</div>
-                                <div class="small text-muted">Sent 2h ago • Clinical Opinion</div>
-                            </div>
-                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3">URGENT</span>
-                        </div>
-                        <div class="p-3 mb-4 rounded-3 border border-indigo-500 border-opacity-10"
-                            style="background: rgba(99, 102, 241, 0.03);">
-                            <div class="small text-indigo-500 mb-2 text-uppercase fw-bold"
-                                style="font-size: 0.65rem; letter-spacing: 0.05em;">Patient: John Doe (H101-001)</div>
-                            <p class="text-theme mb-0 lh-base">"Requesting neurological consult for persistent migraines
-                                and intermittent episodes of confusion. EMR records for last MRI attached."</p>
-                        </div>
-                        <div class="d-flex gap-2 justify-content-end">
-                            <button class="btn btn-sm btn-outline-secondary rounded-pill px-4">Review EMR</button>
-                            <button class="btn btn-sm btn-indigo rounded-pill px-4">Accept & Consult</button>
-                        </div>
-                    </div>
-
-                    <div class="consult-card p-4">
-                        <div class="d-flex align-items-center mb-4">
-                            <div class="sender-avatar me-3">AL</div>
-                            <div class="flex-grow-1">
-                                <div class="fw-bold text-theme">Dr. Anna Lee (Cardiology)</div>
-                                <div class="small text-muted">Sent yesterday • Referral</div>
-                            </div>
-                            <span class="badge bg-indigo bg-opacity-10 text-indigo-500 rounded-pill px-3">ROUTINE</span>
-                        </div>
-                        <div class="p-3 mb-4 rounded-3 border border-indigo-500 border-opacity-10"
-                            style="background: rgba(99, 102, 241, 0.03);">
-                            <div class="small text-indigo-500 mb-2 text-uppercase fw-bold"
-                                style="font-size: 0.65rem; letter-spacing: 0.05em;">Patient: Mike Ross (H101-812)</div>
-                            <p class="text-theme mb-0 lh-base">"Post-operative follow-up for joint stability assessment.
-                                Please provide orthopedic clearance for physical therapy."</p>
-                        </div>
-                        <div class="d-flex gap-2 justify-content-end">
-                            <button class="btn btn-sm btn-outline-secondary rounded-pill px-4">Review EMR</button>
-                            <button class="btn btn-sm btn-indigo rounded-pill px-4">Accept & Consult</button>
-                        </div>
-                    </div>
                 </div>
-
                 <div class="col-lg-4">
                     <div class="glass-card p-4">
                         <h6 class="fw-bold mb-4 text-uppercase small ls-1 text-muted">Consult Summary</h6>
                         <div class="d-flex justify-content-between mb-3 text-theme">
                             <span>Pending Inbound</span>
-                            <span class="fw-bold">08</span>
+                            <span class="fw-bold" id="stat-pending">0</span>
                         </div>
                         <div class="d-flex justify-content-between mb-3 text-theme">
                             <span>Accepted Today</span>
-                            <span class="fw-bold text-indigo-500">04</span>
+                            <span class="fw-bold text-indigo-500" id="stat-accepted">0</span>
                         </div>
                         <div class="d-flex justify-content-between mb-0 text-theme">
                             <span>Avg Resp Time</span>
-                            <span class="fw-bold">1.2h</span>
+                            <span class="fw-bold" id="stat-resp-time">--</span>
                         </div>
                         <hr class="border-theme opacity-10">
                         <button class="btn btn-sm btn-outline-indigo w-100 rounded-pill mb-2">Request New
@@ -134,6 +90,108 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+            loadConsults('incoming');
+
+            document.querySelectorAll('.incoming-outgoing-toggle button').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.incoming-outgoing-toggle button').forEach(b => {
+                        b.classList.remove('active');
+                        b.classList.add('text-theme');
+                    });
+                    e.target.classList.add('active');
+                    e.target.classList.remove('text-theme');
+
+                    const type = e.target.innerText.toLowerCase();
+                    loadConsults(type);
+                });
+            });
+        });
+
+        function loadStats() {
+            fetch('/api/doctor/consults/stats')
+                .then(res => res.json())
+                .then(res => {
+                    const stats = res.data || res;
+                    document.getElementById('stat-pending').innerText = stats.pendingInbound || 0;
+                    document.getElementById('stat-accepted').innerText = stats.acceptedTotal || 0;
+                    document.getElementById('stat-resp-time').innerText = stats.avgRespTime || '--';
+                })
+                .catch(err => console.error("Error loading stats:", err));
+        }
+
+        async function loadConsults(type) {
+            const container = document.getElementById('consult-list-container');
+            container.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
+
+            try {
+                const response = await fetch(`/api/doctor/consults/${type}`);
+                if (!response.ok) throw new Error('Failed to load consults');
+                const result = await response.json();
+                const consults = result.data || result;
+
+                renderConsults(consults, type);
+            } catch (error) {
+                console.error("Error loading consults:", error);
+                container.innerHTML = `<div class="text-center text-danger py-5">Error loading data</div>`;
+            }
+        }
+
+        function renderConsults(consults, type) {
+            const container = document.getElementById('consult-list-container');
+            container.innerHTML = '';
+
+            if (consults.length === 0) {
+                container.innerHTML = `<div class="text-center py-5 text-muted">No ${type} consultations found.</div>`;
+                return;
+            }
+
+            consults.forEach(c => {
+                const isIncoming = type === 'incoming';
+                const otherPartyName = isIncoming ? c.requesterName : c.recipientName;
+                const otherPartySpec = isIncoming ? c.requesterSpecialization : 'Specialist'; // recipient spec not in DTO currently? 
+                // Wait, logic says Requester Spec is there. Recipient Spec? 
+                // I should add recipient spec to DTO if needed. For now assume generic title or requester context.
+
+                const urgencyBadge = c.urgency === 'URGENT' || c.urgency === 'EMERGENCY'
+                    ? `<span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3">${c.urgency}</span>`
+                    : `<span class="badge bg-indigo bg-opacity-10 text-indigo-500 rounded-pill px-3">${c.urgency}</span>`;
+
+                const timeStr = new Date(c.requestedAt).toLocaleString();
+
+                // Avatar Initials
+                const initials = otherPartyName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+                const card = `
+                    <div class="consult-card p-4">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="sender-avatar me-3">${initials}</div>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold text-theme">${otherPartyName} <small class="text-muted fw-normal">(${otherPartySpec || 'Doctor'})</small></div>
+                                <div class="small text-muted">Sent ${timeStr} • Internal Consult</div>
+                            </div>
+                            ${urgencyBadge}
+                        </div>
+                        <div class="p-3 mb-4 rounded-3 border border-indigo-500 border-opacity-10"
+                            style="background: rgba(99, 102, 241, 0.03);">
+                            <div class="small text-indigo-500 mb-2 text-uppercase fw-bold"
+                                style="font-size: 0.65rem; letter-spacing: 0.05em;">Patient: ${c.patientName} (${c.uhid})</div>
+                            <p class="text-theme mb-0 lh-base">"${c.reason}"</p>
+                             ${c.clinicalNotes ? `<div class="small text-muted mt-2 border-top pt-2">Notes: ${c.clinicalNotes}</div>` : ''}
+                        </div>
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="/doctor/emr/${c.patientId}" class="btn btn-sm btn-outline-secondary rounded-pill px-4">Review EMR</a>
+                            ${isIncoming && c.status === 'PENDING' ? `<button class="btn btn-sm btn-indigo rounded-pill px-4">Accept & Consult</button>` : ''}
+                            ${!isIncoming ? `<span class="badge bg-secondary rounded-pill align-self-center">Status: ${c.status}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+    </script>
 </body>
 
 </html>

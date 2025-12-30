@@ -21,7 +21,7 @@
 
 <body>
     <div th:replace="~{fragments/navbar :: navbar}"></div>
-    <div th:replace="~{fragments/sidebars/doctor_sidebar :: doctor_sidebar('doc-presc')}"></div>
+    <div th:replace="~{fragments/sidebars/doctor_sidebar :: doctor_sidebar('doc-rx')}"></div>
 
     <main class="main-content">
         <div class="container-fluid">
@@ -35,24 +35,86 @@
                 </button>
             </div>
 
-            <div class="glass-card p-5 text-center">
-                <div class="mb-4">
-                    <i class="fas fa-prescription-bottle-medical fs-1 text-indigo-400 opacity-50"></i>
-                </div>
-                <h4 class="text-theme">Digital RX Engine Ready</h4>
-                <p class="text-theme-muted mx-auto" style="max-width: 500px;">
-                    The clinical prescription module is ready to be linked with the pharmacy inventory system for
-                    real-time drug availability checks.
-                </p>
-                <button class="btn btn-outline-primary mt-3 rounded-pill px-4 fw-bold">
-                    <i class="fas fa-link me-2"></i>Link with Pharmacy Hub
-                </button>
+            <!-- Prescriptions List -->
+            <div class="glass-card table-responsive">
+                <table class="table table-hover align-middle mb-0 text-white">
+                    <thead class="bg-transparent border-bottom border-secondary">
+                        <tr class="text-uppercase small fw-bold text-muted">
+                            <th class="ps-4">Date / ID</th>
+                            <th>Patient / Visit</th>
+                            <th>Medications</th>
+                            <th>Notes</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rx-table-body">
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <div class="spinner-border text-primary"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPrescriptions();
+        });
+
+        async function loadPrescriptions() {
+            const tbody = document.getElementById('rx-table-body');
+            try {
+                const response = await fetch('/api/doctor/prescriptions/my-list');
+                if (!response.ok) throw new Error("Failed to load");
+                const result = await response.json();
+                const data = result.data || result;
+
+                tbody.innerHTML = '';
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-muted">No prescriptions issued yet.</td></tr>`;
+                    return;
+                }
+
+                data.forEach(rx => {
+                    const medList = rx.medications.map(m => `<span class="badge bg-indigo-subtle text-indigo rounded-pill me-1 mb-1">${m.medicineName} (${m.dosage})</span>`).join(' ');
+
+                    const row = `
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold text-theme">${rx.visitDate}</div>
+                                <div class="small text-muted">#RX-${rx.id}</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-theme">${rx.doctorName || 'My Patient'}</div>
+                                <div class="small text-muted">Visit #${rx.visitId}</div>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-wrap" style="max-width: 300px;">
+                                    ${medList}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="small text-muted text-truncate" style="max-width: 200px;">${rx.pharmacistNotes || '-'}</div>
+                            </td>
+                            <td class="text-end pe-4">
+                                <button class="btn btn-sm btn-outline-light rounded-pill"><i class="fas fa-print"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+
+            } catch (e) {
+                console.error(e);
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-danger">Error loading prescriptions</td></tr>`;
+            }
+        }
+    </script>
 </body>
 
 </html>

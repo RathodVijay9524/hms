@@ -15,6 +15,7 @@ public class WardPatientDTO {
     private String patientName;
     private String uhid;
     private String bedCode;
+    private String wardName; // Added ward name field
 
     private String gender;
     private Integer age;

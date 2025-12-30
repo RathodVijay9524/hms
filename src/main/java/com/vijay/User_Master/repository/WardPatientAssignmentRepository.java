@@ -32,4 +32,15 @@ public interface WardPatientAssignmentRepository extends JpaRepository<WardPatie
             Long ownerId,
             WardPatientAssignment.AssignmentStatus status
     );
+
+    List<WardPatientAssignment> findByDoctorIdAndOwnerIdAndIsDeletedFalseAndStatus(
+            Long doctorId,
+            Long ownerId,
+            WardPatientAssignment.AssignmentStatus status
+    );
+
+    List<WardPatientAssignment> findByOwnerIdAndIsDeletedFalseAndStatus(
+            Long ownerId,
+            WardPatientAssignment.AssignmentStatus status
+    );
 }

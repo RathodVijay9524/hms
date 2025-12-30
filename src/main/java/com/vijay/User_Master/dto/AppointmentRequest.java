@@ -13,4 +13,5 @@ public class AppointmentRequest {
     private Long slotId;
     private String reasonForVisit;
     private String notes;
+    private com.vijay.User_Master.entity.Appointment.AppointmentType type;
 }

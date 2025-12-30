@@ -109,91 +109,140 @@
                     <h1 class="fw-bold mb-1 text-theme" style="font-family: 'Outfit';">Virtual Consults</h1>
                     <p class="text-muted mb-0 small">Secure video consultations with remote patients</p>
                 </div>
-                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3">
-                    <i class="fas fa-cog me-2"></i>Media Settings
-                </button>
-            </div>
-
-            <div class="row g-4 mb-4">
-                <div class="col-md-4">
-                    <div class="consult-card p-4 active">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Live Now</span>
-                            <span class="text-muted small">10:00 AM Slot</span>
-                        </div>
-                        <h5 class="fw-bold mb-1 text-theme">Alice Smith</h5>
-                        <p class="text-muted small mb-4">Post-Op Review • H101-002</p>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="small fw-bold text-theme">
-                                <span class="status-dot status-online"></span>Patient in Lobby
-                            </div>
-                            <button class="video-btn">
-                                <i class="fas fa-video"></i>Join Call
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="consult-card p-4">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3">Up Next</span>
-                            <span class="text-muted small">10:30 AM Slot</span>
-                        </div>
-                        <h5 class="fw-bold mb-1 text-theme">Wanda Maximoff</h5>
-                        <p class="text-muted small mb-4">Gynae Consult • H101-088</p>
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div class="small fw-bold text-theme">
-                                <span class="status-dot status-waiting"></span>Expected at 10:25
-                            </div>
-                            <button class="btn btn-sm btn-secondary disabled rounded-pill px-3" style="opacity: 0.5;">
-                                <i class="fas fa-video me-1"></i>Wait
-                            </button>
-                        </div>
-                    </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="loadConsults()">
+                        <i class="fas fa-sync me-2"></i>Refresh
+                    </button>
+                    <!-- <button class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                        <i class="fas fa-cog me-2"></i>Media Settings
+                    </button> -->
                 </div>
             </div>
 
-            <!-- Past Consultations -->
+            <!-- Active / Upcoming Consultations Container -->
+            <div class="row g-4 mb-4" id="consultContainer">
+                <!-- Loaded Dynamically -->
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
+            </div>
+
+            <!-- Past Consultations (Placeholder for now, could be filtered by status COMPLETED) -->
+            <!-- 
             <div class="glass-card p-4">
                 <h5 class="fw-bold mb-4 text-theme" style="font-family: 'Outfit';">Recent Activity</h5>
-                <div class="table-responsive">
-                    <table class="table table-premium align-middle mb-0">
-                        <thead>
-                            <tr>
-                                <th>Patient</th>
-                                <th>Date</th>
-                                <th>Duration</th>
-                                <th>Recording</th>
-                                <th class="text-end">Notes</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-theme">
-                            <tr>
-                                <td class="fw-bold">John Doe</td>
-                                <td>Today, 09:30 AM</td>
-                                <td class="text-muted">18 mins</td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3"
-                                        style="color: #6366f1; border-color: rgba(99, 102, 241, 0.3);">
-                                        <i class="fas fa-play me-2"></i>Play
-                                    </button>
-                                </td>
-                                <td class="text-end">
-                                    <button class="btn btn-icon text-primary">
-                                        <i class="fas fa-file-alt"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                ...
+            </div> 
+            -->
         </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadConsults();
+        });
+
+        async function loadConsults() {
+            const container = document.getElementById('consultContainer');
+            container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary"></div></div>';
+
+            try {
+                // Fetch today's teleconsult appointments
+                const today = new Date().toISOString().split('T')[0];
+                const response = await fetch(`/api/appointments/teleconsult?date=${today}`);
+                if (!response.ok) throw new Error('Failed to load consults');
+
+                const result = await response.json();
+                const appointments = result.data || result;
+
+                renderConsults(appointments);
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = `<div class="col-12 text-center py-5 text-danger">Error loading consultations.</div>`;
+            }
+        }
+
+        function renderConsults(appointments) {
+            const container = document.getElementById('consultContainer');
+            container.innerHTML = '';
+
+            if (appointments.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-video-slash fs-1 text-muted opacity-50 mb-3"></i>
+                        <h5 class="text-muted">No virtual consultations scheduled for today.</h5>
+                        <p class="small text-muted">Appointments with type 'TELECONSULT' will appear here.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            appointments.forEach(appt => {
+                // Determine card style based on status/time
+                let isActive = appt.status === 'CHECKED_IN' || appt.status === 'IN_PROGRESS';
+                let cardClass = isActive ? 'consult-card active' : 'consult-card';
+                let badgeClass = isActive ? 'bg-success bg-opacity-10 text-success' : 'bg-warning bg-opacity-10 text-warning';
+                let badgeText = isActive ? 'Live Now' : 'Scheduled';
+                let statusDot = isActive ? 'status-online' : 'status-waiting';
+                let statusText = isActive ? 'Patient in Lobby' : 'Expected';
+
+                if (appt.status === 'COMPLETED') {
+                    cardClass = 'consult-card opacity-75';
+                    badgeClass = 'bg-secondary bg-opacity-10 text-secondary';
+                    badgeText = 'Completed';
+                    statusDot = 'bg-secondary';
+                    statusText = 'Ended';
+                }
+
+                const timeStr = appt.appointmentTime ? formatTime(appt.appointmentTime) : '--:--';
+
+                const cardHtml = `
+                    <div class="col-md-4">
+                        <div class="${cardClass} p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <span class="badge ${badgeClass} rounded-pill px-3">${badgeText}</span>
+                                <span class="text-muted small">${timeStr} Slot</span>
+                            </div>
+                            <h5 class="fw-bold mb-1 text-theme">${appt.patientName}</h5>
+                            <p class="text-muted small mb-4">${appt.reasonForVisit || 'General Consult'} • ${appt.patientUhid || 'No UHID'}</p>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="small fw-bold text-theme">
+                                    <span class="status-dot ${statusDot}"></span>${statusText}
+                                </div>
+                                ${getActionBtn(appt)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        }
+
+        function getActionBtn(appt) {
+            if (appt.status === 'COMPLETED' || appt.status === 'CANCELLED') {
+                return `<button class="btn btn-sm btn-secondary disabled rounded-pill px-3">View Details</button>`;
+            }
+            // Link to a video call page (placeholder or actual integration)
+            // Using start-call endpoint or just opening a new window
+            // For now, let's link to the EMR page where the video widget usually resides
+            return `
+                <a href="/doctor/emr/${appt.visitId || ''}?video=true" class="video-btn text-decoration-none">
+                    <i class="fas fa-video"></i>Join Call
+                </a>
+             `;
+        }
+
+        function formatTime(timeArray) {
+            if (Array.isArray(timeArray)) {
+                const [h, m] = timeArray;
+                const d = new Date(); d.setHours(h); d.setMinutes(m);
+                return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+            return timeArray;
+        }
+    </script>
 </body>
 
 </html>

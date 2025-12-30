@@ -287,7 +287,8 @@ public class WebController {
     }
 
     @GetMapping("/doctor/prescriptions")
-    public String doctorPrescriptions() {
+    public String doctorPrescriptions(Model model) {
+        model.addAttribute("activeLink", "doc-rx");
         return "doctor/prescriptions";
     }
 
@@ -639,6 +640,12 @@ public class WebController {
     public String patientDetails(@org.springframework.web.bind.annotation.PathVariable Long id, Model model) {
         model.addAttribute("patient", patientService.getPatientById(id));
         return "lab/patient-details";
+    }
+
+    @GetMapping("/doctor/patients/{id}")
+    public String doctorPatientDetails(@org.springframework.web.bind.annotation.PathVariable Long id, Model model) {
+        model.addAttribute("patient", patientService.getPatientById(id));
+        return "doctor/patient-details";
     }
 
     @GetMapping("/admin/schedules")

@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient EMR - MedLab Pro</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link th:href="@{/css/theme.css}" rel="stylesheet">
+
+    <!-- Chart.js for Vitals -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('medlab-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+
+    <style>
+        .btn-primary-gradient {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+        }
+
+        .btn-primary-gradient:hover {
+            opacity: 0.9;
+            color: white;
+        }
+
+        .dashboard-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            height: 100%;
+        }
+
+        .nav-tabs .nav-link {
+            color: var(--text-muted);
+            border: none;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: transparent;
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .timeline-item {
+            border-left: 2px solid var(--border-color);
+            padding-left: 1.5rem;
+            padding-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -9px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            border: 2px solid var(--primary-color);
+        }
+
+        .timeline-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .badge-vital {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary-color);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/sidebars/doctor_sidebar :: doctor_sidebar('doc-emr')}"></div>
+
+    <div class="main-content container-fluid px-4">
+        <!-- Patient Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                    style="width: 64px; height: 64px; font-size: 1.5rem;">
+                    <span th:text="${#strings.substring(patient.name, 0, 1)}">J</span>
+                </div>
+                <div>
+                    <h2 class="mb-0 fw-bold" th:text="${patient.name}">John Doe</h2>
+                    <p class="text-muted mb-0">
+                        <span class="badge bg-primary me-2" th:if="${patient.uhid}"
+                            th:text="${patient.uhid}">UHID</span>
+                        <i class="fas fa-id-card me-1"></i> <span
+                            th:text="${patient.gender} + ', ' + ${patient.age} + ' yrs'">Male, 35 yrs</span>
+                        <span class="mx-2">|</span>
+                        <i class="fas fa-phone me-1"></i> <span th:text="${patient.phone}">+91 9876543210</span>
+                    </p>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#visitModal"><i
+                        class="fas fa-user-md me-1"></i> Record Visit</button>
+                <button class="btn btn-primary-gradient" data-bs-toggle="modal" data-bs-target="#vitalsModal"><i
+                        class="fas fa-heartbeat me-1"></i> Add Vitals</button>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Sidebar / Quick Info -->
+            <div class="col-lg-3">
+                <div class="dashboard-card mb-4">
+                    <h5 class="fw-bold mb-3">Vitals Summary</h5>
+                    <div id="latestVitals">
+                        <p class="text-muted text-center py-3">Loading vitals...</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-card mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Medical History</h5>
+                        <div>
+                            <button class="btn btn-sm btn-link"
+                                th:onclick="|viewAuditTrail('MEDICAL_HISTORY', ${patient.id})|"><i
+                                    class="fas fa-history"></i></button>
+                            <button class="btn btn-sm btn-link" onclick="editHistory()"><i
+                                    class="fas fa-edit"></i></button>
+                        </div>
+                    </div>
+                    <div id="medicalHistoryContent">
+                        <p class="text-muted small">No history recorded.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Tabs -->
+            <div class="col-lg-9">
+                <div class="dashboard-card">
+                    <ul class="nav nav-tabs mb-4" id="emrTabs">
+                        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab"
+                                href="#timeline">Timeline</a></li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#vitalsGraph">Vitals
+                                Trends</a></li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab"
+                                href="#prescriptions">Prescriptions</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <!-- Timeline Tab -->
+                        <div class="tab-pane fade show active" id="timeline">
+                            <h6 class="text-muted text-uppercase mb-4 small fw-bold">Recent Activity</h6>
+                            <div id="patientTimeline">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Vitals Graph Tab -->
+                        <div class="tab-pane fade" id="vitalsGraph">
+                            <canvas id="bpChart" height="100"></canvas>
+                        </div>
+
+                        <!-- Prescriptions Tab -->
+                        <div class="tab-pane fade" id="prescriptions">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="text-muted text-uppercase mb-0 small fw-bold">Active Prescriptions</h6>
+                                <button class="btn btn-sm btn-primary-gradient"
+                                    onclick="openPrescriptionForLatestVisit()">
+                                    <i class="fas fa-plus me-1"></i> New Prescription
+                                </button>
+                            </div>
+                            <table class="table" id="prescriptionsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Doctor</th>
+                                        <th>Medications</th>
+                                        <th>Instructions</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody><!-- JS Populated --></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add Vitals Modal -->
+    <div class="modal fade" id="vitalsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Record Vitals</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="vitalsForm">
+                        <div class="row g-3">
+                            <div class="col-6"><label>Systolic BP</label>
+                                <input type="number" id="sysBp" class="form-control"
+                                    oninput="checkVitalInput('BP_SYSTOLIC', this)">
+                            </div>
+                            <div class="col-6"><label>Diastolic BP</label>
+                                <input type="number" id="diaBp" class="form-control"
+                                    oninput="checkVitalInput('BP_DIASTOLIC', this)">
+                            </div>
+                            <div class="col-6"><label>Heart Rate</label>
+                                <input type="number" id="heartRate" class="form-control"
+                                    oninput="checkVitalInput('HEART_RATE', this)">
+                            </div>
+                            <div class="col-6"><label>SpO2 (%)</label>
+                                <input type="number" id="spo2" class="form-control"
+                                    oninput="checkVitalInput('OXYGEN', this)">
+                            </div>
+                            <div class="col-6"><label>Temp (°C)</label>
+                                <input type="number" id="temp" class="form-control" step="0.1"
+                                    oninput="checkVitalInput('TEMP', this)">
+                            </div>
+                            <div class="col-6"><label>Weight (kg)</label>
+                                <input type="number" id="weight" class="form-control" step="0.1">
+                            </div>
+                            <div class="col-6"><label>Height (cm)</label>
+                                <input type="number" id="height" class="form-control" step="0.1">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary-gradient" onclick="saveVitals()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Medical History Modal -->
+    <div class="modal fade" id="historyModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Medical History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="historyForm">
+                        <div class="mb-3"><label>Allergies</label><textarea id="histAllergies"
+                                class="form-control"></textarea></div>
+                        <div class="mb-3"><label>Chronic Conditions</label><textarea id="histConditions"
+                                class="form-control"></textarea></div>
+                        <div class="mb-3"><label>Past Surgeries</label><textarea id="histSurgeries"
+                                class="form-control"></textarea></div>
+                        <div class="mb-3"><label>Family History</label><textarea id="histFamily"
+                                class="form-control"></textarea></div>
+                        <div class="mb-3"><label>Medication History</label><textarea id="histMedications"
+                                class="form-control" placeholder="Current or long-term medications..."></textarea></div>
+                        <div class="mb-3"><label>Blood Group</label><input type="text" id="histBlood"
+                                class="form-control"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary-gradient" onclick="saveHistory()">Update
+                        History</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Record Visit Modal -->
+    <div class="modal fade" id="visitModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">New Doctor Visit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <!-- ... existing visit modal body ... -->
+                <div class="modal-body">
+                    <form id="visitForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label>Visit Type</label>
+                                <select id="visitType" class="form-select">
+                                    <option value="OPD">OPD</option>
+                                    <option value="ROUTINE_CHECKUP">Routine Checkup</option>
+                                    <option value="FOLLOW_UP">Follow Up</option>
+                                    <option value="EMERGENCY">Emergency</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Structured Symptom Entry -->
+                        <div class="mb-3">
+                            <label class="fw-bold mb-2">Symptoms</label>
+                            <div class="card p-3 bg-light">
+                                <div class="row g-2 mb-2">
+                                    <div class="col-md-4">
+                                        <input type="text" id="symptomName" class="form-control"
+                                            placeholder="Enter symptom" list="symptomSuggestions">
+                                        <datalist id="symptomSuggestions"></datalist>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select id="symptomSeverity" class="form-select">
+                                            <option value="">Select Severity</option>
+                                            <option value="MILD" style="color: #28a745;">🟢 Mild</option>
+                                            <option value="MODERATE" style="color: #ffc107;">🟡 Moderate</option>
+                                            <option value="SEVERE" style="color: #fd7e14;">🟠 Severe</option>
+                                            <option value="CRITICAL" style="color: #dc3545;">🔴 Critical</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" id="symptomDuration" class="form-control"
+                                            placeholder="Duration (e.g., 2 days)">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-primary w-100" onclick="addSymptom()">
+                                            <i class="fas fa-plus"></i> Add
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="symptomsList" class="mt-2"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3"><label>Diagnosis</label><textarea id="visitDiagnosis" class="form-control"
+                                rows="2"></textarea></div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-uppercase">Subjective (S)</label>
+                                <textarea id="visitSubjective" class="form-control" rows="3"
+                                    placeholder="History, complaints..."></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-uppercase">Objective (O)</label>
+                                <textarea id="visitObjective" class="form-control" rows="3"
+                                    placeholder="Physical exam, vitals..."></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-uppercase">Assessment (A)</label>
+                                <textarea id="visitAssessment" class="form-control" rows="3"
+                                    placeholder="Clinical diagnosis reasoning..."></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small fw-bold text-uppercase">Plan (P)</label>
+                                <textarea id="visitPlan" class="form-control" rows="3"
+                                    placeholder="Treatment, medications, follow-up..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Medications Section -->
+                        <div class="mt-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="fw-bold text-primary"><i class="fas fa-pills me-2"></i>Medications
+                                    (Rx)</label>
+                                <button type="button" class="btn btn-sm btn-outline-primary"
+                                    onclick="addVisitMedicationRow()">
+                                    <i class="fas fa-plus me-1"></i> Add Medication
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered" id="visitMedsTable">
+                                    <thead class="bg-light">
+                                        <tr class="small text-uppercase">
+                                            <th>Medicine</th>
+                                            <th style="width: 120px;">Dosage</th>
+                                            <th style="width: 100px;">Freq</th>
+                                            <th style="width: 100px;">Duration</th>
+                                            <th style="width: 80px;">Qty</th>
+                                            <th>Instructions</th>
+                                            <th style="width: 40px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="visitMedsTableBody">
+                                        <!-- Dynamic Rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mb-3">
+                                <label class="small text-muted">Pharmacist Notes</label>
+                                <textarea id="visitPharmacistNotes" class="form-control form-control-sm" rows="1"
+                                    placeholder="Special instructions for pharmacist..."></textarea>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="visitNotes">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary-gradient" onclick="saveVisit()">Record Visit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Prescription Modal -->
+    <div class="modal fade" id="prescriptionModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Prescription</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="prescriptionForm">
+                        <input type="hidden" id="prescVisitId">
+                        <div class="mb-3">
+                            <label class="form-label">Pharmacist Notes</label>
+                            <textarea id="pharmacistNotes" class="form-control" rows="2"
+                                placeholder="Notes for pharmacist..."></textarea>
+                        </div>
+                        <h6 class="fw-bold mb-2">Medications</h6>
+                        <datalist id="medicineSuggestions"></datalist>
+                        <div class="table-responsive mb-2">
+                            <table class="table table-bordered table-sm" id="medsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Medicine Name</th>
+                                        <th>Dosage</th>
+                                        <th>Freq</th>
+                                        <th>Duration</th>
+                                        <th style="width: 80px;">Qty</th>
+                                        <th>Instructions</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="medsTableBody">
+                                    <!-- Rows added dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addMedicationRow()"><i
+                                class="fas fa-plus"></i> Add Medicine</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary-gradient" onclick="savePrescription()">Issue
+                        Prescription</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audit Trail Modal -->
+    <div class="modal fade" id="auditTrailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Audit Trail - Change History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="auditLogsList" style="max-height: 500px; overflow-y: auto;">
+                        <p class="text-center text-muted py-4">Loading audit logs...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/theme.js}"></script>
+
+    <script th:inline="javascript">
+        const patientId = /*[[${patient.id}]]*/ 1;
+        let patientAllergies = [];
+        let medicineStockMap = {}; // Global map for medicine stock info
+
+        const VITAL_THRESHOLDS = {
+            BP_SYSTOLIC: { min: 90, max: 150 },
+            BP_DIASTOLIC: { min: 60, max: 95 },
+            HEART_RATE: { min: 50, max: 110 },
+            TEMP: { min: 96.0, max: 100.4 },
+            OXYGEN: { min: 94, max: 100 }
+        };
+
+        // Initial Loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadVitals();
+            loadHistory();
+            loadTimeline();
+            loadSymptomSuggestions();
+            loadMedicineSuggestions();
+
+            // Initialize medication rows when visit modal opens
+            const visitModal = document.getElementById('visitModal');
+            visitModal.addEventListener('show.bs.modal', function () {
+                document.getElementById('visitMedsTableBody').innerHTML = '';
+                addVisitMedicationRow();
+            });
+        });
+
+        // --- Symptom Management ---
+        let visitSymptoms = []; // Track symptoms for current visit
+
+        function loadSymptomSuggestions() {
+            fetch('/api/emr/symptoms/master')
+                .then(r => r.json())
+                .then(symptoms => {
+                    const datalist = document.getElementById('symptomSuggestions');
+                    datalist.innerHTML = symptoms.map(s => `<option value="${s.name}">`).join('');
+                })
+                .catch(err => console.error('Error loading symptoms:', err));
+        }
+
+        function loadMedicineSuggestions() {
+            fetch('/api/inventory/items/names')
+                .then(r => r.json())
+                .then(medicines => {
+                    const datalist = document.getElementById('medicineSuggestions');
+                    if (datalist) {
+                        datalist.innerHTML = medicines.map(m => `<option value="${m.name}">`).join('');
+                    }
+                    // Cache stock info for lookup
+                    medicineStockMap = {};
+                    medicines.forEach(m => {
+                        medicineStockMap[m.name.toLowerCase().trim()] = {
+                            stock: m.currentStock || 0,
+                            uom: m.unitOfMeasure || 'units'
+                        };
+                    });
+                })
+                .catch(err => console.error('Error loading medicine suggestions:', err));
+        }
+
+        function addSymptom() {
+            const name = document.getElementById('symptomName').value.trim();
+            const severity = document.getElementById('symptomSeverity').value;
+            const duration = document.getElementById('symptomDuration').value.trim();
+
+            if (!name) {
+                alert('Please enter a symptom name');
+                return;
+            }
+            if (!severity) {
+                alert('Please select severity');
+                return;
+            }
+
+            visitSymptoms.push({ symptomName: name, severity, duration });
+            displaySymptoms();
+
+            // Clear inputs
+            document.getElementById('symptomName').value = '';
+            document.getElementById('symptomSeverity').value = '';
+            document.getElementById('symptomDuration').value = '';
+        }
+
+        function removeSymptom(index) {
+            visitSymptoms.splice(index, 1);
+            displaySymptoms();
+        }
+
+        function displaySymptoms() {
+            const container = document.getElementById('symptomsList');
+            if (visitSymptoms.length === 0) {
+                container.innerHTML = '<p class="text-muted small mb-0">No symptoms added yet</p>';
+                return;
+            }
+
+            container.innerHTML = visitSymptoms.map((s, i) => `
+                <div class="d-flex align-items-center justify-content-between mb-2 p-2 border rounded">
+                    <div>
+                        <span class="badge ${getSeverityBadgeClass(s.severity)} me-2">${s.severity}</span>
+                        <strong>${s.symptomName}</strong>
+                        ${s.duration ? `<span class="text-muted ms-2">(${s.duration})</span>` : ''}
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeSymptom(${i})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function getSeverityBadgeClass(severity) {
+            switch (severity) {
+                case 'MILD': return 'bg-success';
+                case 'MODERATE': return 'bg-warning';
+                case 'SEVERE': return 'bg-orange';
+                case 'CRITICAL': return 'bg-danger';
+                default: return 'bg-secondary';
+            }
+        }
+
+        function getBMIBadgeClass(category) {
+            switch (category) {
+                case 'Underweight': return 'bg-info text-white';
+                case 'Normal': return 'bg-success text-white';
+                case 'Overweight': return 'bg-warning text-dark';
+                case 'Obese': return 'bg-danger text-white';
+                default: return 'bg-secondary text-white';
+            }
+        }
+
+        function getBMITextClass(category) {
+            switch (category) {
+                case 'Underweight': return 'text-info';
+                case 'Normal': return 'text-success';
+                case 'Overweight': return 'text-warning';
+                case 'Obese': return 'text-danger';
+                default: return 'text-muted';
+            }
+        }
+
+        // --- API Calls ---
+
+        function loadVitals() {
+            fetch(`/api/emr/patients/${patientId}/vitals/recent`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const v = data[0];
+                        const sBpClass = getVitalStatus('BP_SYSTOLIC', v.systolicBP);
+                        const dBpClass = getVitalStatus('BP_DIASTOLIC', v.diastolicBP);
+                        const hrClass = getVitalStatus('HEART_RATE', v.heartRate);
+                        const tempClass = getVitalStatus('TEMP', v.temperature);
+                        const oxClass = getVitalStatus('OXYGEN', v.oxygenLevel);
+
+                        document.getElementById('latestVitals').innerHTML = `
+                            <div class="d-flex justify-content-between mb-2"><span>BP</span> <strong class="${sBpClass || dBpClass}">${v.bp}</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>Heart Rate</span> <strong class="${hrClass}">${v.heartRate} bpm</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>SpO2</span> <strong class="${oxClass}">${v.oxygenLevel}%</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>Temp</span> <strong class="${tempClass}">${v.temperature}°C</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>Weight</span> <strong>${v.weight} kg</strong></div>
+                            <div class="d-flex justify-content-between mb-2"><span>Height</span> <strong>${v.height} cm</strong></div>
+                            ${v.bmi ? `
+                            <hr class="my-2">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span>BMI</span> 
+                                <span class="badge ${getBMIBadgeClass(v.bmiCategory)}">${v.bmi}</span>
+                            </div>
+                            <div class="text-end small ${getBMITextClass(v.bmiCategory)}">${v.bmiCategory}</div>
+                            ` : ''}
+                            <div class="d-flex justify-content-between text-muted small mt-3">Recorded: ${new Date(v.recordedAt).toLocaleString()}</div>
+                        `;
+                        renderChart(data);
+                    } else {
+                        document.getElementById('latestVitals').innerHTML = '<p class="text-muted text-center">No vitals recorded.</p>';
+                    }
+                });
+        }
+
+        function saveVitals() {
+            const data = {
+                systolicBP: document.getElementById('sysBp').value,
+                diastolicBP: document.getElementById('diaBp').value,
+                heartRate: document.getElementById('heartRate').value,
+                oxygenLevel: document.getElementById('spo2').value,
+                temperature: document.getElementById('temp').value,
+                weight: document.getElementById('weight').value,
+                height: document.getElementById('height').value
+            };
+
+            fetch(`/api/emr/patients/${patientId}/vitals`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(res => {
+                if (res.ok) {
+                    location.reload();
+                } else alert('Error saving vitals');
+            });
+        }
+
+        function loadHistory() {
+            fetch(`/api/emr/patients/${patientId}/history`)
+                .then(r => r.json())
+                .then(h => {
+                    document.getElementById('medicalHistoryContent').innerHTML = `
+                        <div class="mb-2"><small class="text-uppercase text-muted fw-bold">Allergies</small><div class="text-danger">${h.allergies || 'None'}</div></div>
+                        <div class="mb-2"><small class="text-uppercase text-muted fw-bold">Conditions</small><div>${h.chronicConditions || 'None'}</div></div>
+                        <div class="mb-2"><small class="text-uppercase text-muted fw-bold">Medications</small><div>${h.medicationHistory || 'None'}</div></div>
+                        <div class="mb-2"><small class="text-uppercase text-muted fw-bold">Blood Group</small><div>${h.bloodGroup || 'Unknown'}</div></div>
+                    `;
+                    // Populate edit form
+                    document.getElementById('histAllergies').value = h.allergies || '';
+                    patientAllergies = h.allergies ? h.allergies.split(',').map(s => s.trim().toLowerCase()).filter(s => s !== '') : [];
+
+                    document.getElementById('histConditions').value = h.chronicConditions || '';
+                    document.getElementById('histSurgeries').value = h.pastSurgeries || '';
+                    document.getElementById('histBlood').value = h.bloodGroup || '';
+                    document.getElementById('histFamily').value = h.familyHistory || '';
+                    document.getElementById('histMedications').value = h.medicationHistory || '';
+                });
+        }
+
+        function editHistory() {
+            new bootstrap.Modal(document.getElementById('historyModal')).show();
+        }
+
+        function saveHistory() {
+            const data = {
+                allergies: document.getElementById('histAllergies').value,
+                chronicConditions: document.getElementById('histConditions').value,
+                pastSurgeries: document.getElementById('histSurgeries').value,
+                familyHistory: document.getElementById('histFamily').value,
+                medicationHistory: document.getElementById('histMedications').value,
+                bloodGroup: document.getElementById('histBlood').value
+            };
+            fetch(`/api/emr/patients/${patientId}/history`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(res => {
+                if (res.ok) {
+                    location.reload();
+                } else alert('Error saving history');
+            });
+        }
+
+        function loadTimeline() {
+            const container = document.getElementById('patientTimeline');
+            container.innerHTML = '<p class="text-muted text-center">Loading timeline...</p>';
+
+            Promise.all([
+                fetch(`/api/emr/patients/${patientId}/visits`).then(r => r.json()),
+                fetch(`/api/lab/orders/patient/${patientId}`).then(r => r.json())
+            ]).then(([visitsPage, orders]) => {
+                container.innerHTML = '';
+                const visits = visitsPage.content.map(v => ({
+                    type: 'VISIT',
+                    date: new Date(v.visitDate),
+                    data: v
+                }));
+                const labOrders = orders.map(o => ({
+                    type: 'LAB',
+                    date: new Date(o.createdAt),
+                    data: o
+                }));
+
+                const allEvents = [...visits, ...labOrders].sort((a, b) => b.date - a.date);
+
+                if (allEvents.length === 0) {
+                    container.innerHTML = '<p class="text-muted text-center">No recent activity.</p>';
+                    return;
+                }
+
+                allEvents.forEach(event => {
+                    if (event.type === 'VISIT') {
+                        const visit = event.data;
+                        const statusBadge = getStatusBadge(visit.status);
+                        const actionButtons = getVisitActionButtons(visit);
+                        const isEditable = visit.status === 'CREATED' || visit.status === 'IN_PROGRESS';
+
+                        container.innerHTML += `
+                            <div class="timeline-item">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="timeline-date">${event.date.toLocaleDateString()}</div>
+                                    ${statusBadge}
+                                </div>
+                                <h5 class="fw-bold mb-1 border-start border-4 border-primary ps-2">${visit.visitType} Visit</h5>
+                                <div class="text-muted small mb-2">Dr. ${visit.doctorName || 'Unknown'}</div>
+                                <p class="mb-2 bg-dark bg-opacity-10 p-2 rounded">${visit.diagnosis || 'No diagnosis recorded'}</p>
+                                
+                                ${visit.subjectiveNotes || visit.objectiveNotes || visit.assessmentNotes || visit.planNotes ? `
+                                <div class="soap-notes small mb-3">
+                                    ${visit.subjectiveNotes ? `<div class="mb-1"><strong>S:</strong> ${visit.subjectiveNotes}</div>` : ''}
+                                    ${visit.objectiveNotes ? `<div class="mb-1"><strong>O:</strong> ${visit.objectiveNotes}</div>` : ''}
+                                    ${visit.assessmentNotes ? `<div class="mb-1"><strong>A:</strong> ${visit.assessmentNotes}</div>` : ''}
+                                    ${visit.planNotes ? `<div class="mb-1"><strong>P:</strong> ${visit.planNotes}</div>` : ''}
+                                </div>
+                                ` : ''}
+
+                                ${visit.closedBy ? `<div class="small text-muted">Closed by ${visit.closedBy} on ${new Date(visit.closedAt).toLocaleString()}</div>` : ''}
+                                <div class="mt-2">
+                                    ${actionButtons}
+                                    <button class="btn btn-sm btn-outline-info me-2" onclick="printVisitSummary(${visit.id})">
+                                        <i class="fas fa-file-alt me-1"></i> Summary
+                                    </button>
+                                    ${!visit.hasPrescription && isEditable ?
+                                `<button class="btn btn-sm btn-outline-primary me-2" onclick="openPrescriptionModal(${visit.id})"><i class="fas fa-prescription me-1"></i> Add Rx</button>`
+                                : visit.hasPrescription ?
+                                    `<button class="btn btn-sm btn-success me-2" onclick="printPrescription(${visit.id})"><i class="fas fa-print me-1"></i> Print Rx</button>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        const order = event.data;
+                        const statusClass = order.status === 'VERIFIED' ? 'text-success' : 'text-warning';
+                        container.innerHTML += `
+                            <div class="timeline-item">
+                                <div class="timeline-date mb-1">${event.date.toLocaleDateString()}</div>
+                                <h5 class="fw-bold mb-1 border-start border-4 border-info ps-2">Lab Order <small>#${order.orderNumber}</small></h5>
+                                <div class="mb-2">
+                                    <span class="badge bg-secondary">${order.tests.length} Tests</span>
+                                    <span class="fw-bold small ${statusClass}">${order.status}</span>
+                                </div>
+                                <div class="text-muted small">
+                                    ${order.tests.map(t => t.name).join(', ')}
+                                </div>
+                                <a href="#" onclick="window.location.href='/lab/orders'" class="btn btn-sm btn-link p-0 mt-1">View Details</a>
+                            </div>
+                        `;
+                    }
+                });
+            });
+        }
+
+        function saveVisit() {
+            const data = {
+                visitType: document.getElementById('visitType').value,
+                symptoms: visitSymptoms.map(s => s.symptomName).join(', '), // Legacy field
+                diagnosis: document.getElementById('visitDiagnosis').value,
+                doctorNotes: document.getElementById('visitNotes').value,
+                subjectiveNotes: document.getElementById('visitSubjective').value,
+                objectiveNotes: document.getElementById('visitObjective').value,
+                assessmentNotes: document.getElementById('visitAssessment').value,
+                planNotes: document.getElementById('visitPlan').value
+            };
+
+            // Collect medications if any
+            const medications = [];
+            document.querySelectorAll('#visitMedsTableBody tr').forEach(row => {
+                const name = row.querySelector('.med-name').value;
+                if (name) {
+                    medications.push({
+                        medicineName: name,
+                        dosage: row.querySelector('.med-dosage').value,
+                        frequency: row.querySelector('.med-freq').value,
+                        duration: row.querySelector('.med-dur').value,
+                        quantity: parseInt(row.querySelector('.med-qty').value) || 0,
+                        instructions: row.querySelector('.med-instr').value
+                    });
+                }
+            });
+
+            const pharmacistNotes = document.getElementById('visitPharmacistNotes').value;
+
+            fetch(`/api/emr/patients/${patientId}/visits`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(res => {
+                if (res.ok) {
+                    return res.json();
+                } else {
+                    throw new Error('Error recording visit');
+                }
+            }).then(visit => {
+                const promises = [];
+
+                // Save symptoms
+                visitSymptoms.forEach(symptom => {
+                    promises.push(fetch(`/api/emr/visits/${visit.id}/symptoms`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(symptom)
+                    }));
+                });
+
+                // Save prescription if medications were added
+                if (medications.length > 0) {
+                    promises.push(fetch(`/api/emr/visits/${visit.id}/prescription`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            pharmacistNotes: pharmacistNotes,
+                            medications: medications
+                        })
+                    }));
+                }
+
+                return Promise.all(promises);
+            }).then(() => {
+                visitSymptoms = [];
+                location.reload();
+            }).catch(err => {
+                alert('Error recording visit: ' + err.message);
+            });
+        }
+
+        // --- Clinical Safety Helpers ---
+
+        function checkAllergy(input) {
+            const val = input.value.toLowerCase().trim();
+            const container = input.parentElement;
+
+            // Remove existing warnings
+            container.querySelectorAll('.emr-warning').forEach(el => el.remove());
+
+            if (val.length < 2) return;
+
+            // 1. Check Allergy
+            const isAllergic = patientAllergies.some(allergy => val.includes(allergy) || allergy.includes(val));
+            if (isAllergic) {
+                const badge = document.createElement('div');
+                badge.className = 'emr-warning text-danger small fw-bold mt-1 animate__animated animate__shakeX';
+                badge.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> Allergy Risk Detected!';
+                container.appendChild(badge);
+            }
+
+            // 2. Check Stock
+            const stockInfo = medicineStockMap[val];
+            if (stockInfo) {
+                const stockBadge = document.createElement('div');
+                if (stockInfo.stock <= 0) {
+                    stockBadge.className = 'emr-warning text-danger small fw-bold mt-1';
+                    stockBadge.innerHTML = '<i class="fas fa-times-circle me-1"></i> Out of Stock!';
+                } else if (stockInfo.stock < 10) {
+                    stockBadge.className = 'emr-warning text-warning small fw-bold mt-1';
+                    stockBadge.innerHTML = `<i class="fas fa-exclamation-circle me-1"></i> Low Stock: ${stockInfo.stock} ${stockInfo.uom}`;
+                } else {
+                    stockBadge.className = 'emr-warning text-success small mt-1';
+                    stockBadge.innerHTML = `<i class="fas fa-check-circle me-1"></i> In Stock: ${stockInfo.stock} ${stockInfo.uom}`;
+                }
+                container.appendChild(stockBadge);
+            }
+        }
+
+        function getVitalStatus(key, value) {
+            const threshold = VITAL_THRESHOLDS[key];
+            if (!threshold || value === null || value === undefined || value === '') return '';
+            if (value < threshold.min || value > threshold.max) return 'text-danger fw-bold';
+            return '';
+        }
+
+        function checkVitalInput(key, input) {
+            const val = parseFloat(input.value);
+            const statusClass = getVitalStatus(key, val);
+            if (statusClass) {
+                input.classList.add('is-invalid', 'text-danger', 'fw-bold');
+            } else {
+                input.classList.remove('is-invalid', 'text-danger', 'fw-bold');
+            }
+        }
+
+        // --- Prescription Hub Helpers ---
+
+        function addVisitMedicationRow() {
+            const tbody = document.getElementById('visitMedsTableBody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>
+                    <input type="text" class="form-control form-control-sm med-name" placeholder="Medicine" oninput="checkAllergy(this)" list="medicineSuggestions">
+                </td>
+                <td><input type="text" class="form-control form-control-sm med-dosage" placeholder="e.g. 500mg"></td>
+                <td><input type="text" class="form-control form-control-sm med-freq" placeholder="e.g. 1-0-1"></td>
+                <td><input type="text" class="form-control form-control-sm med-dur" placeholder="e.g. 5 days"></td>
+                <td><input type="number" class="form-control form-control-sm med-qty" placeholder="Qty" min="0"></td>
+                <td><input type="text" class="form-control form-control-sm med-instr" placeholder="Instructions"></td>
+                <td><button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="this.closest('tr').remove()"><i class="fas fa-times"></i></button></td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        function openPrescriptionForLatestVisit() {
+            fetch(`/api/emr/patients/${patientId}/visits`)
+                .then(r => r.json())
+                .then(page => {
+                    if (page.content && page.content.length > 0) {
+                        // Find the most recent visit that is CREATED or IN_PROGRESS
+                        const eligibleVisit = page.content.find(v => v.status === 'CREATED' || v.status === 'IN_PROGRESS');
+                        if (eligibleVisit) {
+                            openPrescriptionModal(eligibleVisit.id);
+                        } else {
+                            alert('No active visits found for this patient. Please record a new visit first.');
+                            new bootstrap.Modal(document.getElementById('visitModal')).show();
+                        }
+                    } else {
+                        alert('No visits found. Please record a new visit first.');
+                        new bootstrap.Modal(document.getElementById('visitModal')).show();
+                    }
+                });
+        }
+
+        // --- Prescription Logic ---
+
+        function openPrescriptionModal(visitId) {
+            document.getElementById('prescVisitId').value = visitId;
+            document.getElementById('medsTableBody').innerHTML = '';
+            addMedicationRow(); // Add one empty row
+            new bootstrap.Modal(document.getElementById('prescriptionModal')).show();
+        }
+
+        function addMedicationRow() {
+            const tbody = document.getElementById('medsTableBody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>
+                    <input type="text" class="form-control form-control-sm med-name" placeholder="Medicine" oninput="checkAllergy(this)" list="medicineSuggestions">
+                </td>
+                <td><input type="text" class="form-control form-control-sm med-dosage" placeholder="500mg"></td>
+                <td><input type="text" class="form-control form-control-sm med-freq" placeholder="1-0-1"></td>
+                <td><input type="text" class="form-control form-control-sm med-dur" placeholder="5 days"></td>
+                <td><input type="number" class="form-control form-control-sm med-qty" placeholder="Qty" min="0"></td>
+                <td><input type="text" class="form-control form-control-sm med-instr" placeholder="After food"></td>
+                <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove()"><i class="fas fa-times"></i></button></td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        function savePrescription() {
+            const visitId = document.getElementById('prescVisitId').value;
+            const medications = [];
+
+            document.querySelectorAll('#medsTableBody tr').forEach(row => {
+                const name = row.querySelector('.med-name').value;
+                if (name) {
+                    medications.push({
+                        medicineName: name,
+                        dosage: row.querySelector('.med-dosage').value,
+                        frequency: row.querySelector('.med-freq').value,
+                        duration: row.querySelector('.med-dur').value,
+                        quantity: parseInt(row.querySelector('.med-qty').value) || 0,
+                        instructions: row.querySelector('.med-instr').value
+                    });
+                }
+            });
+
+            if (medications.length === 0) {
+                alert('Please add at least one medication');
+                return;
+            }
+
+            const data = {
+                pharmacistNotes: document.getElementById('pharmacistNotes').value,
+                medications: medications
+            };
+
+            fetch(`/api/emr/visits/${visitId}/prescription`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(res => {
+                if (res.ok) location.reload();
+                else alert('Error adding prescription');
+            });
+        }
+
+        function renderChart(vitals) {
+            const ctx = document.getElementById('bpChart').getContext('2d');
+            // Reverse to show oldest to newest
+            const data = [...vitals].reverse();
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(v => new Date(v.recordedAt).toLocaleDateString()),
+                    datasets: [
+                        { label: 'Systolic', data: data.map(v => v.systolicBP), borderColor: '#f87171' },
+                        { label: 'Diastolic', data: data.map(v => v.diastolicBP), borderColor: '#60a5fa' }
+                    ]
+                },
+                options: { responsive: true }
+            });
+        }
+
+        function loadPrescriptions() {
+            fetch(`/api/emr/patients/${patientId}/prescriptions`)
+                .then(r => r.json())
+                .then(list => {
+                    const tbody = document.querySelector('#prescriptionsTable tbody');
+                    tbody.innerHTML = '';
+                    if (list.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No active prescriptions</td></tr>';
+                        return;
+                    }
+                    list.forEach(p => {
+                        const meds = p.medications.map(m => `<div><strong>${m.medicineName}</strong> (${m.dosage}) - ${m.frequency}</div>`).join('');
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${new Date(p.visitDate).toLocaleDateString()}</td>
+                                <td>Dr. ${p.doctorName}</td>
+                                <td>${meds}</td>
+                                <td>${p.medications.map(m => m.instructions || '-').join('<br>')}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="printPrescription(${p.visitId})">
+                                        <i class="fas fa-print"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                });
+        }
+
+        // Call loadPrescriptions on tab switch or init
+        document.addEventListener('DOMContentLoaded', () => {
+            loadVitals();
+            loadHistory();
+            loadTimeline();
+            loadPrescriptions();
+        });
+
+        // Visit Lifecycle Helper Functions
+        function getStatusBadge(status) {
+            const badges = {
+                'CREATED': '<span class="badge bg-secondary"><i class="fas fa-circle me-1"></i> Created</span>',
+                'IN_PROGRESS': '<span class="badge bg-primary"><i class="fas fa-play-circle me-1"></i> In Progress</span>',
+                'CLOSED': '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i> Closed</span>',
+                'LOCKED': '<span class="badge bg-danger"><i class="fas fa-lock me-1"></i> Locked</span>'
+            };
+            return badges[status] || '';
+        }
+
+        function getVisitActionButtons(visit) {
+            if (visit.status === 'CREATED') {
+                return `<button class="btn btn-sm btn-outline-primary me-2" onclick="startVisit(${visit.id})"><i class="fas fa-play me-1"></i> Start Visit</button>`;
+            } else if (visit.status === 'IN_PROGRESS') {
+                return `<button class="btn btn-sm btn-success me-2" onclick="closeVisit(${visit.id})"><i class="fas fa-check me-1"></i> Close Visit</button>`;
+            } else if (visit.status === 'CLOSED') {
+                return `<button class="btn btn-sm btn-outline-secondary me-2" disabled><i class="fas fa-lock me-1"></i> Visit Closed</button>`;
+            }
+            return '';
+        }
+
+        function startVisit(visitId) {
+            if (!confirm('Start this visit? You will be able to add notes and prescriptions.')) return;
+
+            fetch(`/api/emr/visits/${visitId}/start`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            }).then(res => {
+                if (res.ok) {
+                    location.reload();
+                } else {
+                    alert('Error starting visit');
+                }
+            });
+        }
+
+        function closeVisit(visitId) {
+            if (!confirm('Close this visit? Once closed, it cannot be edited for medical-legal compliance.')) return;
+
+            fetch(`/api/emr/visits/${visitId}/close`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            }).then(res => {
+                if (res.ok) {
+                    location.reload();
+                } else {
+                    alert('Error closing visit');
+                }
+            });
+        }
+
+        // Audit Trail Functions
+        function viewAuditTrail(entityType, entityId) {
+            fetch(`/api/emr/audit/entity/${entityType}/${entityId}`)
+                .then(res => res.json())
+                .then(data => {
+                    displayAuditLogs(data.content || []);
+                    const modal = new bootstrap.Modal(document.getElementById('auditTrailModal'));
+                    modal.show();
+                })
+                .catch(err => {
+                    console.error('Error loading audit trail:', err);
+                    document.getElementById('auditLogsList').innerHTML =
+                        '<p class="text-center text-danger">Error loading audit logs</p>';
+                });
+        }
+
+        function displayAuditLogs(logs) {
+            const container = document.getElementById('auditLogsList');
+
+            if (logs.length === 0) {
+                container.innerHTML = '<p class="text-center text-muted py-4">No audit logs found</p>';
+                return;
+            }
+
+            container.innerHTML = logs.map(log => `
+                <div class="border-bottom pb-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <span class="badge ${getActionBadgeClass(log.action)}">${log.action}</span>
+                            <strong class="ms-2">${log.entityType.replace('_', ' ')}</strong>
+                        </div>
+                        <small class="text-muted">${new Date(log.changedAt).toLocaleString()}</small>
+                    </div>
+                    <div class="text-muted small mb-1">
+                        <i class="fas fa-user me-1"></i> ${log.changedBy}
+                    </div>
+                    ${log.changeDiff ? `<div class="mt-2 p-2 bg-light rounded small">${log.changeDiff}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function getActionBadgeClass(action) {
+            switch (action) {
+                case 'CREATE': return 'bg-success';
+                case 'UPDATE': return 'bg-primary';
+                case 'DELETE': return 'bg-danger';
+                default: return 'bg-secondary';
+            }
+        }
+
+        function printPrescription(visitId) {
+            window.open(`/api/emr/reports/prescription/${visitId}`, '_blank');
+        }
+
+        function printVisitSummary(visitId) {
+            window.open(`/api/emr/reports/visit-summary/${visitId}`, '_blank');
+        }
+    </script>
+</body>
+
+</html>
+```

@@ -32,4 +32,6 @@ public interface ReceptionService {
     // Appointments
     List<com.vijay.User_Master.dto.AppointmentResponse> getTodayAppointments();
     List<com.vijay.User_Master.dto.AppointmentResponse> getAppointmentsByDate(java.time.LocalDate date);
+    
+    com.vijay.User_Master.dto.reception.WeeklyScheduleGridDTO getWeeklySchedule(java.time.LocalDate startDate);
 }

@@ -95,6 +95,10 @@
                 </div>
                 <div class="d-flex gap-2">
                     <button class="btn btn-outline-secondary rounded-pill px-4">Shift Handover</button>
+                    <button class="btn btn-outline-indigo rounded-pill px-4" data-bs-toggle="modal"
+                        data-bs-target="#admitPatientModal" style="border-color: #6366f1; color: #6366f1;">
+                        <i class="fas fa-user-plus me-2"></i>Admit Patient
+                    </button>
                     <button class="btn btn-indigo text-white fw-bold px-4 rounded-pill" style="background: #6366f1;">
                         <i class="fas fa-file-medical me-2"></i>Daily Rounds Note
                     </button>
@@ -106,25 +110,26 @@
                 <div class="col-md-3">
                     <div class="ipd-card p-3 text-center">
                         <small class="text-muted d-block uppercase">My Admissions</small>
-                        <h3 class="fw-bold mb-0">12</h3>
+                        <h3 class="fw-bold mb-0" id="stat-admissions">0</h3>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="ipd-card p-3 text-center">
                         <small class="text-muted d-block uppercase">Critical Cases</small>
-                        <h3 class="fw-bold mb-0 text-danger">02</h3>
+                        <h3 class="fw-bold mb-0 text-danger" id="stat-critical">0</h3>
                     </div>
                 </div>
+                <!-- Placeholders for now -->
                 <div class="col-md-3">
                     <div class="ipd-card p-3 text-center">
                         <small class="text-muted d-block uppercase">Pending Discharges</small>
-                        <h3 class="fw-bold mb-0 text-success">03</h3>
+                        <h3 class="fw-bold mb-0 text-success">--</h3>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="ipd-card p-3 text-center">
                         <small class="text-muted d-block uppercase">Waitlist</small>
-                        <h3 class="fw-bold mb-0">05</h3>
+                        <h3 class="fw-bold mb-0">--</h3>
                     </div>
                 </div>
             </div>
@@ -135,41 +140,20 @@
                     <table class="table patient-table mb-0">
                         <thead>
                             <tr>
-                                <th>Ward / Bed</th>
+                                <th>Ward</th>
+                                <th>Bed</th>
                                 <th>Patient Details</th>
-                                <th>Admission Date</th>
-                                <th>Primary Diagnosis</th>
-                                <th>Status</th>
+                                <th>Assigned Doctor</th>
+                                <th>Stability</th>
+                                <th>BP</th>
                                 <th class="text-end">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="patient-table-body">
+                            <!-- Dynamic Content -->
                             <tr>
-                                <td><span class="ward-badge">ICU-04</span></td>
-                                <td>
-                                    <div class="fw-bold">Bruce Banner</div>
-                                    <div class="small text-muted">H101-091 • Male • 45y</div>
-                                </td>
-                                <td>24-Dec-2025</td>
-                                <td>Gamma Exposure • Hypertension</td>
-                                <td><span class="status-badge status-critical">Critical</span></td>
-                                <td class="text-end">
-                                    <button class="btn btn-sm btn-outline-indigo px-3 rounded-pill"
-                                        style="border-color: #6366f1; color: #6366f1;">View File</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><span class="ward-badge">G-202</span></td>
-                                <td>
-                                    <div class="fw-bold">Peter Parker</div>
-                                    <div class="small text-muted">H101-812 • Male • 19y</div>
-                                </td>
-                                <td>26-Dec-2025</td>
-                                <td>Allergic Reaction • Observation</td>
-                                <td><span class="status-badge status-observation">Observation</span></td>
-                                <td class="text-end">
-                                    <button class="btn btn-sm btn-outline-indigo px-3 rounded-pill"
-                                        style="border-color: #6366f1; color: #6366f1;">View File</button>
+                                <td colspan="6" class="text-center py-4">
+                                    <div class="spinner-border text-primary"></div>
                                 </td>
                             </tr>
                         </tbody>
@@ -179,8 +163,271 @@
         </div>
     </main>
 
+    <!-- Admit Patient Modal -->
+    <div class="modal fade" id="admitPatientModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-white"
+                style="background: var(--bg-secondary); border: 1px solid var(--border-color);">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title">Assign Patient to My Care</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="admitPatientForm">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small text-uppercase fw-bold">Patient</label>
+                            <select class="form-select bg-dark border-secondary text-white" id="admit-uhid" required>
+                                <option value="" selected disabled>Select Patient</option>
+                            </select>
+                        </div>
+                        <!-- Simplified Info Display -->
+                        <div id="admission-info" class="mt-3 p-3 rounded border border-secondary"
+                            style="background: rgba(99, 102, 241, 0.05); display: none;">
+                            <div class="d-flex justify-content-between mb-2 border-bottom border-secondary pb-2">
+                                <span class="text-muted small text-uppercase fw-bold">Assigned Ward</span>
+                                <span id="info-ward" class="fw-bold text-indigo">--</span>
+                            </div>
+                            <div class="d-flex justify-content-between pt-2">
+                                <span class="text-muted small text-uppercase fw-bold">Assigned Bed</span>
+                                <span id="info-bed" class="fw-bold text-indigo">--</span>
+                            </div>
+                        </div>
+                        <div id="not-admitted-warning"
+                            class="mt-3 p-3 rounded text-danger small text-center bg-dark border border-danger"
+                            style="display: none;">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Patient must be admitted by Ward Manager first.
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="button" class="btn btn-outline-light rounded-pill"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-indigo rounded-pill px-4" onclick="submitAdmission()">Admit
+                        Patient</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadIPDPatients();
+            loadWards();
+            loadPatients(); // Load patient list for dropdown
+
+            document.getElementById('admit-uhid').addEventListener('change', (e) => {
+                const val = e.target.value;
+                if (val) {
+                    checkPatientStatus(val);
+                }
+            });
+
+            document.getElementById('admit-ward').addEventListener('change', loadAvailableBeds);
+        });
+
+        async function loadPatients() {
+            try {
+                const response = await fetch('/api/doctor/patients/list');
+                if (response.ok) {
+                    const patients = (await response.json()).data;
+                    const select = document.getElementById('admit-uhid');
+                    patients.forEach(p => {
+                        const option = document.createElement('option');
+                        option.value = p.uhid;
+                        option.textContent = p.name + ' (' + (p.age || 'N/A') + 'y) - ' + p.uhid;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (e) {
+                console.error("Failed to load patients list", e);
+            }
+        }
+
+        async function loadWards() {
+            try {
+                const response = await fetch('/api/doctor/ipd/wards');
+                if (response.ok) {
+                    const wards = (await response.json()).data;
+                    const select = document.getElementById('admit-ward');
+                    wards.forEach(w => {
+                        const option = document.createElement('option');
+                        option.value = w.id;
+                        option.textContent = w.name + ' (' + w.code + ')';
+                        select.appendChild(option);
+                    });
+                }
+            } catch (e) {
+                console.error("Failed to load wards", e);
+            }
+        }
+
+        function updateBedPlaceholder() {
+            // Optional: Logic to fetch available beds if backend supported it
+        }
+
+
+
+        async function checkPatientStatus(uhid) {
+            const infoBlock = document.getElementById('admission-info');
+            const warningBlock = document.getElementById('not-admitted-warning');
+            const infoWard = document.getElementById('info-ward');
+            const infoBed = document.getElementById('info-bed');
+
+            // Reset UI
+            infoBlock.style.display = 'none';
+            warningBlock.style.display = 'none';
+            window.currentAdmission = null;
+
+            if (!uhid) return;
+
+            try {
+                const response = await fetch(`/api/doctor/ipd/patient-status?uhid=${encodeURIComponent(uhid)}`);
+                console.log('[DEBUG] Patient Status Response:', response.status);
+                if (response.ok) {
+                    const json = await response.json();
+                    console.log('[DEBUG] Full JSON:', json);
+                    const status = json.data;
+                    console.log('[DEBUG] Status data:', status);
+
+                    // NOTE: Jackson serializes 'isAdmitted' as 'admitted' in JSON
+                    if (status && status.admitted) {
+                        infoWard.textContent = status.wardName;
+                        infoBed.textContent = status.bedCode;
+                        infoBlock.style.display = 'block';
+                        warningBlock.style.display = 'none';
+                        window.currentAdmission = status;
+                    } else {
+                        infoBlock.style.display = 'none';
+                        warningBlock.style.display = 'block';
+                        let msg = (status && status.message) ? status.message : 'Patient must be admitted by Ward Manager first.';
+                        if (status && status.debugInfo) {
+                            msg += ` <br><small class="text-muted">(Debug: ${status.debugInfo})</small>`;
+                        }
+                        warningBlock.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i> ${msg}`;
+                        window.currentAdmission = null;
+                    }
+                } else {
+                    console.error('[DEBUG] Response not OK:', response.status);
+                }
+            } catch (e) {
+                console.error("Status check failed", e);
+            }
+        }
+
+
+
+
+
+        async function submitAdmission() {
+            const uhid = document.getElementById('admit-uhid').value;
+
+            if (!uhid) {
+                alert("Please select a patient");
+                return;
+            }
+
+            if (!window.currentAdmission) {
+                alert("Patient must be admitted by Ward Manager before you can assign them to your care.");
+                return;
+            }
+
+            const data = {
+                uhid: uhid,
+                wardId: window.currentAdmission.wardId,
+                bedCode: window.currentAdmission.bedCode
+            };
+
+            try {
+                const response = await fetch('/api/doctor/ipd/admit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('admitPatientModal'));
+                    modal.hide();
+                    document.getElementById('admitPatientForm').reset();
+                    // Reset UI
+                    document.getElementById('admission-info').style.display = 'none';
+                    document.getElementById('not-admitted-warning').style.display = 'none';
+                    window.currentAdmission = null;
+
+                    loadIPDPatients();
+                    alert("Patient assigned to your care successfully!");
+                } else {
+                    const res = await response.json();
+                    alert("Assignment Failed: " + (res.message || "Unknown Error"));
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Error submitting assignment");
+            }
+        }
+
+        async function loadIPDPatients() {
+            try {
+                const response = await fetch('/api/doctor/ipd/my-patients');
+                if (!response.ok) throw new Error('Failed to load patients');
+                const result = await response.json();
+                const patients = result.data || result;
+
+                renderPatients(patients);
+                updateStats(patients);
+            } catch (error) {
+                console.error("Error loading IPD patients:", error);
+                document.getElementById('patient-table-body').innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error loading data</td></tr>`;
+            }
+        }
+
+        function renderPatients(patients) {
+            const tbody = document.getElementById('patient-table-body');
+            tbody.innerHTML = '';
+
+            if (patients.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">No patients currently admitted under your care.</td></tr>`;
+                return;
+            }
+
+            patients.forEach(p => {
+                let statusBadge = '';
+                if (p.stability === 'CRITICAL') statusBadge = '<span class="status-badge status-critical">Critical</span>';
+                else if (p.stability === 'OBSERVATION') statusBadge = '<span class="status-badge status-observation">Observation</span>';
+                else statusBadge = '<span class="status-badge status-stable">Stable</span>';
+
+                const row = `
+                    <tr>
+                        <td><span class="ward-badge bg-indigo-subtle text-indigo px-2 py-1 rounded small fw-bold">${p.wardName || 'N/A'}</span></td>
+                        <td><span class="bed-badge text-muted small fw-bold">${p.bedCode || 'N/A'}</span></td>
+                        <td>
+                            <div class="fw-bold">${p.patientName}</div>
+                            <div class="small text-muted">${p.uhid} • ${p.gender || '-'} • ${p.age || '-'}y</div>
+                        </td>
+                         <td>
+                            <div class="small text-muted">${p.primaryDoctorName || 'Unassigned'}</div>
+                        </td>
+                        <td>${statusBadge}</td>
+                        <td class="small font-monospace">${p.bpSummary || '--/--'}</td>
+                        <td class="text-end">
+                            <a href="/doctor/patients/${p.patientId}" class="btn btn-sm btn-outline-indigo px-3 rounded-pill" style="border-color: #6366f1; color: #6366f1;">
+                                View EMR
+                            </a>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function updateStats(patients) {
+            document.getElementById('stat-admissions').innerText = patients.length;
+            const criticalCount = patients.filter(p => p.stability === 'CRITICAL').length;
+            document.getElementById('stat-critical').innerText = criticalCount;
+        }
+    </script>
 </body>
 
 </html>

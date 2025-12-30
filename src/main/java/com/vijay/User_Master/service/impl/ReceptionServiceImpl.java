@@ -29,6 +29,7 @@ public class ReceptionServiceImpl implements ReceptionService {
     private final AppointmentRepository appointmentRepository;
     private final DepartmentRepository departmentRepository;
     private final DoctorProfileRepository doctorProfileRepository;
+    private final DoctorScheduleRepository doctorScheduleRepository;
     private final PatientService patientService;
     private final ModelMapper modelMapper;
 
@@ -224,5 +225,75 @@ public class ReceptionServiceImpl implements ReceptionService {
             response.setVisitId(appointment.getVisit().getId());
         }
         return response;
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public WeeklyScheduleGridDTO getWeeklySchedule(LocalDate startDate) {
+        Long ownerId = CommonUtils.getLoggedInUser().getOwnerId();
+        
+        // Calculate start of week (assuming Monday start)
+        LocalDate startOfWeek = startDate;
+        while (startOfWeek.getDayOfWeek() != java.time.DayOfWeek.MONDAY) {
+            startOfWeek = startOfWeek.minusDays(1);
+        }
+        LocalDate endOfWeek = startOfWeek.plusDays(6);
+
+        // Fetch all active doctors
+        List<DoctorProfile> doctors = doctorProfileRepository.findByOwnerIdAndStatusTrue(ownerId).stream()
+                .filter(d -> d.getUser() != null && Boolean.TRUE.equals(d.getStatus()))
+                .collect(Collectors.toList());
+
+        List<DoctorWeeklyScheduleDTO> doctorSchedules = new java.util.ArrayList<>();
+
+        for (DoctorProfile doc : doctors) {
+            DoctorWeeklyScheduleDTO docDto = DoctorWeeklyScheduleDTO.builder()
+                    .doctorId(doc.getId())
+                    .doctorName(doc.getUser().getName())
+                    .department(doc.getDepartment() != null ? doc.getDepartment().getName() : "General")
+                    .weeklyShifts(new java.util.HashMap<>())
+                    .build();
+
+            // For each day of the week
+            for (LocalDate date = startOfWeek; !date.isAfter(endOfWeek); date = date.plusDays(1)) {
+                List<String> formattedShifts = new java.util.ArrayList<>();
+                
+                // 1. Check for specific date schedule
+                List<DoctorSchedule> specificSchedules = doctorScheduleRepository.findByDoctorIdAndSpecificDateAndActiveTrue(doc.getId(), date);
+                
+                List<DoctorSchedule> activeSchedulesForDay;
+                if (!specificSchedules.isEmpty()) {
+                    activeSchedulesForDay = specificSchedules;
+                } else {
+                    // 2. Fallback to weekly schedule
+                    activeSchedulesForDay = doctorScheduleRepository.findByDoctorIdAndDayOfWeekAndSpecificDateIsNullAndActiveTrue(
+                            doc.getId(), DoctorSchedule.DayOfWeek.valueOf(date.getDayOfWeek().name()));
+                }
+
+                for (DoctorSchedule s : activeSchedulesForDay) {
+                    String fmt = formatTime(s.getStartTime()) + " - " + formatTime(s.getEndTime());
+                    formattedShifts.add(fmt);
+                }
+
+                if (formattedShifts.isEmpty()) {
+                    formattedShifts.add("OFF DUTY");
+                }
+                
+                docDto.getWeeklyShifts().put(date.toString(), formattedShifts);
+            }
+            doctorSchedules.add(docDto);
+        }
+
+        return WeeklyScheduleGridDTO.builder()
+                .startDate(startOfWeek)
+                .endDate(endOfWeek)
+                .doctorSchedules(doctorSchedules)
+                .build();
+    }
+
+    private String formatTime(java.time.LocalTime time) {
+        if (time == null) return "";
+        return time.format(java.time.format.DateTimeFormatter.ofPattern("hh a"));
     }
 }

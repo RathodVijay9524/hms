@@ -54,7 +54,8 @@
                     </h1>
                     <p class="text-muted mb-0">Management of Operating Theatres and Procedure Logs</p>
                 </div>
-                <button class="btn btn-indigo px-4 rounded-pill">
+                <button class="btn btn-indigo px-4 rounded-pill" data-bs-toggle="modal"
+                    data-bs-target="#scheduleSurgeryModal">
                     <i class="fas fa-plus me-2"></i>Schedule Surgery
                 </button>
             </div>
@@ -64,19 +65,20 @@
                 <div class="col-md-4">
                     <div class="surgery-card p-4">
                         <div class="text-muted small fw-bold text-uppercase mb-2">OTs In Use</div>
-                        <div class="display-6 fw-bold text-white">4 <small class="fs-6 text-muted">/ 6</small></div>
+                        <div class="display-6 fw-bold text-white"><span id="stat-ot-use">0</span></div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="surgery-card p-4">
                         <div class="text-muted small fw-bold text-uppercase mb-2">Today's Procedures</div>
-                        <div class="display-6 fw-bold text-white">12</div>
+                        <div class="display-6 fw-bold text-white"><span id="stat-procedures">0</span></div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="surgery-card p-4">
                         <div class="text-muted small fw-bold text-uppercase mb-2">Avg Prep Time</div>
-                        <div class="display-6 fw-bold text-white">24 <small class="fs-6 text-muted">Mins</small></div>
+                        <div class="display-6 fw-bold text-white"><span id="stat-prep-time">25</span> <small
+                                class="fs-6 text-muted">Mins</small></div>
                     </div>
                 </div>
             </div>
@@ -87,8 +89,12 @@
                     class="card-header bg-transparent border-bottom border-light p-4 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold">Live Surgery Timeline</h5>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-dark btn-sm rounded-pill px-3">Filter by OT</button>
-                        <button class="btn btn-dark btn-sm rounded-pill px-3">Export Log</button>
+                        <div class="d-flex align-items-center">
+                            <input type="date" id="surgery-date"
+                                class="form-control form-control-sm bg-dark border-secondary text-light"
+                                style="width: auto;">
+                        </div>
+                        <button class="btn btn-dark btn-sm rounded-pill px-3" onclick="loadSurgeries()">Refresh</button>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -103,58 +109,10 @@
                                 <th class="text-end pe-4">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr class="border-bottom border-light">
-                                <td class="ps-4">
-                                    <div class="ot-badge mb-1">OT - 02</div>
-                                    <div class="small fw-bold">09:30 AM</div>
-                                </td>
-                                <td>
-                                    <div class="fw-bold">Mark Johnson</div>
-                                    <div class="small text-muted">UHID: H101-442</div>
-                                </td>
-                                <td>
-                                    <div class="badge bg-indigo-subtle text-indigo rounded-pill px-3 mb-1">Orthopedic
-                                    </div>
-                                    <div class="small text-white">Total Hip Replacement</div>
-                                </td>
-                                <td>
-                                    <div class="small text-white">Lead: Dr. Robert S.</div>
-                                    <div class="small text-muted">Anaest: Dr. Linda M.</div>
-                                </td>
-                                <td>
-                                    <span class="badge bg-success-subtle text-success px-3 rounded-pill">In
-                                        Progress</span>
-                                </td>
-                                <td class="text-end pe-4">
-                                    <button class="btn btn-outline-light btn-sm rounded-pill"><i
-                                            class="fas fa-external-link-alt me-1"></i>View Log</button>
-                                </td>
-                            </tr>
-                            <tr class="border-bottom border-light">
-                                <td class="ps-4">
-                                    <div class="ot-badge mb-1">OT - 04</div>
-                                    <div class="small fw-bold">11:15 AM</div>
-                                </td>
-                                <td>
-                                    <div class="fw-bold">Emma Davis</div>
-                                    <div class="small text-muted">UHID: H101-512</div>
-                                </td>
-                                <td>
-                                    <div class="badge bg-indigo-subtle text-indigo rounded-pill px-3 mb-1">Cardio</div>
-                                    <div class="small text-white">Angioplasty (3 Stents)</div>
-                                </td>
-                                <td>
-                                    <div class="small text-white">Lead: Dr. Sarah W.</div>
-                                    <div class="small text-muted">Anaest: Dr. Kevin P.</div>
-                                </td>
-                                <td>
-                                    <span class="badge bg-warning-subtle text-warning px-3 rounded-pill">Prep
-                                        Ready</span>
-                                </td>
-                                <td class="text-end pe-4">
-                                    <button class="btn btn-outline-light btn-sm rounded-pill"><i
-                                            class="fas fa-external-link-alt me-1"></i>View Log</button>
+                        <tbody id="surgery-table-body">
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <div class="spinner-border text-primary"></div>
                                 </td>
                             </tr>
                         </tbody>
@@ -164,8 +122,230 @@
         </div>
     </main>
 
+    <!-- Schedule Surgery Modal -->
+    <div class="modal fade" id="scheduleSurgeryModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-white"
+                style="background: var(--bg-secondary); border: 1px solid var(--border-color);">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title">Schedule New Surgery</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="scheduleSurgeryForm">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small text-uppercase fw-bold">Patient</label>
+                            <input class="form-control bg-dark border-secondary text-white" list="surg-patient-options"
+                                id="surg-uhid" required placeholder="Type to search patient...">
+                            <datalist id="surg-patient-options">
+                                <!-- Loaded dynamically -->
+                            </datalist>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small text-uppercase fw-bold">Procedure Name</label>
+                            <input type="text" class="form-control bg-dark border-secondary text-white"
+                                id="surg-procedure" required>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label text-muted small text-uppercase fw-bold">Date</label>
+                                <input type="date" class="form-control bg-dark border-secondary text-white"
+                                    id="surg-date" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label text-muted small text-uppercase fw-bold">Time</label>
+                                <input type="time" class="form-control bg-dark border-secondary text-white"
+                                    id="surg-time" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small text-uppercase fw-bold">Duration (Minutes)</label>
+                            <input type="number" class="form-control bg-dark border-secondary text-white"
+                                id="surg-duration" value="60" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small text-uppercase fw-bold">OT Code</label>
+                            <select class="form-select bg-dark border-secondary text-white" id="surg-ot">
+                                <option value="OT-1">OT-1 (General)</option>
+                                <option value="OT-2">OT-2 (Cardiac)</option>
+                                <option value="OT-3">OT-3 (Ortho)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small text-uppercase fw-bold">Department</label>
+                            <select class="form-select bg-dark border-secondary text-white" id="surg-dept">
+                                <option value="General Surgery">General Surgery</option>
+                                <option value="Cardiology">Cardiology</option>
+                                <option value="Orthopedics">Orthopedics</option>
+                                <option value="Neurology">Neurology</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="button" class="btn btn-outline-light rounded-pill"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-indigo rounded-pill px-4"
+                        onclick="submitSurgery()">Schedule</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/theme.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('surgery-date').valueAsDate = new Date();
+            loadSurgeries();
+            loadPatients();
+
+            document.getElementById('surgery-date').addEventListener('change', loadSurgeries);
+
+            // Set modal date default
+            document.getElementById('surg-date').valueAsDate = new Date();
+        });
+
+        async function loadPatients() {
+            try {
+                const response = await fetch('/api/doctor/patients/list');
+                if (response.ok) {
+                    const patients = (await response.json()).data;
+                    const datalist = document.getElementById('surg-patient-options');
+                    patients.forEach(p => {
+                        const option = document.createElement('option');
+                        option.value = p.uhid;
+                        option.label = p.name + ' (' + p.age + 'y)';
+                        datalist.appendChild(option);
+                    });
+                }
+            } catch (e) {
+                console.error("Failed to load patients list", e);
+            }
+        }
+
+        async function loadSurgeries() {
+            const date = document.getElementById('surgery-date').value;
+            try {
+                // Load Stats
+                fetch(`/api/doctor/surgeries/stats?date=${date}`)
+                    .then(res => res.json())
+                    .then(res => {
+                        const stats = res.data || res;
+                        document.getElementById('stat-ot-use').innerText = stats.otInUse || 0;
+                        document.getElementById('stat-procedures').innerText = stats.totalProcedures || 0;
+                        document.getElementById('stat-prep-time').innerText = stats.avgPrepTime || 0;
+                    });
+
+                // Load Schedule
+                const response = await fetch(`/api/doctor/surgeries/schedule?date=${date}`);
+                if (!response.ok) throw new Error('Failed to load surgeries');
+                const result = await response.json();
+                const surgeries = result.data || result;
+
+                renderSurgeries(surgeries);
+            } catch (error) {
+                console.error("Error loading surgeries:", error);
+                document.getElementById('surgery-table-body').innerHTML = `<tr><td colspan="6" class="text-center text-danger">Error loading data: ${error.message}</td></tr>`;
+            }
+        }
+
+        async function submitSurgery() {
+            const date = document.getElementById('surg-date').value;
+            const time = document.getElementById('surg-time').value;
+
+            if (!date || !time) {
+                alert("Please select date and time");
+                return;
+            }
+
+            const data = {
+                uhid: document.getElementById('surg-uhid').value,
+                procedureName: document.getElementById('surg-procedure').value,
+                scheduledStartTime: date + 'T' + time,
+                durationMinutes: document.getElementById('surg-duration').value,
+                otCode: document.getElementById('surg-ot').value,
+                departmentName: document.getElementById('surg-dept').value
+            };
+
+            try {
+                const response = await fetch('/api/doctor/surgeries/schedule', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('scheduleSurgeryModal'));
+                    modal.hide();
+
+                    // Reset form
+                    document.getElementById('scheduleSurgeryForm').reset();
+
+                    // Refresh data
+                    loadSurgeries();
+
+                    alert("Surgery scheduled successfully!");
+                } else {
+                    const result = await response.json();
+                    alert("Failed to schedule: " + (result.message || "Unknown error"));
+                }
+            } catch (error) {
+                console.error("Error scheduling surgery:", error);
+                alert("Error scheduling surgery");
+            }
+        }
+
+        function renderSurgeries(surgeries) {
+            const tbody = document.getElementById('surgery-table-body');
+            tbody.innerHTML = '';
+
+            if (surgeries.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">No surgeries scheduled for this date.</td></tr>`;
+                return;
+            }
+
+            surgeries.forEach(s => {
+                let statusBadge = '';
+                // Status mapping
+                if (s.status === 'IN_PROGRESS') statusBadge = '<span class="badge bg-success-subtle text-success px-3 rounded-pill">In Progress</span>';
+                else if (s.status === 'PREP_READY') statusBadge = '<span class="badge bg-warning-subtle text-warning px-3 rounded-pill">Prep Ready</span>';
+                else if (s.status === 'COMPLETED') statusBadge = '<span class="badge bg-secondary-subtle text-secondary px-3 rounded-pill">Completed</span>';
+                else statusBadge = `<span class="badge bg-info-subtle text-info px-3 rounded-pill">${s.status}</span>`;
+
+                const timeStr = new Date(s.scheduledStartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                const row = `
+                    <tr class="border-bottom border-light">
+                        <td class="ps-4">
+                            <div class="ot-badge mb-1">${s.otCode}</div>
+                            <div class="small fw-bold">${timeStr}</div>
+                        </td>
+                        <td>
+                            <div class="fw-bold">${s.patientName}</div>
+                            <div class="small text-muted">UHID: ${s.uhid}</div>
+                        </td>
+                        <td>
+                            <div class="badge bg-indigo-subtle text-indigo rounded-pill px-3 mb-1">${s.departmentName}</div>
+                            <div class="small text-white">${s.procedureName}</div>
+                        </td>
+                        <td>
+                            <div class="small text-white">Lead: ${s.leadDoctorName}</div>
+                            <div class="small text-muted">Anaest: ${s.anaesthetistName || '-'}</div>
+                        </td>
+                        <td>
+                            ${statusBadge}
+                        </td>
+                        <td class="text-end pe-4">
+                            <button class="btn btn-outline-light btn-sm rounded-pill"><i class="fas fa-external-link-alt me-1"></i>View Log</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+    </script>
 </body>
 
 </html>

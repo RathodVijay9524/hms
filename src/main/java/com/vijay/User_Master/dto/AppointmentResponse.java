@@ -25,4 +25,5 @@ public class AppointmentResponse {
     private Long visitId;
     private String reasonForVisit;
     private String notes;
+    private com.vijay.User_Master.entity.Appointment.AppointmentType type;
 }

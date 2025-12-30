@@ -56,7 +56,16 @@ public class Appointment extends BaseModel {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner; // Tenant segregation
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private AppointmentType type = AppointmentType.OPD;
+
     public enum AppointmentStatus {
-        BOOKED, CHECKED_IN, COMPLETED, CANCELLED, NO_SHOW
+        BOOKED, CHECKED_IN, IN_PROGRESS, COMPLETED, CANCELLED, NO_SHOW
+    }
+
+    public enum AppointmentType {
+        OPD, TELECONSULT, HOME_VISIT
     }
 }

@@ -13,4 +13,6 @@ public interface AppointmentService {
     List<AppointmentResponse> getTodayAppointments();
     List<AppointmentResponse> getAppointmentsByPatient(Long patientId);
     AppointmentResponse getAppointmentById(Long id);
+    List<AppointmentResponse> getMyAppointments(LocalDate date);
+    List<AppointmentResponse> getTeleconsultAppointments(LocalDate date);
 }
